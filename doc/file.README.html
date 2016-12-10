@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.9.5
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="file_list.html"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="puppet_class_list_link"
+        href="puppet_class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <iframe id="search_frame" src="file_list.html"></iframe>
+
+      <div id="content"><div id='filecontents'>
+<p><a href="http://www.apache.org/licenses/LICENSE-2.0.html"><img
+src="http://img.shields.io/:license-apache-blue.svg"></a> <a
+href="https://travis-ci.org/simp/pupmod-simp-simp_rsyslog"><img
+src="https://travis-ci.org/simp/pupmod-simp-simp_rsyslog.svg"></a> <a
+href="https://img.shields.io/badge/SIMP%20compatibility-6.*-orange.svg"><img
+src="https://img.shields.io/badge/SIMP%20compatibility-6.*-orange.svg"></a></p>
+
+<h4 id="label-Table+of+Contents">Table of Contents</h4>
+<ol><li>
+<p><a href="#description">Description</a></p>
+</li><li>
+<p><a href="#setup">Setup - The basics of getting started with
+simp_rsyslog</a></p>
+<ul><li>
+<p><a href="#what-simp_rsyslog-affects">What simp_rsyslog affects</a></p>
+</li></ul>
+</li><li>
+<p><a href="#usage">Usage - Configuration options and additional
+functionality</a></p>
+</li><li>
+<p><a href="#reference">Reference - An under-the-hood peek at what the module
+is doing and how</a></p>
+</li><li>
+<p><a href="#limitations">Limitations - OS compatibility, etc.</a></p>
+</li><li>
+<p><a href="#development">Development - Guide for contributing to the
+module</a></p>
+<ul><li>
+<p><a href="#acceptance-tests">Acceptance Tests - Beaker env variables</a></p>
+</li></ul>
+</li></ol>
+
+<h2 id="label-Description">Description</h2>
+
+<p>This module is a <a href="https://simp-project.com">SIMP</a> Puppet profile
+for setting up common Rsyslog configurations as supported by the SIMP
+ecosystem</p>
+
+<h3 id="label-This+is+a+SIMP+module">This is a SIMP module</h3>
+
+<p>This module is a component of the <a
+href="https://github.com/NationalSecurityAgency/SIMP">System Integrity
+Management Platform</a>, a compliance-management framework built on Puppet.</p>
+
+<p>If you find any issues, they may be submitted to our <a
+href="https://simp-project.atlassian.net/">bug tracker</a>.</p>
+
+<p>This module is optimally designed for use within a larger SIMP ecosystem,
+but it can be used independently:</p>
+<ul><li>
+<p>When included within the SIMP ecosystem, security compliance settings will 
+be managed from the Puppet server.</p>
+</li><li>
+<p>If used independently, all SIMP-managed security subsystems are disabled by
+default and must be explicitly opted into by administrators. Please review 
+the parameters in  <a
+href="https://github.com/simp/pupmod-simp-simp_options">simp/simp_options</a>
+for  details.</p>
+</li></ul>
+
+<h2 id="label-Setup">Setup</h2>
+
+<h3 id="label-What+simp_rsyslog+affects">What simp_rsyslog affects</h3>
+
+<p>This module provides configurations for both Rsyslog local and Rsyslog
+server configurations.</p>
+
+<h2 id="label-Usage">Usage</h2>
+
+<h3 id="label-Local+Logging">Local Logging</h3>
+
+<p>To set up local logging, you can simply do the following:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_include'>include</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>::simp_rsyslog</span><span class='tstring_end'>&#39;</span></span>
+</code></pre>
+
+<p>The <code>$log_collection</code> <code>Hash</code> provides an
+<code>Rsyslog 7</code> compatible set of filters that you wish to collect.
+These will be considered <strong>security relevant</strong> and fed into
+<code>/var/log/secure</code> by default.</p>
+
+<p>The <code>Hash</code> has the following format and all entries will be
+combined with a logical <code>OR</code>.</p>
+
+<pre class="code ruby"><code class="ruby">$log_collection = {
+  &#39;programs&#39;   =&gt; [ &lt;logged daemon names&gt; ],
+  &#39;facilities&#39; =&gt; [ &lt;syslog facilities&gt; ],
+  &#39;priorities&#39; =&gt; [ &lt;syslog priorities&gt; ],
+  &#39;msg_starts&#39; =&gt; [ &lt;strings the message starts with&gt; ],
+  &#39;msg_regex&#39;  =&gt; [ &lt;regular expression matches&gt; ]
+}
+</code></pre>
+
+<p>If you need something more complex than this, you will need to configure
+your own rsyslog rules using the <code>::rsyslog::rule</code> defined type.</p>
+
+<p>If you simply want to log <strong>EVERYTHING</strong> to your remote
+servers, set <code>simp_rsyslog::collect_everything</code> to
+<code>true</code>.</p>
+
+<p>If you do this, it is <strong>highly recommended</strong> that you set
+<code>simp_rsyslog::log_local</code> to <code>false</code> so that you
+don&#39;t overwhelm your filesystem.</p>
+<hr>
+
+<p><strong>NOTE</strong></p>
+
+<p>If you do not capture the <code>local6</code> syslog facility, you will
+lose a lot of  SIMP-specific messaging</p>
+<hr>
+
+<h3 id="label-Centralized+Logging">Centralized Logging</h3>
+
+<p>While we highly recommend <a
+href="https://simp.readthedocs.io/en/master/user_guide/HOWTO/Central_Log_Collection/Logstash.html">using
+ELG</a> for collecting your logs, we understand that this is not practical
+for all situations.</p>
+
+<p>If you wish to collect logs from remote hosts, you can do the following:</p>
+
+<p><strong>Manifest:</strong></p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_include'>include</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>::simp_rsyslog</span><span class='tstring_end'>&#39;</span></span>
+</code></pre>
+
+<p><strong>Hieradata:</strong></p>
+
+<pre class="code ruby"><code class="ruby">---
+simp_rsyslog::is_server : true</code></pre>
+
+<p>This will set your system up as an Rsyslog server, using TLS which is
+capable of collecting both TCP and UDP logs.</p>
+
+<p>At this time, the version of Rsyslog that ships with EL systems cannot
+handle both TLS and non-TLS TCP connections at the same time. When it can,
+we will support this mode of log collection.</p>
+
+<p>UDP logs will not be encrypted in transit but are supported for network
+device compatibility.</p>
+
+<h3 id="label-Log+Forwarding">Log Forwarding</h3>
+
+<p>If you wish to set your system up to forward logs to a set of remote log
+servers, in either the server or client case, you should use the following:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_include'>include</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>::simp_rsyslog::log_shipper</span><span class='tstring_end'>&#39;</span></span>
+</code></pre>
+
+<p>This will use the <code>$simp_options::syslog::log_servers</code> and
+<code>$simp_options::syslog::failover_log_servers</code> variables to set
+the targets for your logs. Alternatively, you can specify the targets in
+Hiera directly.</p>
+
+<p>TLS and TCP connections will be used for log forwarding for security
+purposes.</p>
+<hr>
+
+<blockquote>
+<p><strong>WARNING</strong></p>
+
+<p>Be <strong>VERY</strong> careful when setting your
+<code>simp_rsyslog::log_servers</code> and
+<code>simp_rsyslog::failover_log_servers</code> Arrays!</p>
+
+<p>There is <strong>no</strong> foolproof way to detect if you are setting
+your local log server as part of the Array. If you do this, you may end up
+with infinite log loops that fill your log server&#39;s disk space within
+minutes.</p>
+
+<p><strong>WARNING</strong></p>
+</blockquote>
+<hr>
+
+<h2 id="label-Reference">Reference</h2>
+
+<p>See the <a
+href="https://github.com/simp/pupmod-simp-simp_rsyslog/tree/master/docs/index.html">API
+Documentation</a> for full details.</p>
+
+<h2 id="label-Limitations">Limitations</h2>
+
+<p>This is a SIMP Profile. It will not expose <strong>all</strong> options of
+the underlying modules, only the ones that are conducive to a supported
+SIMP infrastructure. If you need to do things that this module does not
+cover, you may need to create your own profile or inherit this profile and
+extend it to meet your needs.</p>
+
+<p>SIMP Puppet modules are generally intended for use on Red Hat Enterprise
+Linux and compatible distributions, such as CentOS. Please see the <a
+href="./metadata.json">metadata.json file</a> for the most up-to-date list
+of supported operating systems, Puppet versions, and module dependencies.</p>
+
+<h2 id="label-Development">Development</h2>
+
+<p>Please read our <a
+href="http://simp-doc.readthedocs.io/en/stable/contributors_guide/index.html">Contribution
+Guide</a>.</p>
+
+<h3 id="label-Acceptance+tests">Acceptance tests</h3>
+
+<p>This module includes <a
+href="https://github.com/puppetlabs/beaker">Beaker</a> acceptance tests
+using the SIMP <a
+href="https://github.com/simp/rubygem-simp-beaker-helpers">Beaker
+Helpers</a>. By default the tests use <a
+href="https://www.vagrantup.com/">Vagrant</a> with <a
+href="https://www.virtualbox.org">VirtualBox</a> as a back-end; Vagrant and
+VirtualBox must both be installed to run these tests without modification.
+To execute the tests run the following:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_install'>install</span>
+<span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_rake'>rake</span> <span class='label'>beaker:</span><span class='id identifier rubyid_suites'>suites</span></code></pre>
+
+<p>Please refer to the <a
+href="https://github.com/simp/rubygem-simp-beaker-helpers/blob/master/README.md">SIMP
+Beaker Helpers documentation</a> for more information.</p>
+</div></div>
+
+      <div id="footer">
+  Generated on Fri Dec 23 14:02:05 2016 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.5 (ruby-2.1.10).
+</div>
+
+    </div>
+  </body>
+</html>

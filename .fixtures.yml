@@ -1,0 +1,20 @@
+---
+fixtures:
+  repositories:
+    auditd:    'https://github.com/simp/pupmod-simp-auditd.git'
+    augeasproviders_core:
+      repo: 'https://github.com/simp/augeasproviders_core'
+      branch: 'simp-master'
+    augeasproviders_grub:
+      repo: 'https://github.com/simp/augeasproviders_grub'
+      branch: 'simp-master'
+    iptables:  'https://github.com/simp/pupmod-simp-iptables.git'
+    logrotate: 'https://github.com/simp/pupmod-simp-logrotate.git'
+    pki:       'https://github.com/simp/pupmod-simp-pki.git'
+    rsyslog:   'https://github.com/simp/pupmod-simp-rsyslog.git'
+    simpcat:   'https://github.com/simp/pupmod-simp-simpcat.git'
+    simplib:   'https://github.com/simp/pupmod-simp-simplib.git'
+    stdlib:    'https://github.com/simp/puppetlabs-stdlib.git'
+    tcpwrappers: 'https://github.com/simp/pupmod-simp-tcpwrappers.git'
+  symlinks:
+    simp_rsyslog: '#{source_dir}'
