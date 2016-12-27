@@ -8,7 +8,8 @@
   "project_page": "https://github.com/simp/pupmod-simp-simp_rsyslog",
   "issues_url": "https://simp-project.atlassian.net",
   "tags": [
-    "simp"
+    "simp",
+    "rsyslog"
   ],
   "dependencies": [
     {
