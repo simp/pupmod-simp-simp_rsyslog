@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Puppet Class: simp_rsyslog::server
+  
+    &mdash; Documentation by YARD 0.9.5
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "puppet_classes::simp_rsyslog::server";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../puppet_class_list.html"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (s)</a> &raquo;
+    <span class='title'><span class='object_link'>Puppet Classes</span></span>
+     &raquo; 
+    <span class="title">simp_rsyslog::server</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="puppet_class_list_link"
+        href="../puppet_class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <iframe id="search_frame" src="../puppet_class_list.html"></iframe>
+
+      <div id="content"><h1>Puppet Class: simp_rsyslog::server</h1>
+<div class="box_info">
+  
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>
+      manifests/server.pp
+    </dd>
+  </dl>
+</div>
+<h2>Overview</h2>
+<div class="docstring">
+  <div class="discussion">
+    
+<p><strong>NOTE: THIS IS A <a
+href="https://github.com/puppetlabs/puppetlabs-stdlib#assert_private">PRIVATE</a>
+CLASS</strong></p>
+
+<p>This class provides a general purpose log server suitable for centralized
+logging.</p>
+
+<p>It is <strong>highly</strong> recommended that you look to use the Logstash
+module at this point.</p>
+
+<p>The following must be set in Hiera for this class to work properly:</p>
+
+<pre class="code ruby"><code class="ruby">rsyslog::global::tls_tcpserver: true
+
+The following are optional for legacy, unencrypted connections.
+rsyslog::global::tcpserver: true
+rsyslog::global::udpserver: true
+rsyslog::global::udpServerAddress: &#39;0.0.0.0&#39;</code></pre>
+<hr>
+
+<p>Loose standard for the rules that will be created:</p>
+<ul><li>
+<p>10_default = specific rules to be caught early (ex. matching on programname
++  error + etc.)</p>
+</li><li>
+<p>11_default = specific rules that have a corresponding “0_default” entry but
+have a less-specific rule than “0_default” (ex. matching on programname)</p>
+</li><li>
+<p>17_default = catch all for security relevant logs that weren&#39;t caught
+by previous rules</p>
+</li><li>
+<p>19_default = anything else gets sent to messages</p>
+</li><li>
+<p>30_default = stop processing (if appropriate), don&#39;t go past this</p>
+</li></ul>
+<hr>
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>server_conf</span>
+      
+      
+        <span class='type'>(<tt>Optional[String]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The full configuration to use</p>
+<ul><li>
+<p>Adds the contained rsyslog configuration to the system  instead of the
+default from this module. This allows you complete freedom  in specifying
+your log server ruleset if you do not like the one that is  provided. There
+will be <strong>no</strong> sanity checking of this string!</p>
+</li></ul>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_sudosh_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of sudosh rules</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_httpd_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of httpd rules</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_dhcpd_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of dhcpd rules</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_puppet_agent_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of puppet agent rules</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_puppetserver_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of puppetserver rules</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_auditd_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of auditd rules</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_slapd_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of OpenLDAP Server rules</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_kern_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of kern.* rules</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_iptables_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of messages starting with <code>IPT:</code></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_security_relevant_logs</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of the
+<code>::simp_rsyslog::security_relevant_logs</code></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_message_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable the default <code>/var/log/message</code> traditional processing</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_mail_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of mail.* rules</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_cron_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of cron.* rules</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_emerg_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of *.emerg rules</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_spool_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of spool.* rules</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>process_boot_rules</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enable processing of local7.* rules</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>enable_catchall</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Add anything missed by other rules to a <code>catchall.log</code> file</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>stop_processing</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Do not continue processing additional Rsyslog rules after the logs have
+been sent to the remote server.</p>
+<ul><li>
+<p>You will probably want to keep this set so that your local system logs  are
+not filled with material from other hosts.</p>
+</li></ul>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>add_logrotate_rule</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Add a logrotate rule for the logs that are collected by these server rules</p>
+<ul><li>
+<p>This will <strong>not</strong> be applied if you are not using the inbuilt
+rules since  there is no way to know what you are doing.</p>
+</li></ul>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>rotate_period</span>
+      
+      
+        <span class='type'>(<tt>Enum['daily','weekly','monthly','yearly']</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&#39;weekly&#39;</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>How often to rotate the local logs</p>
+<ul><li>
+<p>Has no effect if <code>add_logrotate_rule</code> is <code>false</code></p>
+</li></ul>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>rotate_preserve</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>12</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>How many rotated logs to preserve</p>
+<ul><li>
+<p>3 months by default</p>
+</li><li>
+<p>Has no effect if <code>add_logrotate_rule</code> is <code>false</code></p>
+</li></ul>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>rotate_size</span>
+      
+      
+        <span class='type'>(<tt>Optional[Integer]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The maximum size of a log file</p>
+<ul><li>
+<p><code>$rotate_period</code> will be ignored if this is specified</p>
+</li><li>
+<p>Has no effect if <code>add_logrotate_rule</code> is <code>false</code></p>
+</li></ul>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Author:</p>
+<ul class="author">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'>
+<p>Trevor Vaughan <a
+href="mailto:tvaughan@onyxpoint.com">tvaughan@onyxpoint.com</a></p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><div class="method_details_list">
+  <table class="source_code">
+    <tr>
+      <td>
+        <pre class="lines">
+
+
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336</pre>
+      </td>
+      <td>
+        <pre class="code"><span class="info file"># File 'manifests/server.pp', line 127</span>
+
+class simp_rsyslog::server(
+  Optional[String]                          $server_conf                    = undef,
+  Boolean                                   $process_sudosh_rules           = true,
+  Boolean                                   $process_httpd_rules            = true,
+  Boolean                                   $process_dhcpd_rules            = true,
+  Boolean                                   $process_puppet_agent_rules     = true,
+  Boolean                                   $process_puppetserver_rules     = true,
+  Boolean                                   $process_auditd_rules           = true,
+  Boolean                                   $process_slapd_rules            = true,
+  Boolean                                   $process_kern_rules             = true,
+  Boolean                                   $process_iptables_rules         = true,
+  Boolean                                   $process_security_relevant_logs = true,
+  Boolean                                   $process_message_rules          = true,
+  Boolean                                   $process_mail_rules             = true,
+  Boolean                                   $process_cron_rules             = true,
+  Boolean                                   $process_emerg_rules            = true,
+  Boolean                                   $process_spool_rules            = true,
+  Boolean                                   $process_boot_rules             = true,
+  Boolean                                   $enable_catchall                = true,
+  Boolean                                   $stop_processing                = true,
+  Boolean                                   $add_logrotate_rule             = true,
+  Enum[&#39;daily&#39;,&#39;weekly&#39;,&#39;monthly&#39;,&#39;yearly&#39;] $rotate_period                  = &#39;weekly&#39;,
+  Integer                                   $rotate_preserve                = 12,
+  Optional[Integer]                         $rotate_size                    = undef
+) {
+  include &#39;::rsyslog&#39;
+  include &#39;::rsyslog::server&#39;
+
+  assert_private()
+
+  if $server_conf {
+    rsyslog::rule::local { &#39;0_default&#39;:
+      rule            =&gt; $server_conf,
+      stop_processing =&gt; $stop_processing
+    }
+  }
+  else {
+    $file_base = &#39;/var/log/hosts/%HOSTNAME%&#39;
+
+    # Up front because they are the fastest to process
+    if $process_boot_rules {
+      rsyslog::rule::local { &#39;10_00_default_boot&#39;:
+        rule            =&gt; &#39;prifilt(\&#39;local7.*\&#39;)&#39;,
+        dyna_file       =&gt; &quot;${file_base}/boot.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+    if $process_kern_rules {
+      rsyslog::rule::local { &#39;10_00_default_kern&#39;:
+        rule            =&gt; &#39;prifilt(\&#39;kern.*\&#39;)&#39;,
+        dyna_file       =&gt; &quot;${file_base}/kernel.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+    if $process_mail_rules {
+      rsyslog::rule::local { &#39;10_00_default_mail&#39;:
+        rule            =&gt; &#39;prifilt(\&#39;mail.*\&#39;)&#39;,
+        dyna_file       =&gt; &quot;${file_base}/mail.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+    if $process_cron_rules {
+      rsyslog::rule::local { &#39;10_00_default_cron&#39;:
+        rule            =&gt; &#39;prifilt(\&#39;cron.*\&#39;)&#39;,
+        dyna_file       =&gt; &quot;${file_base}/cron.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+    if $process_emerg_rules {
+      rsyslog::rule::local { &#39;10_00_default_emerg&#39;:
+        rule            =&gt; &#39;prifilt(\&#39;*.emerg\&#39;)&#39;,
+        dyna_file       =&gt; &quot;${file_base}/emergency.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+
+    # Every other regular processing rule
+    if $process_sudosh_rules {
+      rsyslog::rule::local { &#39;10_default_sudosh&#39;:
+        rule            =&gt; &#39;$programname == \&#39;sudosh\&#39;&#39;,
+        dyna_file       =&gt; &quot;${file_base}/sudosh.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+    if $process_httpd_rules {
+      rsyslog::rule::local { &#39;10_default_httpd_error&#39;:
+        rule            =&gt; &#39;prifilt(\&#39;*.err\&#39;) and ($programname == \&#39;httpd\&#39;)&#39;,
+        dyna_file       =&gt; &quot;${file_base}/httpd_error.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+      rsyslog::rule::local { &#39;11_default_httpd&#39;:
+        rule            =&gt; &#39;$programname == \&#39;httpd\&#39;&#39;,
+        dyna_file       =&gt; &quot;${file_base}/httpd.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+    if $process_dhcpd_rules {
+      rsyslog::rule::local { &#39;10_default_dhcpd&#39;:
+        rule            =&gt; &#39;$programname == \&#39;dhcpd\&#39;&#39;,
+        dyna_file       =&gt; &quot;${file_base}/dhcpd.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+    if $process_puppet_agent_rules {
+      rsyslog::rule::local { &#39;10_default_puppet_agent_error&#39;:
+        rule            =&gt; &#39;prifilt(\&#39;*.err\&#39;) and ($programname == \&#39;puppet\&#39;)&#39;,
+        dyna_file       =&gt; &quot;${file_base}/puppet_agent_error.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+      rsyslog::rule::local { &#39;11_default_puppet_agent&#39;:
+        rule            =&gt; &#39;$programname == \&#39;puppet\&#39;&#39;,
+        dyna_file       =&gt; &quot;${file_base}/puppet_agent.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+    if $process_puppetserver_rules {
+      rsyslog::rule::local { &#39;10_default_puppetserver_error&#39;:
+        rule            =&gt; &#39;prifilt(\&#39;*.err\&#39;) and ($programname == \&#39;puppetserver\&#39;)&#39;,
+        dyna_file       =&gt; &quot;${file_base}/puppetserver_error.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+      rsyslog::rule::local { &#39;11_default_puppetserver&#39;:
+        rule            =&gt; &#39;$programname == \&#39;puppetserver\&#39;&#39;,
+        dyna_file       =&gt; &quot;${file_base}/puppetserver.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+    if $process_auditd_rules {
+      rsyslog::rule::local { &#39;10_default_audit&#39;:
+        rule            =&gt; &#39;prifilt(\&#39;local5.*\&#39;) or ($programname == \&#39;audispd\&#39;) or ($syslogtag == \&#39;tag_auditd_log:\&#39;)&#39;,
+        dyna_file       =&gt; &quot;${file_base}/auditd.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+    if $process_slapd_rules {
+      rsyslog::rule::local { &#39;10_default_slapd_audit&#39;:
+        rule            =&gt; &#39;$programname == \&#39;slapd_audit\&#39;&#39;,
+        dyna_file       =&gt; &quot;${file_base}/slapd_audit.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+    if $process_iptables_rules {
+      rsyslog::rule::local { &#39;10_default_iptables&#39;:
+        rule            =&gt; &#39;prifilt(\&#39;kern.*\&#39;) and ($msg startswith \&#39;IPT:\&#39;)&#39;,
+        dyna_file       =&gt; &quot;${file_base}/iptables.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+    if $process_spool_rules {
+      rsyslog::rule::local { &#39;10_default_spool&#39;:
+        rule            =&gt; &#39;($syslogfacility-text == \&#39;uucp\&#39;) or (($syslogfacility-text == \&#39;news\&#39;) and prifilt(\&#39;*.crit\&#39;))&#39;,
+        dyna_file       =&gt; &quot;${file_base}/spool.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+
+    # Late processing items
+    if $process_security_relevant_logs {
+      rsyslog::rule::local { &#39;17_default_security_relevant_logs&#39;:
+        rule            =&gt; $::simp_rsyslog::security_relevant_logs,
+        dyna_file       =&gt; &quot;${file_base}/secure.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+    if $process_message_rules {
+      rsyslog::rule::local { &#39;19_default_message&#39;:
+        rule            =&gt; &#39;prifilt(\&#39;*.info;mail.none;authpriv.none;cron.none;local6.none;local5.none\&#39;)&#39;,
+        dyna_file       =&gt; &quot;${file_base}/messages.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+
+    # End of processing
+    if $enable_catchall {
+      rsyslog::rule::local { &#39;30_default_catchall&#39;:
+        rule            =&gt; &#39;prifilt(\&#39;*.*\&#39;)&#39;,
+        dyna_file       =&gt; &quot;${file_base}/catchall.log&quot;,
+        stop_processing =&gt; $stop_processing
+      }
+    }
+    else {
+      if $stop_processing {
+        rsyslog::rule::local { &#39;30_default_drop&#39;:
+          rule            =&gt; &#39;prifilt(\&#39;*.*\&#39;)&#39;,
+          dyna_file       =&gt; &#39;~&#39;,
+          # We don&#39;t need this due to the line above
+          stop_processing =&gt; false
+        }
+      }
+    }
+
+    if $add_logrotate_rule {
+      include &#39;::logrotate&#39;
+
+      $_restartcmd = &#39;systemd&#39; in $facts[&#39;init_systems&#39;] ? {
+        true    =&gt; &#39;/usr/sbin/systemctl restart rsyslog&#39;,
+        default =&gt; &#39;/usr/sbin/service rsyslog restart&#39;
+      }
+
+      logrotate::rule { &#39;simp_rsyslog_server_profile&#39;:
+        log_files     =&gt; [ &quot;${file_base}/*/*.log&quot; ],
+        missingok     =&gt; true,
+        size          =&gt; $rotate_size,
+        rotate_period =&gt; $rotate_period,
+        rotate        =&gt; $rotate_preserve,
+        lastaction    =&gt; &quot;${_restartcmd} &gt; /dev/null 2&gt;&amp;1 || true&quot;
+      }
+    }
+  }
+}</pre>
+      </td>
+    </tr>
+  </table>
+</div>
+</div>
+
+      <div id="footer">
+  Generated on Fri Dec 23 14:02:06 2016 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.5 (ruby-2.1.10).
+</div>
+
+    </div>
+  </body>
+</html>
