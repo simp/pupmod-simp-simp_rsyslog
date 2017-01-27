@@ -155,9 +155,8 @@ class simp_rsyslog::server(
   assert_private()
 
   if $server_conf {
-    rsyslog::rule::local { '0_default':
-      rule            => $server_conf,
-      stop_processing => $stop_processing
+    rsyslog::rule::drop { '0_default':
+      rule => $server_conf
     }
   }
   else {
