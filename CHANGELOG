@@ -1,2 +1,5 @@
+* Wed Feb 08 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 0.0.1
+- Fix bug in logrotate rule for simp_rsyslog server
+
 * Tue Dec 27 2016 Trevor Vaughan <tvaughan@onyxpoint.com> - 0.0.1
 - This is the first release of the new simp_rsyslog profile module
