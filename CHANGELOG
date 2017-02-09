@@ -1,3 +1,6 @@
+* Thu Feb 08 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> 0.0.1
+- Fix path for service to /sbin/service for CentOS 6
+
 * Wed Feb 08 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 0.0.1
 - Fix bug in logrotate rule for simp_rsyslog server
 
