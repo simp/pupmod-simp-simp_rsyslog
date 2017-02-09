@@ -319,7 +319,7 @@ class simp_rsyslog::server(
 
       $_restartcmd = ('systemd' in $facts['init_systems']) ? {
         true    => '/usr/sbin/systemctl restart rsyslog',
-        default => '/usr/sbin/service rsyslog restart'
+        default => '/sbin/service rsyslog restart'
       }
 
       logrotate::rule { 'simp_rsyslog_server_profile':
