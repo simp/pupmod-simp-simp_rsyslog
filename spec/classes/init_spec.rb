@@ -86,7 +86,7 @@ describe 'simp_rsyslog' do
           it { is_expected.to contain_class('logrotate') }
           it { 
             if facts[:operatingsystemmajrelease].to_s <= '6'
-               expected_cmd ='/usr/sbin/service rsyslog restart > /dev/null 2>&1 || true'
+               expected_cmd ='/sbin/service rsyslog restart > /dev/null 2>&1 || true'
             else
                expected_cmd ='/usr/sbin/systemctl restart rsyslog > /dev/null 2>&1 || true'
             end

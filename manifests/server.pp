@@ -160,7 +160,9 @@ class simp_rsyslog::server(
     }
   }
   else {
-    $file_base = '/var/log/hosts/%HOSTNAME%'
+    $logdir ='/var/log/hosts'
+    $file_base = "${logdir}/%HOSTNAME%"
+
 
     # Up front because they are the fastest to process
     if $process_boot_rules {
@@ -323,7 +325,7 @@ class simp_rsyslog::server(
       }
 
       logrotate::rule { 'simp_rsyslog_server_profile':
-        log_files     => [ "${file_base}/*/*.log" ],
+        log_files     => [ "${logdir}/*/*.log" ],
         missingok     => true,
         size          => $rotate_size,
         rotate_period => $rotate_period,
