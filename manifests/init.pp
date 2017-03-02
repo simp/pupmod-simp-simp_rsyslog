@@ -100,6 +100,11 @@
 #     you are collecting all entries. Otherwise, you run a high risk of
 #     overwhelming your filesystem.
 #
+# @param enable_warning
+#   By default it will log a warning if a log server is set to forward logs.
+#   This can cause a loop unless the simp_rsyslog::servers list does not
+#   contain the log server itself.
+#
 # @author Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class simp_rsyslog (
@@ -126,7 +131,8 @@ class simp_rsyslog (
   Boolean                     $log_openldap         = false,
   Boolean                     $log_local            = true,
   Stdlib::Absolutepath        $local_target         = '/var/log/secure',
-  Boolean                     $collect_everything   = false
+  Boolean                     $collect_everything   = false,
+  Boolean                     $enable_warning       = true,
 ) {
 
   if $log_openldap {
