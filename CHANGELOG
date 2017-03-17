@@ -1,3 +1,7 @@
+* Fri Feb 24 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> 0.0.2
+- Fix -fixed directory for log rotate of central log server
+- add warning if possible log looping detected
+
 * Thu Feb 08 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> 0.0.1
 - Fix path for service to /sbin/service for CentOS 6
 
