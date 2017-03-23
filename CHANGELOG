@@ -1,3 +1,6 @@
+* Thu Mar 23 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> 0.0.2
+-  Fixed path for systemctl
+
 * Fri Feb 24 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> 0.0.2
 - Fixed directory for log rotate of central log server
 - add warning if possible log looping detected

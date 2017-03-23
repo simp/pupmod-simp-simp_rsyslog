@@ -88,7 +88,7 @@ describe 'simp_rsyslog' do
             if facts[:operatingsystemmajrelease].to_s <= '6'
                expected_cmd ='/sbin/service rsyslog restart > /dev/null 2>&1 || true'
             else
-               expected_cmd ='/usr/sbin/systemctl restart rsyslog > /dev/null 2>&1 || true'
+               expected_cmd ='/usr/bin/systemctl restart rsyslog > /dev/null 2>&1 || true'
             end
             is_expected.to contain_logrotate__rule('simp_rsyslog_server_profile').with( {
                 :lastaction => expected_cmd
