@@ -1,5 +1,8 @@
 require 'spec_helper'
 
+file_content_7 = "/usr/bin/systemctl restart rsyslog > /dev/null 2>&1 || true"
+file_content_6 = "/sbin/service rsyslog restart > /dev/null 2>&1 || true"
+
 describe 'simp_rsyslog' do
   shared_examples_for "a structured module" do
     it { is_expected.to compile.with_all_deps }
@@ -84,16 +87,13 @@ describe 'simp_rsyslog' do
           it { is_expected.to contain_rsyslog__rule__local('30_default_catchall') }
           it { is_expected.not_to contain_rsyslog__rule__local('30_default_drop') }
           it { is_expected.to contain_class('logrotate') }
-          it { 
-            if facts[:operatingsystemmajrelease].to_s <= '6'
-               expected_cmd ='/sbin/service rsyslog restart > /dev/null 2>&1 || true'
+          if ['RedHat','CentOS'].include?(facts[:operatingsystem])
+            if facts[:operatingsystemmajrelease].to_s < '7'
+              it { should create_file('/etc/logrotate.d/simp_rsyslog_server_profile').with_content(/#{file_content_6}/)}
             else
-               expected_cmd ='/usr/bin/systemctl restart rsyslog > /dev/null 2>&1 || true'
+              it { should create_file('/etc/logrotate.d/simp_rsyslog_server_profile').with_content(/#{file_content_7}/)}
             end
-            is_expected.to contain_logrotate__rule('simp_rsyslog_server_profile').with( {
-                :lastaction => expected_cmd
-            })
-          }
+          end
         end
 
         context "simp_rsyslog class with everything enabled" do

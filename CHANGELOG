@@ -1,3 +1,6 @@
+* Wed Apr 19 2017 Nick Markowski <nmarkowski@keywcorp.com> - 0.0.4-0
+- Updated logrotate to use new lastaction API
+
 * Thu Mar 23 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 0.0.3
 -  Fixed path for systemctl
 
