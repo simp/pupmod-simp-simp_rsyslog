@@ -319,18 +319,13 @@ class simp_rsyslog::server(
     if $add_logrotate_rule {
       include '::logrotate'
 
-      $_restartcmd = ('systemd' in $facts['init_systems']) ? {
-        true    => '/usr/bin/systemctl restart rsyslog',
-        default => '/sbin/service rsyslog restart'
-      }
-
       logrotate::rule { 'simp_rsyslog_server_profile':
-        log_files     => [ "${logdir}/*/*.log" ],
-        missingok     => true,
-        size          => $rotate_size,
-        rotate_period => $rotate_period,
-        rotate        => $rotate_preserve,
-        lastaction    => "${_restartcmd} > /dev/null 2>&1 || true"
+        log_files                  => [ "${logdir}/*/*.log" ],
+        missingok                  => true,
+        size                       => $rotate_size,
+        rotate_period              => $rotate_period,
+        rotate                     => $rotate_preserve,
+        lastaction_restart_logger  => true
       }
     }
   }
