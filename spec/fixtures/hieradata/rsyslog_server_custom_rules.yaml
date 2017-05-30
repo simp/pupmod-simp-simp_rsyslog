@@ -1,0 +1,2 @@
+---
+simp_rsyslog::server::server_conf: "prifilt('*.*')"
