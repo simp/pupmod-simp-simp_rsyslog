@@ -12,11 +12,8 @@ fixtures:
     logrotate: 'https://github.com/simp/pupmod-simp-logrotate.git'
     pki:       'https://github.com/simp/pupmod-simp-pki.git'
     rsyslog:
-#FIXME  Once SIMP-3268 is merged, point back to master
-#      repo:   'https://github.com/simp/pupmod-simp-rsyslog.git'
-#      branch: 'master'
-      repo:   'https://github.com/lnemsick-simp/pupmod-simp-rsyslog.git'
-      branch: 'SIMP-3268'
+      repo:   'https://github.com/simp/pupmod-simp-rsyslog.git'
+      branch: 'master'
     simpcat:   'https://github.com/simp/pupmod-simp-simpcat.git'
     simplib:   'https://github.com/simp/pupmod-simp-simplib.git'
     stdlib:    'https://github.com/simp/puppetlabs-stdlib.git'
