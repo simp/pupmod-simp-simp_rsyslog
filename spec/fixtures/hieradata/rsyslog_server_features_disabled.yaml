@@ -1,0 +1,21 @@
+---
+simp_rsyslog::server::process_sudosh_rules: false
+simp_rsyslog::server::process_httpd_rules: false
+simp_rsyslog::server::process_dhcpd_rules: false
+simp_rsyslog::server::process_puppet_agent_rules: false
+simp_rsyslog::server::process_puppetserver_rules: false
+simp_rsyslog::server::process_auditd_rules: false
+simp_rsyslog::server::process_slapd_rules: false
+simp_rsyslog::server::process_kern_rules: false
+simp_rsyslog::server::process_iptables_rules: false
+simp_rsyslog::server::process_security_relevant_logs: false
+simp_rsyslog::server::process_message_rules: false
+simp_rsyslog::server::process_mail_rules: false
+simp_rsyslog::server::process_cron_rules: false
+simp_rsyslog::server::process_emerg_rules: false
+simp_rsyslog::server::process_spool_rules: false
+simp_rsyslog::server::process_boot_rules: false
+simp_rsyslog::server::enable_catchall: false
+simp_rsyslog::server::stop_processing: false
+simp_rsyslog::server::add_logrotate_rule: false
+

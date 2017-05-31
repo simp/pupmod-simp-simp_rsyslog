@@ -18,231 +18,131 @@ describe 'simp_rsyslog' do
     end
   end
 
-  let(:servers) { hosts_with_role( hosts, 'rsysserver' ) }
-
-  let(:server_manifest) {
-    <<-EOS
-      include 'simp_rsyslog'
-    EOS
-  }
-  let(:server_hieradata) {
+  hosts_with_role( hosts, 'rsyslog_server' ).each do |server|
+    hosts_with_role(hosts, 'rsyslog_client').each do |client|
+      context "#{client} logging to the remote syslog server #{server} with default forwarding" do
+        let(:client_fqdn){ fact_on( client, 'fqdn' ) }
+        let(:server_fqdn){ fact_on( server, 'fqdn' ) }
+        let(:manifest) { <<-EOS
+include 'simp_rsyslog'
+EOS
+        }
+        let(:client_hieradata) {
     <<-EOS
 ---
+simp_options::syslog::log_servers:
+  - '#{server_fqdn}'
+
+simp_rsyslog::forward_logs: true
 rsyslog::pki: false
+rsyslog::enable_tls_logging: false
+
+EOS
+        }
+
+        let(:server_hieradata) {
+    <<-EOS
+---
+simp_options::syslog::log_servers:
+  - '#{server_fqdn}'
+
 simp_rsyslog::is_server: true
-    EOS
-}
+simp_rsyslog::forward_logs: false
+rsyslog::tcp_server: true
+rsyslog::tls_tcp_server: false
+rsyslog::pki: false
+EOS
+        }
 
-let(:server_disable01_hieradata) {
-    <<-EOS
-#{server_hieradata}
-simp_rsyslog::server::process_sudosh_rules: false
-simp_rsyslog::server::process_httpd_rules: false
-simp_rsyslog::server::process_dcpd_rules: false
-simp_rsyslog::server::process_puppet_agent_rules: false
-simp_rsyslog::server::process_puppetserver_rules: false
-simp_rsyslog::server::process_auditd_rules: false
-simp_rsyslog::server::process_slapd_rules: false
-simp_rsyslog::server::process_kern_rules: false
-simp_rsyslog::server::process_iptables_rules: false
-simp_rsyslog::server::process_message_rules: false
-simp_rsyslog::server::process_mail_rules: false
-simp_rsyslog::server::process_cron_rules: false
-simp_rsyslog::server::process_emerg_rules: false
-simp_rsyslog::server::process_spool_rules: false
-simp_rsyslog::server::process_boot_rules: false
-    EOS
-  }
+        let(:client_log_dir) { "/var/log/hosts/#{client_fqdn}" }
 
-  let(:server_disable017_hieradata) {
-    <<-EOS
-#{server_hieradata}
-simp_rsyslog::server::process_sudosh_rules: false
-simp_rsyslog::server::process_httpd_rules: false
-simp_rsyslog::server::process_dcpd_rules: false
-simp_rsyslog::server::process_puppet_agent_rules: false
-simp_rsyslog::server::process_puppetserver_rules: false
-simp_rsyslog::server::process_auditd_rules: false
-simp_rsyslog::server::process_slapd_rules: false
-simp_rsyslog::server::process_kern_rules: false
-simp_rsyslog::server::process_iptables_rules: false
-simp_rsyslog::server::process_message_rules: true
-simp_rsyslog::server::process_mail_rules: false
-simp_rsyslog::server::process_cron_rules: false
-simp_rsyslog::server::process_emerg_rules: false
-simp_rsyslog::server::process_spool_rules: false
-simp_rsyslog::server::process_boot_rules: false
-simp_rsyslog::server::process_security_relevant_logs: false
-    EOS
-  }
-
-  # Test simp_rsyslog::server
-  #
-  #
-  context 'with is_server = true' do
-    it 'should configure the server without erros' do
-      servers.each do |server|
-        set_hieradata_on(server, server_hieradata)
-        apply_manifest_on(server, server_manifest, :catch_failures => true)
-      end
-    end
-    it 'should configure the servers idempotently' do
-      servers.each do |server|
-        apply_manifest_on(server, server_manifest, :catch_changes => true)
-      end
-    end
-
-    # Log Server Test1: Ensure syslog messages are processed by their
-    # intended rule(s), and that there are no re-processed messages (duplicates).
-    #
-    # Log_servers uses a 3 tier log-local rule hierarchy:
-    #   0/1 - facility specific logs
-    #   7   - secure.log (security relevant logs)
-    #   9   - messages.log
-    #
-    # Each takes precedence over the next.  For instance, if a
-    # 7 rule encompasses a 0/1 rule, the 0/1 rule should process the log message
-    # first, then stop processing such that the 7 or 9 rule will not process it.
-    #
-    # This testing scheme iterates over every 0/1 rule in server.pp, and
-    # ensures it is not re-processed by 7/9 rules.  7 rules encompassed by 9 rules
-    # are tested as well.
-    #
-    #
-    it 'testing default server rules' do
-      servers.each do |server|
-        # 0/1 rules
-        # 
-        on server, "logger -t sudosh LOGGERSUDOSH"
-        on server, "logger -p local0.warn -t httpd LOGGERHTTPDNOERR"
-        on server, "logger -p local0.err -t httpd LOGGERHTTPDERR"
-        on server, "logger -t dhcpd LOGGERDHCP"
-        on server, "logger -p local0.err -t puppet LOGGERPUPPETAGENTERR"
-        on server, "logger -p local0.warn -t puppet LOGGERPUPPETAGENTNOERR"
-        on server, "logger -p local0.err -t puppetserver LOGGERPUPPETMASTERERR"
-        on server, "logger -p local0.warn -t puppetserver LOGGERPUPPETMASTERNOERR"
-        # NOTE: on server, "logger -t audispd LOGGERAUDISPD * does not work!"
-        on server, "logger -t audispd LOGGERTAGAUDITLOG"
-        on server, "logger -t slapd_audit LOGGERSLAPDAUDIT"
-        # NOTE: on server, "IPT does not work!" see logger man page for
-        # potential kern issues
-        on server, "logger -p mail.warn -t mail LOGGERMAIL"
-        on server, "logger -p cron.warn -t cron LOGGERCRON"
-        # TODO: test console output for emerge
-        on server, "logger -p cron.emerg -t cron LOGGEREMERG"
-        on server, "logger -p news.crit -t news LOGGERNEWS"
-        on server, "logger -p uucp.warn -t uucp LOGGERUUCP"
-        on server, "logger -p local7.warn -t boot LOGGERBOOT"
-        # 7 rules
-        #
-        on server, "logger -t yum LOGGERYUM"
-        on server, "logger -p authpriv.warn -t auth LOGGERAUTHPRIV"
-        on server, "logger -p local5.warn -t local5 LOGGERLOCAL5"
-        on server, "logger -p local6.warn -t local6 LOGGERLOCAL6"
-        # 9 rules
-        #
-        on server, "logger -p local0.info -t info LOGGERINFO"
-
-        # This array maps each tag's message, above, to its template file (log file).
-        test_array = [
-          ["LOGGERSUDOSH", "sudosh.log"],
-          ["LOGGERHTTPDNOERR", "httpd.log"],
-          ["LOGGERHTTPDERR", "httpd_error.log"],
-          ["LOGGERDHCP", "dhcpd.log"],
-          ["LOGGERPUPPETAGENTERR", "puppet_agent_error.log"],
-          ["LOGGERPUPPETAGENTNOERR", "puppet_agent.log"],
-          ["LOGGERPUPPETMASTERERR", "puppetserver_error.log"],
-          ["LOGGERPUPPETMASTERNOERR", "puppetserver.log"],
-          ["LOGGERTAGAUDITLOG", "auditd.log"],
-          ["LOGGERLOCAL5", "auditd.log"],
-          ["LOGGERSLAPDAUDIT", "slapd_audit.log"],
-          ["LOGGERMAIL", "mail.log"],
-          ["LOGGERCRON", "cron.log"],
-          ["LOGGEREMERG", "cron.log"],
-          ["LOGGERNEWS", "spool.log"],
-          ["LOGGERUUCP", "spool.log"],
-          ["LOGGERBOOT", "boot.log"],
-          ["LOGGERYUM", "secure.log"],
-          ["LOGGERAUTHPRIV", "secure.log"],
-          ["LOGGERLOCAL6", "secure.log"],
-          ["LOGGERINFO", "messages.log"]]
-
-        result_dir = "/var/log/hosts/#{fact_on(server,'fqdn')}"
-
-        # Ensure each message ended up in the intended log.
-        test_array.each do |message|
-          result = on server, "grep -Rl #{message[0]} #{result_dir}"
-          expect(result.stdout.strip).to eq("#{result_dir}/#{message[1]}")
+        it "should configure server #{server} without errors" do
+          set_hieradata_on(server, server_hieradata)
+          apply_manifest_on(server, manifest, :catch_failures => true)
         end
-      end
-    end
 
-    # Log Server Test2: Disable all 0/1 stop rules and test 7/9 rules.
-    #
-    #
-    it 'should disable 0/1 rules' do
-      servers.each do |server|
-        set_hieradata_on(server, server_disable01_hieradata)
-        apply_manifest_on(server, server_manifest, :catch_failures => true)
-      end
-    end
-    it 'testing server with 0/1 stop rules disabled' do
-      servers.each do |server|
-        on server, "logger -t sudosh LOGGERSUDOSHSECURE"
-        on server, "logger -t yum LOGGERYUMSECURE"
-        on server, "logger -p cron.warn -t cron LOGGERCRONWARNSECURE"
-        on server, "logger -p authpriv.warn -t auth LOGGERAUTHPRIVSECURE"
-        on server, "logger -p local5.warn -t local5 LOGGERLOCAL5SECURE"
-        on server, "logger -p local6.warn -t local6 LOGGERLOCAL6SECURE"
-        on server, "logger -p local7.warn -t boot BOOTSECURE"
-        on server, "logger -p cron.emerg -t cron LOGGEREMERGSECURE"
-        # NOTE: on server, "IPT does not work!" see logger man page for
-        # potential kern issues
-
-        test_array = ["LOGGERSUDOSHSECURE","LOGGERYUMSECURE",
-                      "LOGGERCRONWARNSECURE", "LOGGERAUTHPRIVSECURE",
-                      "LOGGERLOCAL6SECURE",
-                      "BOOTSECURE", "LOGGEREMERGSECURE"]
-        result_dir = "/var/log/hosts/#{fact_on(server,'fqdn')}"
-
-        test_array.each do |message|
-          result = on server, "grep -Rl #{message} #{result_dir}"
-          expect(result.stdout.strip).to eq("#{result_dir}/secure.log")
+        it "should configure #{server} idempotently" do
+          apply_manifest_on(server, manifest, :catch_changes => true)
         end
-      end
-    end
 
-    # Log Server Test3: Disable all 0/1/7 stop rules and test 9 rules.
-    #
-    #
-    it 'should disable 0/1/7 rules' do
-      servers.each do |server|
-        set_hieradata_on(server, server_disable017_hieradata)
-        apply_manifest_on(server, server_manifest, :catch_failures => true)
-      end
-    end
-    it 'testing server with 0/1/7 stop rules disabled' do
-      servers.each do |server|
-        on server, "logger -p local0.info -t local0 LOGGERLOCAL0MESSAGES"
-        on server, "logger -p mail.warn -t mail LOGGERMAILNONEMESSAGES"
-        on server, "logger -p authpriv.warn -t authpriv LOGGERAUTHPRIVNONEMESSAGES"
-        on server, "logger -p cron.warn -t cron LOGGERCRONNONEMESSAGES"
-        on server, "logger -p local6.warn -t local6 LOGGERLOCAL6NONEMESSAGES"
-        on server, "logger -p local5.warn -t local5 LOGGERLOCAL5NONEMESSAGES"
+        it "should configure client #{client} without errors" do
+          set_hieradata_on(client, client_hieradata)
+          apply_manifest_on(client, manifest, :catch_failures => true)
+        end
 
-        test_array = ["LOGGERMAILNONEMESSAGES", "LOGGERAUTHPRIVNONEMESSAGES",
-                      "LOGGERCRONNONEMESSAGES", "LOGGERLOCAL6NONEMESSAGES",
-                      "LOGGERLOCAL5NONEMESSAGES"]
-        result_dir = "/var/log/hosts/#{fact_on(server,'fqdn')}"
+        it "should configure #{client} idempotently" do
+          apply_manifest_on(client, manifest, :catch_changes => true)
+        end
 
-        # *.info should be logged
-        result = on server, "grep -Rl LOGGERLOCAL0MESSAGES #{result_dir}"
-        expect(result.stdout.strip).to eq("#{result_dir}/messages.log")
+        it "should collect #{client} iptables messages to host-specific iptables.log" do
+          # Set up iptables to disallow icmp requests
+          on(client, 'iptables --list-rules')
+          on(client, 'iptables -N LOG_AND_DROP')
+          on(client, 'iptables -A LOG_AND_DROP -j LOG --log-prefix "IPT:"')
+          on(client, 'iptables -A LOG_AND_DROP -j DROP')
+          on(client, 'iptables -A INPUT -p icmp -m icmp --icmp-type 8 -j LOG_AND_DROP')
+          on(client, 'ping -c 1 `facter ipaddress`', :accept_all_exit_codes => true)
+          result = on(server, "grep -l 'IPT:' #{client_log_dir}/iptables.log")
+          expect(result.stdout.strip).to eq("#{client_log_dir}/iptables.log")
 
-        # Catchall should grab the rest
-        test_array.each do |message|
-          result = on server, "grep -Rl #{message} #{result_dir}"
-          expect(result.stdout.strip).to eq("#{result_dir}/catchall.log")
+          # clean up iptables rules to allow any future tests using the
+          # SIMP iptables module to start with a clean slate
+          on(client, 'iptables --delete LOG_AND_DROP -j LOG --log-prefix "IPT:"')
+          on(client, 'iptables --delete LOG_AND_DROP -j DROP')
+          on(client, 'iptables --delete INPUT -p icmp -m icmp --icmp-type 8 -j LOG_AND_DROP')
+          on(client, 'iptables -X LOG_AND_DROP')
+          on(client, 'iptables --list-rules')
+        end
+  
+        it "should collect #{client} messages to host-specific files" do
+          # Each entry in this array is [log_options, log_message, log_file]
+          # When log_file is nil, this means the log is NOT forwarded.
+          default_test_array = [
+            ['-p local7.warning -t boot',   'CLIENT_FORWARDED_BOOT_LOG',         'boot.log'],
+            ['-p mail.info -t id1',         'CLIENT_FORWARDED_ANY_MAIL_LOG',     nil], # if forwarded would be mail.log
+            ['-p cron.warning -t cron',     'CLIENT_FORWARDED_CRON_ANY_LOG',     'cron.log'],
+            ['-p local4.emerg -t id2',      'CLIENT_FORWARDED_ANY_EMERG_LOG',    'emergency.log'],
+            ['-p local2.info -t sudosh',    'CLIENT_FORWARDED_SUDOSH_LOG',       'sudosh.log'],
+            ['-p local6.err -t httpd',      'CLIENT_FORWARDED_HTTPD_ERR_LOG',    'httpd_error.log'],
+            ['-p local6.warning -t httpd',  'CLIENT_FORWARDED_HTTPD_NO_ERR_LOG', 'httpd.log'],
+            ['-t dhcpd',                    'CLIENT_FORWARDED_DHCPD_LOG',        nil], # if forwarded would be dhcpd.log
+            ['-p local6.err -t puppet-agent',     'CLIENT_FORWARDED_PUPPET_AGENT_ERR_LOG',    'puppet_agent_error.log'],
+            ['-p local6.warning -t puppet-agent', 'CLIENT_FORWARDED_PUPPET_AGENT_NO_ERR_LOG', 'puppet_agent.log'],
+            ['-p local6.err -t puppetserver',     'CLIENT_FORWARDED_PUPPETSERVER_ERR_LOG',    'puppetserver_error.log'],
+            ['-p local6.warning -t puppetserver', 'CLIENT_FORWARDED_PUPPETSERVER_NO_ERR_LOG', 'puppetserver.log'],
+            ['-p local5.notice -t audispd', 'CLIENT_FORWARDED_AUDISPD_LOG',      'auditd.log'],
+            ['-t slapd_audit',              'CLIENT_FORWARDED_SLAPD_AUDIT_LOG',  nil], # if forwarded would be slapd_audit.log
+            ['-p news.crit -t news',        'CLIENT_FORWARDED_NEWS_CRIT_LOG',    nil], # if forwarded would be spool.log
+            ['-p uucp.crit -t uucp',        'CLIENT_FORWARDED_UUCP_CRIT_LOG',    nil], # if forwarded would be spool.log
+            ['-t sudo',                     'CLIENT_FORWARDED_SUDO_LOG',         'secure.log'],
+            ['-t auditd',                   'CLIENT_FORWARDED_AUDITD_LOG',       'secure.log'],
+            ['-t audit',                    'CLIENT_FORWARDED_AUDIT_LOG',        'secure.log'],
+            ['-t yum',                      'CLIENT_FORWARDED_YUM_LOG',          'secure.log'],
+            ['-t systemd',                  'CLIENT_FORWARDED_SYSTEMD_LOG',      'secure.log'],
+            ['-t crond',                    'CLIENT_FORWARDED_CROND_LOG',        'secure.log'],
+            ['-p authpriv.warning -t auth', 'CLIENT_FORWARDED_AUTHPRIV_ANY_LOG', 'secure.log'],
+            ['-p local6.info -t id3',       'CLIENT_FORWARDED_LOCAL6_ANY_LOG',   'secure.log']
+          ]
+
+          # send the messages
+          default_test_array.each do |options,message,logfile|
+            on(client,"logger #{options} #{message}")
+          end
+
+          wait_for_log_message(server, File.join(client_log_dir, default_test_array[-1][2]),
+            default_test_array[-1][1])
+
+          # verify messages are forwarded and persisted, as appropriate
+          default_test_array.each do |options,message,logfile|
+            if logfile
+              # Ensure message ended up in the intended log.
+              result = on(server, "grep -Rl #{message} #{client_log_dir}")
+              expect(result.stdout.strip).to eq("#{client_log_dir}/#{logfile}")
+            else
+              # Ensure message is not forwarded.
+              on(server, "grep -Rl #{message} #{client_log_dir}", :acceptable_exit_codes => [1])
+            end
+          end
         end
       end
     end

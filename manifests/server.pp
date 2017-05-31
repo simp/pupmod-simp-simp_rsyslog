@@ -172,13 +172,6 @@ class simp_rsyslog::server(
         stop_processing => $stop_processing
       }
     }
-    if $process_kern_rules {
-      rsyslog::rule::local { '10_00_default_kern':
-        rule            => 'prifilt(\'kern.*\')',
-        dyna_file       => "${file_base}/kernel.log",
-        stop_processing => $stop_processing
-      }
-    }
     if $process_mail_rules {
       rsyslog::rule::local { '10_00_default_mail':
         rule            => 'prifilt(\'mail.*\')',
@@ -230,12 +223,12 @@ class simp_rsyslog::server(
     }
     if $process_puppet_agent_rules {
       rsyslog::rule::local { '10_default_puppet_agent_error':
-        rule            => 'prifilt(\'*.err\') and ($programname == \'puppet\')',
+        rule            => 'prifilt(\'*.err\') and ($programname == \'puppet-agent\')',
         dyna_file       => "${file_base}/puppet_agent_error.log",
         stop_processing => $stop_processing
       }
       rsyslog::rule::local { '11_default_puppet_agent':
-        rule            => '$programname == \'puppet\'',
+        rule            => '$programname == \'puppet-agent\'',
         dyna_file       => "${file_base}/puppet_agent.log",
         stop_processing => $stop_processing
       }
@@ -254,7 +247,7 @@ class simp_rsyslog::server(
     }
     if $process_auditd_rules {
       rsyslog::rule::local { '10_default_audit':
-        rule            => 'prifilt(\'local5.*\') or ($programname == \'audispd\') or ($syslogtag == \'tag_auditd_log:\')',
+        rule            => '($programname == \'audispd\') or ($syslogtag == \'tag_auditd_log:\')',
         dyna_file       => "${file_base}/auditd.log",
         stop_processing => $stop_processing
       }
@@ -268,8 +261,17 @@ class simp_rsyslog::server(
     }
     if $process_iptables_rules {
       rsyslog::rule::local { '10_default_iptables':
-        rule            => 'prifilt(\'kern.*\') and ($msg startswith \'IPT:\')',
+        # Some versions of rsyslog include the space separator that precedes
+        # the message as part of the message body
+        rule            => 'prifilt(\'kern.*\') and (($msg startswith \' IPT:\') or ($msg startswith \'IPT:\'))',
         dyna_file       => "${file_base}/iptables.log",
+        stop_processing => $stop_processing
+      }
+    }
+    if $process_kern_rules {
+      rsyslog::rule::local { '10_default_kern':
+        rule            => 'prifilt(\'kern.*\')',
+        dyna_file       => "${file_base}/kernel.log",
         stop_processing => $stop_processing
       }
     }

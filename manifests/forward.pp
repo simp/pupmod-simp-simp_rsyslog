@@ -31,7 +31,7 @@ class simp_rsyslog::forward (
   assert_private()
 
   if empty($::simp_rsyslog::log_servers) {
-    fail('You must specify $::simp_rsyslog::log_servers when attempting to forward logs')
+    fail('You must specify ::simp_rsyslog::log_servers when attempting to forward logs')
   }
 
   if  $::simp_rsyslog::is_server and $::simp_rsyslog::enable_warning {

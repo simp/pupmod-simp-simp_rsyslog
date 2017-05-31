@@ -52,7 +52,7 @@
 #   Failover log servers to use if the primaries go down
 #
 # @param default_logs
-#   The logs that should be collected as security relevant to this system.
+#   The logs that should be forwarded as security relevant to this system.
 #
 #   * All rules will be combined with a logical ``OR``
 #
@@ -84,21 +84,21 @@
 #   * **WARNING** these logs are particularly verbose
 #
 # @param log_local
-#   Write all logs to the filesystem at ``local_target``
+#   Write security-related logs to the filesystem at ``local_target``
 #
 # @param local_target
-#   Path on the filesystem to which to write all logs that this module collects
+#   Path on the filesystem to which to write security-related logs
+#
+#  * This is a catchall log for security-related messages not written
+#  * to their own logs. Some security logs, such as audit and iptables,
+#    will be written to their own logs.
 #
 # @param collect_everything
 #   Set a ``*.*`` rule in Rsyslog that matches **all** logs on the system
 #
+#   * Only applies to forwarded log messages.
 #   * This overrides **any other rules** that are specified
-#
 #   * This is primarily meant for remote logging where all data is required
-#
-#   * It is **highly** recommended that you set ``log_local`` to ``false`` if
-#     you are collecting all entries. Otherwise, you run a high risk of
-#     overwhelming your filesystem.
 #
 # @param enable_warning
 #   By default it will log a warning if a log server is set to forward logs.
@@ -123,9 +123,11 @@ class simp_rsyslog (
     Array[String]
   ]                           $default_logs         = {
 
-    'programs'   => [ 'sudo', 'sudosh', 'yum', 'auditd', 'audit', 'systemd', 'crond' ],
+    'programs'   => [ 'sudo', 'sudosh', 'yum', 'audispd', 'auditd', 'audit', 'systemd', 'crond' ],
     'facilities' => [ 'cron.*', 'authpriv.*', 'local6.*', 'local7.warn', '*.emerg'],
-    'msg_starts' => ['IPT:'],
+    # Some versions of rsyslog include the space separator that precedes
+    # the message as part of the message body
+    'msg_starts' => [' IPT:', 'IPT:'],
     'msg_regex'  => []
   },
   Boolean                     $log_openldap         = false,
@@ -138,7 +140,7 @@ class simp_rsyslog (
   if $log_openldap {
     $_openldap_logs = {
       'programs'   => [ 'slapd' ],
-      'facilities' => [ 'local4' ]
+      'facilities' => [ 'local4.*' ]
     }
   }
   else {
@@ -148,14 +150,9 @@ class simp_rsyslog (
   if $collect_everything {
     $security_relevant_logs = "prifilt('*.*')"
   }
-  elsif !empty($log_collection) {
-    $security_relevant_logs = simp_rsyslog::format_options(
-      deep_merge($default_logs, $_openldap_logs, $log_collection)
-    )
-  }
   else {
     $security_relevant_logs = simp_rsyslog::format_options(
-      deep_merge($default_logs, $_openldap_logs)
+      simp_rsyslog::merge_hash_of_arrays($default_logs, $_openldap_logs, $log_collection)
     )
   }
 

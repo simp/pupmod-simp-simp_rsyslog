@@ -11,7 +11,9 @@ fixtures:
     iptables:  'https://github.com/simp/pupmod-simp-iptables.git'
     logrotate: 'https://github.com/simp/pupmod-simp-logrotate.git'
     pki:       'https://github.com/simp/pupmod-simp-pki.git'
-    rsyslog:   'https://github.com/simp/pupmod-simp-rsyslog.git'
+    rsyslog:
+      repo:   'https://github.com/simp/pupmod-simp-rsyslog.git'
+      branch: 'master'
     simpcat:   'https://github.com/simp/pupmod-simp-simpcat.git'
     simplib:   'https://github.com/simp/pupmod-simp-simplib.git'
     stdlib:    'https://github.com/simp/puppetlabs-stdlib.git'

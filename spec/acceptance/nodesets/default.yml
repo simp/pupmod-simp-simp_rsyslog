@@ -1,9 +1,7 @@
 HOSTS:
-  server5:
+  el7-server:
     roles:
       - default
-      - master
-      - server
       - rsyslog_server
       - el7
     platform:   el-7-x86_64
@@ -15,10 +13,9 @@ HOSTS:
         gpgkeys:
           - https://getfedora.org/static/352C64E5.txt
 
-  client5:
+  el7-client:
     roles:
-      - client
-      - agent
+      - rsyslog_client
       - el7
     platform:   el-7-x86_64
     box:        centos/7
@@ -29,9 +26,8 @@ HOSTS:
         gpgkeys:
           - https://getfedora.org/static/352C64E5.txt
 
-  server4:
+  el6-server:
     roles:
-      - simp_server
       - rsyslog_server
       - el6
     platform:   el-6-x86_64
@@ -43,10 +39,9 @@ HOSTS:
         gpgkeys:
           - https://getfedora.org/static/0608B895.txt
 
-  client4:
+  el6-client:
     roles:
-      - client
-      - agent
+      - rsyslog_client
       - el6
     platform:   el-6-x86_64
     box:        centos/6
