@@ -1,4 +1,4 @@
-* Wed May 24 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 0.1.0
+* Wed May 24 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 0.1.0-0
 - Fix bug whereby audit logs were not being forwarded to remote syslog servers. 
 - Fix bugs whereby simp_rsyslog::log_collection and simp_rsyslog::log_openldap
   parameters were overriding simp_rsyslog::default_logs instead of being merged.
@@ -10,8 +10,9 @@
   log messages are written to their own log files.
 - Restore writing of local puppet and puppet-server messages to their
   own files, by adjusting local security rsyslog rule from simp_rsyslog::local.
+- Update puppet requirement in metadata.json
 
-* Wed Apr 19 2017 Nick Markowski <nmarkowski@keywcorp.com> - 0.0.4-0
+* Wed Apr 19 2017 Nick Markowski <nmarkowski@keywcorp.com> - 0.1.0-0
 - Updated logrotate to use new lastaction API
 
 * Thu Mar 23 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 0.0.3
