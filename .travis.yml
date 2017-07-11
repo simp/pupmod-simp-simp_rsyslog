@@ -41,14 +41,14 @@ deploy:
   - provider: puppetforge
     user: simp
     password:
-        secure: 
+        secure: "ZfyObBxZMbNIUDs0uvGguZkAblHsRwpXAyWDlI0eLY5B7B3uytykS2CZoj41doVqB7PKCY0LpQcMRdFcY6PqJwevlJGIbCDud0/iVkKj8DTewVR4Phemk4tai/Q3ZfaJdft8KZOCigk1T82TgZwOfSZyPsTQ7eXe0rdvs+EPPbz39hP+/V5ZQuXCAC4OE//nXiy2j0SRcmC7laIynQZzXczAPrjLIztLtbenQHOyrpO9qbdYemC0UVP7vqhOmFEFYiyPKbO+lk5UfwoVm6oQxHw9IQmMSK4hy0EVWOtGfEIA7W6UDA2ZMQI3oX9o7uY3HWQ8sn1zhtMs4by+yAkjlF6Z6mmxqaCSHZJF1Bpo3DlWSGrOHlTymZYFFBDAkZ/c1Zq3ZqYA4bfENsX1UZQ51VivpLxYwliCAEYOTsPx69FEMBiXrqaCg5JaxeGAUGMfOHmAkgDbEx8EaZ0P2dDIhTZ39yu6tfwUyV5cfa7m4QVhiFAUz9wzaK4VC5ojvAp87oGBDeWDXRx2/3LJkINBeXYnyqqiNSRvz9qjqKMhTVu8bbFFXmQua7P53jQvBnNdCFjo7bMnX43Ah5hkalVcXfEEFGGWtDDMcXXRWu258aE38+I0Hlb52MiU7Zx+jDNn2zs10BdHbLgeaBenf6YODX4X5otAVZ2BxtKH4Tb2J3U="
     on:
       tags: true
       rvm: 2.1.9
       condition: '($SKIP_FORGE_PUBLISH != true) && ($FORGE_PUBLISH = true)'
   - provider: releases
     api_key:
-        secure: 
+        secure: "QiFv+g2qoBzvFnPN/a37kNEsRD2uf92DgeI+cFQneJjm0wR2LtaWbAoMyxNE7UXe2HxyKL33hd3YcBMWYH1Hcf5w189hwuSaDp++QLmZmECgSIMuduBROCft92MH9pN9u+K3jd5r//62+E0hnJ+lOZbghpZoT4QzbZz6g0KhXHCMowiVVkmfyV2roN67MZ5gntpNaNK7d6jNmpNIJTHsKR/A0zpb06ywJ65jEB+RP9F4BUx4inSnEEyyP3We6YpCoVRSgsx0MktHnEO+yoOMKoxZ2M69XmIXuRUUE7oex6ws72YLC4xsIbVbpZwxVc60dMieDjhqbfXH1nd3RJtBRBZfPkPnAlXeXqeTqFyExs3GwgeLRZC36JfmeNgt6WaI7UImdDccO4fCtSxdAk97TkSB35qx8EMdBf4UEXlZiQERyHYvbuO8saFkmCGyeouIXhk7ivzN+cXcTIgzfnNH+7Kq/vNZYB+FGZ7b5/nbc5sll6eJH71+5qQzeDR0AKIqP6i+PAnkxywA4JDXUcH9oH91bHoQx+zbTi2mmMU/SgTgJ5+sUdairhkFSl15iL4m1ZCLaXAqyB/4yJXErATgGeaosBxN1G14HcuHxZFXl7o7zpdYKCWAE9ll2gRK7rHfmFAE6ySXJL+JkbmsG7YgB0KJhW1cR58vmwWT4jq8a10="
     skip_cleanup: true
     on:
       tags: true
