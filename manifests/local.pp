@@ -22,11 +22,14 @@ class simp_rsyslog::local (
 
   # Since there already are local audispd audit logs in /var/log/audit and these
   # logs grow quickly, drop the syslog duplicates.
-  rsyslog::rule::local { "${order}1_simp_rsyslog_profile_local_drop_audispd_duplicates":
-    rule       => '$programname == \'audispd\'',
-    dyna_file  => '~',
-    # We don't need this due to the line above
-    stop_processing => true
+  # (FIXME:  This is fragile.  It ASSUMES the directory name for local
+  # syslog rules is '99_simp_local'.  Unfortunately, we have to create
+  # our own local drop rule, as there is no way to specify a local drop
+  # rule or even a local rule with custom content with the rsyslog
+  # class.)
+  $_safe_order = regsubst($order,'/','__')
+  rsyslog::rule {"99_simp_local/${_safe_order}1_simp_rsyslog_profile_local_drop_audispd_duplicates.conf":
+    content => "if (\$programname == \'audispd\') then stop\n"
   }
 
   # All other security logs which will NOT be handled by the 'ZZ_default' rules.

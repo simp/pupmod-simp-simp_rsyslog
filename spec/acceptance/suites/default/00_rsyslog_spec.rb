@@ -91,7 +91,7 @@ describe 'simp_rsyslog' do
 
         [ 'LOCAL_ONLY_AUDITD_LOG',
           'LOCAL_ONLY_AUDIT_LOG',
-          'LOCAL_ONLY_SUDOSH_LOG',  # sudosh module is not installed so ends up in secure.log
+          'LOCAL_ONLY_SUDOSH_LOG',  # sudosh module is not installed so ends up in secure log
           'LOCAL_ONLY_SUDO_LOG',
           'LOCAL_ONLY_YUM_LOG',
           'LOCAL_ONLY_SYSTEMD_LOG',
