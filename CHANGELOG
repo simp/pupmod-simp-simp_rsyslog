@@ -1,3 +1,6 @@
+* Thu Jul 27 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 0.1.1-0
+- Fix bug in rule that ensures local audispd log messages are not duplicated
+
 * Wed May 24 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 0.1.0-0
 - Fix bug whereby audit logs were not being forwarded to remote syslog servers. 
 - Fix bugs whereby simp_rsyslog::log_collection and simp_rsyslog::log_openldap

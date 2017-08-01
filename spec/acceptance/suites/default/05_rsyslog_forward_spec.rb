@@ -74,7 +74,7 @@ EOS
           apply_manifest_on(client, manifest, :catch_changes => true)
         end
 
-        it "should collect #{client} iptables messages to host-specific iptables.log" do
+        it "should collect #{client} iptables messages to host-specific, server iptables.log, as well as client iptables.log" do
           # Set up iptables to disallow icmp requests
           on(client, 'iptables --list-rules')
           on(client, 'iptables -N LOG_AND_DROP')
@@ -84,6 +84,8 @@ EOS
           on(client, 'ping -c 1 `facter ipaddress`', :accept_all_exit_codes => true)
           result = on(server, "grep -l 'IPT:' #{client_log_dir}/iptables.log")
           expect(result.stdout.strip).to eq("#{client_log_dir}/iptables.log")
+          result = on(client, "grep -l 'IPT:' /var/log/iptables.log")
+          expect(result.stdout.strip).to eq('/var/log/iptables.log')
 
           # clean up iptables rules to allow any future tests using the
           # SIMP iptables module to start with a clean slate
@@ -94,34 +96,37 @@ EOS
           on(client, 'iptables --list-rules')
         end
   
-        it "should collect #{client} messages to host-specific files" do
-          # Each entry in this array is [log_options, log_message, log_file]
-          # When log_file is nil, this means the log is NOT forwarded.
+        it "should collect #{client} messages to host-specific, server logs, as well as client logs" do
+          # Each entry in this array is [log_options, log_message, server_logfile, client_logfile]
+          # server_logfile is the relative log file in the client-specific directory;
+          #   when nil, this means the log is NOT forwarded.
+          # client_logfile is the relative, local log file on the client;
+          #   when nil, this means the log is dropped
           default_test_array = [
-            ['-p local7.warning -t boot',   'CLIENT_FORWARDED_BOOT_LOG',         'boot.log'],
-            ['-p mail.info -t id1',         'CLIENT_FORWARDED_ANY_MAIL_LOG',     nil], # if forwarded would be mail.log
-            ['-p cron.warning -t cron',     'CLIENT_FORWARDED_CRON_ANY_LOG',     'cron.log'],
-            ['-p local4.emerg -t id2',      'CLIENT_FORWARDED_ANY_EMERG_LOG',    'emergency.log'],
-            ['-p local2.info -t sudosh',    'CLIENT_FORWARDED_SUDOSH_LOG',       'sudosh.log'],
-            ['-p local6.err -t httpd',      'CLIENT_FORWARDED_HTTPD_ERR_LOG',    'httpd_error.log'],
-            ['-p local6.warning -t httpd',  'CLIENT_FORWARDED_HTTPD_NO_ERR_LOG', 'httpd.log'],
-            ['-t dhcpd',                    'CLIENT_FORWARDED_DHCPD_LOG',        nil], # if forwarded would be dhcpd.log
-            ['-p local6.err -t puppet-agent',     'CLIENT_FORWARDED_PUPPET_AGENT_ERR_LOG',    'puppet_agent_error.log'],
-            ['-p local6.warning -t puppet-agent', 'CLIENT_FORWARDED_PUPPET_AGENT_NO_ERR_LOG', 'puppet_agent.log'],
-            ['-p local6.err -t puppetserver',     'CLIENT_FORWARDED_PUPPETSERVER_ERR_LOG',    'puppetserver_error.log'],
-            ['-p local6.warning -t puppetserver', 'CLIENT_FORWARDED_PUPPETSERVER_NO_ERR_LOG', 'puppetserver.log'],
-            ['-p local5.notice -t audispd', 'CLIENT_FORWARDED_AUDISPD_LOG',      'auditd.log'],
-            ['-t slapd_audit',              'CLIENT_FORWARDED_SLAPD_AUDIT_LOG',  nil], # if forwarded would be slapd_audit.log
-            ['-p news.crit -t news',        'CLIENT_FORWARDED_NEWS_CRIT_LOG',    nil], # if forwarded would be spool.log
-            ['-p uucp.crit -t uucp',        'CLIENT_FORWARDED_UUCP_CRIT_LOG',    nil], # if forwarded would be spool.log
-            ['-t sudo',                     'CLIENT_FORWARDED_SUDO_LOG',         'secure.log'],
-            ['-t auditd',                   'CLIENT_FORWARDED_AUDITD_LOG',       'secure.log'],
-            ['-t audit',                    'CLIENT_FORWARDED_AUDIT_LOG',        'secure.log'],
-            ['-t yum',                      'CLIENT_FORWARDED_YUM_LOG',          'secure.log'],
-            ['-t systemd',                  'CLIENT_FORWARDED_SYSTEMD_LOG',      'secure.log'],
-            ['-t crond',                    'CLIENT_FORWARDED_CROND_LOG',        'secure.log'],
-            ['-p authpriv.warning -t auth', 'CLIENT_FORWARDED_AUTHPRIV_ANY_LOG', 'secure.log'],
-            ['-p local6.info -t id3',       'CLIENT_FORWARDED_LOCAL6_ANY_LOG',   'secure.log']
+            ['-p local7.warning -t boot',   'CLIENT_FORWARDED_BOOT_LOG',         'boot.log',        'secure'],
+            ['-p mail.info -t id1',         'CLIENT_FORWARDED_ANY_MAIL_LOG',     nil,               'maillog'],
+            ['-p cron.warning -t cron',     'CLIENT_FORWARDED_CRON_ANY_LOG',     'cron.log',        'cron'],
+            ['-p local4.emerg -t id2',      'CLIENT_FORWARDED_ANY_EMERG_LOG',    'emergency.log',   'secure'],
+            ['-p local2.info -t sudosh',    'CLIENT_FORWARDED_SUDOSH_LOG',       'sudosh.log',      'secure'], # local='sudosh.log' when sudosh installed
+            ['-p local6.err -t httpd',      'CLIENT_FORWARDED_HTTPD_ERR_LOG',    'httpd_error.log', 'secure'], # local='httpd/error_log' when simp_apache is installed
+            ['-p local6.warning -t httpd',  'CLIENT_FORWARDED_HTTPD_NO_ERR_LOG', 'httpd.log',       'secure'], # local='httpd/access_log' when simp_apache is installed
+            ['-t dhcpd',                    'CLIENT_FORWARDED_DHCPD_LOG',        nil,               'messages'], # local='dhcpd' when dhcp is installed
+            ['-p local6.err -t puppet-agent',     'CLIENT_FORWARDED_PUPPET_AGENT_ERR_LOG',     'puppet_agent_error.log', 'puppet-agent-err.log'],
+            ['-p local6.warning -t puppet-agent', 'CLIENT_FORWARDED_PUPPET_AGENT_NO_ERR_LOG',  'puppet_agent.log',       'puppet-agent.log'],
+            ['-p local6.err -t puppetserver',     'CLIENT_FORWARDED_PUPPETSERVER_ERR_LOG',     'puppetserver_error.log', 'puppetserver-err.log'],
+            ['-p local6.warning -t puppetserver', 'CLIENT_FORWARDED_PUPPETSERVER_NO_ERR_LOG',  'puppetserver.log',       'puppetserver.log'],
+            ['-p local5.notice -t audispd', 'CLIENT_FORWARDED_AUDISPD_LOG',      'auditd.log',  nil],  # locally defeated as already in /var/log/audit when real audispd message
+            ['-t slapd_audit',              'CLIENT_FORWARDED_SLAPD_AUDIT_LOG',  nil,          'slapd_audit.log'],
+            ['-p news.crit -t news',        'CLIENT_FORWARDED_NEWS_CRIT_LOG',    nil,          'spooler'], #syslog module FIXME also appears in messages
+            ['-p uucp.crit -t uucp',        'CLIENT_FORWARDED_UUCP_CRIT_LOG',    nil,          'spooler'], #syslog module FIXME also appears in messages, locally
+            ['-t sudo',                     'CLIENT_FORWARDED_SUDO_LOG',         'secure.log', 'secure'],
+            ['-t auditd',                   'CLIENT_FORWARDED_AUDITD_LOG',       'secure.log', 'secure'],
+            ['-t audit',                    'CLIENT_FORWARDED_AUDIT_LOG',        'secure.log', 'secure'],
+            ['-t yum',                      'CLIENT_FORWARDED_YUM_LOG',          'secure.log', 'secure'],
+            ['-t systemd',                  'CLIENT_FORWARDED_SYSTEMD_LOG',      'secure.log', 'secure'],
+            ['-t crond',                    'CLIENT_FORWARDED_CROND_LOG',        'secure.log', 'secure'],
+            ['-p authpriv.warning -t auth', 'CLIENT_FORWARDED_AUTHPRIV_ANY_LOG', 'secure.log', 'secure'],
+            ['-p local6.info -t id3',       'CLIENT_FORWARDED_LOCAL6_ANY_LOG',   'secure.log', 'secure']
           ]
 
           # send the messages
@@ -133,14 +138,29 @@ EOS
             default_test_array[-1][1])
 
           # verify messages are forwarded and persisted, as appropriate
-          default_test_array.each do |options,message,logfile|
-            if logfile
+          default_test_array.each do |options,message,server_logfile,client_logfile|
+            if server_logfile
               # Ensure message ended up in the intended log.
-              result = on(server, "grep -Rl #{message} #{client_log_dir}")
-              expect(result.stdout.strip).to eq("#{client_log_dir}/#{logfile}")
+              result = on(server, "grep -Rl '#{message}' #{client_log_dir}")
+              expect(result.stdout.strip).to eq("#{client_log_dir}/#{server_logfile}")
             else
               # Ensure message is not forwarded.
-              on(server, "grep -Rl #{message} #{client_log_dir}", :acceptable_exit_codes => [1])
+              on(server, "grep -Rl '#{message}' #{client_log_dir}", :acceptable_exit_codes => [1])
+            end
+            if client_logfile
+              # Ensure messages are still logged on the client
+              result = on(client, "grep -l '#{message}' /var/log/#{client_logfile}")
+              if (message == 'CLIENT_FORWARDED_NEWS_CRIT_LOG' or 
+                  message == 'CLIENT_FORWARDED_UUCP_CRIT_LOG')
+                # logged to /var/log/spooler AND /var/log/messages because of syslog module bug
+                expect(result.stdout.strip).to match(/\/var\/log\/#{client_logfile}/)
+              else
+                expect(result.stdout.strip).to eq("/var/log/#{client_logfile}")
+              end
+            else
+              # Ensure dropped message (e.g., duplicate auditd messages) 
+              # are not logged on the client
+              on(client, "grep -Rl '#{message}' /var/log", :acceptable_exit_codes => [1])
             end
           end
         end
