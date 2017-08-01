@@ -8,10 +8,10 @@
 #   This is currently set to ensure the following:
 #   * Comes after the dynamic local rules that would be on a Rsyslog server
 #     (1* and 3* rules from simp_rsyslog::server)
-#   * Comes after the SIMP-module-specific rules that would be on a Rsyslog 
+#   * Comes after the SIMP-module-specific rules that would be on a Rsyslog
 #     client (XX_* and YY_* rules from the sudosh, apache etc. modules).
 #   * Comes before the standard 'ZZ_default.conf' file from SIMP's rsyslog
-#     module. 
+#     module.
 #
 # @author Trevor Vaughan <tvaughan@onyxpoint.com>
 #
@@ -31,7 +31,7 @@ class simp_rsyslog::local (
   # (ZZ_default contains iptables, puppet-agent, puppetserver and
   # local6.* rules, in the appropriate order.)
   #
-  # TODO 
+  # TODO
   # 1. Write a rule that allows *.emerg messages to both log to the console
   #    of all users and to be persisted to file.
   # 2. Remove sudosh from this rule, since it is already represented in a rule
