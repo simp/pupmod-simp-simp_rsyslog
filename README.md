@@ -1,4 +1,10 @@
-[![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Build Status](https://travis-ci.org/simp/pupmod-simp-simp_rsyslog.svg)](https://travis-ci.org/simp/pupmod-simp-simp_rsyslog) [![SIMP compatibility](https://img.shields.io/badge/SIMP%20compatibility-6.*-orange.svg)](https://img.shields.io/badge/SIMP%20compatibility-6.*-orange.svg)
+#pupmod-simp-simp_rsyslog
+
+[![License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/73/badge)](https://bestpractices.coreinfrastructure.org/projects/73)
+[![Puppet Forge](https://img.shields.io/puppetforge/v/simp/simp_rsyslog.svg)](https://forge.puppetlabs.com/simp/simp_rsyslog)
+[![Puppet Forge Downloads](https://img.shields.io/puppetforge/dt/simp/simp_rsyslog.svg)](https://forge.puppetlabs.com/simp/simp_rsyslog)
+[![Build Status](https://travis-ci.org/simp/pupmod-simp-simp_rsyslog.svg)](https://travis-ci.org/simp/pupmod-simp-simp_rsyslog)
 
 #### Table of Contents
 
@@ -18,10 +24,11 @@ common Rsyslog configurations as supported by the SIMP ecosystem
 
 ### This is a SIMP module
 
-This module is a component of the [System Integrity Management Platform](https://github.com/NationalSecurityAgency/SIMP), a
-compliance-management framework built on Puppet.
+This module is a component of the [System Integrity Management Platform](https://simp-project.com),
+a compliance-management framework built on Puppet.
 
-If you find any issues, they may be submitted to our [bug tracker](https://simp-project.atlassian.net/).
+If you find any issues, they may be submitted to our
+[bug tracker](https://simp-project.atlassian.net/).
 
 This module is optimally designed for use within a larger SIMP ecosystem, but
 it can be used independently:
@@ -149,12 +156,15 @@ TLS and TCP connections will be used for log forwarding for security purposes.
 
 ## Reference
 
-See the [API Documentation](https://github.com/simp/pupmod-simp-simp_rsyslog/tree/master/docs/index.html) for full details.
+The full module reference can be found in the
+[module docs](https://simp.github.io/pupmod-simp-simp_rsyslog) and in the local
+`docs/` directory.
 
 ## Limitations
 
 This is a SIMP Profile. It will not expose **all** options of the underlying
 modules, only the ones that are conducive to a supported SIMP infrastructure.
+
 If you need to do things that this module does not cover, you may need to
 create your own profile or inherit this profile and extend it to meet your
 needs.
@@ -166,7 +176,11 @@ supported operating systems, Puppet versions, and module dependencies.
 
 ## Development
 
-Please read our [Contribution Guide](http://simp-doc.readthedocs.io/en/stable/contributors_guide/index.html).
+Please read our [Contribution Guide](http://simp.readthedocs.io/en/master/contributors_guide/index.html)
+and visit our [Developer Wiki](https://simp-project.atlassian.net/wiki/display/SD/SIMP+Development+Home)
+
+If you find any issues, they can be submitted to our
+[JIRA](https://simp-project.atlassian.net).
 
 ### Acceptance tests
 
