@@ -63,7 +63,7 @@ describe 'simp_rsyslog' do
         let(:params) {{ }}
         it_behaves_like 'a structured module'
         it { is_expected.to contain_class('simp_rsyslog::local') }
-        it { is_expected.to contain_rsyslog__rule__local('ZZ_01_simp_rsyslog_profile_local_drop_audispd_duplicates.conf') }
+        it { is_expected.to contain_rsyslog__rule__local('ZZ_01_simp_rsyslog_profile_local_drop_audispd_duplicates') }
         it {
           is_expected.to contain_rsyslog__rule__local('ZZ_02_simp_rsyslog_profile_local_security').with_rule(
             Regexp.new(Regexp.escape(residual_security_logs))

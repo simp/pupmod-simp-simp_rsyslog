@@ -23,7 +23,7 @@ class simp_rsyslog::local (
   # Since there already are local audispd audit logs in /var/log/audit and these
   # logs grow quickly, drop the syslog duplicates.
   $_safe_order = regsubst($order,'/','__')
-  rsyslog::rule::local {"${_safe_order}1_simp_rsyslog_profile_local_drop_audispd_duplicates.conf":
+  rsyslog::rule::local {"${_safe_order}1_simp_rsyslog_profile_local_drop_audispd_duplicates":
     content => "if (\$programname == \'audispd\') then stop\n"
   }
 
