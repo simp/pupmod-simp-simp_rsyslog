@@ -48,6 +48,9 @@
 # @param process_dhcpd_rules
 #   Enable processing of dhcpd rules
 #
+# @param process_snmpd_rules
+#   Enable processing of snmpd rules
+#
 # @param process_puppet_agent_rules
 #   Enable processing of puppet agent rules
 #
@@ -129,6 +132,7 @@ class simp_rsyslog::server(
   Boolean                                   $process_sudosh_rules           = true,
   Boolean                                   $process_httpd_rules            = true,
   Boolean                                   $process_dhcpd_rules            = true,
+  Boolean                                   $process_snmpd_rules            = true,
   Boolean                                   $process_puppet_agent_rules     = true,
   Boolean                                   $process_puppetserver_rules     = true,
   Boolean                                   $process_auditd_rules           = true,
@@ -218,6 +222,13 @@ class simp_rsyslog::server(
       rsyslog::rule::local { '10_default_dhcpd':
         rule            => '$programname == \'dhcpd\'',
         dyna_file       => "${file_base}/dhcpd.log",
+        stop_processing => $stop_processing
+      }
+    }
+    if $process_snmpd_rules {
+      rsyslog::rule::local { '10_default_snmpd':
+        rule            => '$programname == \'snmpd\'',
+        dyna_file       => "${file_base}/snmpd.log",
         stop_processing => $stop_processing
       }
     }

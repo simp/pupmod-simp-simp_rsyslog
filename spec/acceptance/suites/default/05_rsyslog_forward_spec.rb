@@ -111,6 +111,7 @@ EOS
             ['-p local6.err -t httpd',      'CLIENT_FORWARDED_HTTPD_ERR_LOG',    'httpd_error.log', 'secure'], # local='httpd/error_log' when simp_apache is installed
             ['-p local6.warning -t httpd',  'CLIENT_FORWARDED_HTTPD_NO_ERR_LOG', 'httpd.log',       'secure'], # local='httpd/access_log' when simp_apache is installed
             ['-t dhcpd',                    'CLIENT_FORWARDED_DHCPD_LOG',        nil,               'messages'], # local='dhcpd' when dhcp is installed
+            ['-p local6.info -t snmpd',     'CLIENT_FORWARDED_SNMPD_LOG',        'snmpd.log',       'secure'], # local='snmpd.log' when snmpd is installed
             ['-p local6.err -t puppet-agent',     'CLIENT_FORWARDED_PUPPET_AGENT_ERR_LOG',     'puppet_agent_error.log', 'puppet-agent-err.log'],
             ['-p local6.warning -t puppet-agent', 'CLIENT_FORWARDED_PUPPET_AGENT_NO_ERR_LOG',  'puppet_agent.log',       'puppet-agent.log'],
             ['-p local6.err -t puppetserver',     'CLIENT_FORWARDED_PUPPETSERVER_ERR_LOG',     'puppetserver_error.log', 'puppetserver-err.log'],

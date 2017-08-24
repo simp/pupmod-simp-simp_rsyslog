@@ -186,6 +186,7 @@ describe 'simp_rsyslog' do
           it { is_expected.to contain_rsyslog__rule__local('10_default_httpd_error') }
           it { is_expected.to contain_rsyslog__rule__local('11_default_httpd') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_dhcpd') }
+          it { is_expected.to contain_rsyslog__rule__local('10_default_snmpd') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_puppet_agent_error') }
           it { is_expected.to contain_rsyslog__rule__local('11_default_puppet_agent') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_puppetserver_error') }
@@ -228,6 +229,7 @@ describe 'simp_rsyslog' do
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_httpd_error') }
           it { is_expected.not_to contain_rsyslog__rule__local('11_default_httpd') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_dhcpd') }
+          it { is_expected.not_to contain_rsyslog__rule__local('10_default_snmpd') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_puppet_agent_error') }
           it { is_expected.not_to contain_rsyslog__rule__local('11_default_puppet_agent') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_puppetserver_error') }
@@ -260,6 +262,7 @@ describe 'simp_rsyslog' do
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_httpd_error') }
           it { is_expected.not_to contain_rsyslog__rule__local('11_default_httpd') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_dhcpd') }
+          it { is_expected.not_to contain_rsyslog__rule__local('10_default_snmpd') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_puppet_agent_error') }
           it { is_expected.not_to contain_rsyslog__rule__local('11_default_puppet_agent') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_puppetserver_error') }
