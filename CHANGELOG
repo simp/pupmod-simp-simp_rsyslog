@@ -1,3 +1,6 @@
+* Wed Sep 06 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 0.2.0-0
+- Add processing for aide logs
+
 * Wed Aug 23 2017 Jeanne Greulich <jeanne.greulich@onypoint.com> - 0.2.0-0
 - added processing for snmpd logs
 

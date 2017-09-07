@@ -60,6 +60,9 @@
 # @param process_auditd_rules
 #   Enable processing of auditd rules
 #
+# @param process_aide_rules
+#   Enable processing of aide rules
+#
 # @param process_slapd_rules
 #   Enable processing of OpenLDAP Server rules
 #
@@ -136,6 +139,7 @@ class simp_rsyslog::server(
   Boolean                                   $process_puppet_agent_rules     = true,
   Boolean                                   $process_puppetserver_rules     = true,
   Boolean                                   $process_auditd_rules           = true,
+  Boolean                                   $process_aide_rules             = true,
   Boolean                                   $process_slapd_rules            = true,
   Boolean                                   $process_kern_rules             = true,
   Boolean                                   $process_iptables_rules         = true,
@@ -260,6 +264,13 @@ class simp_rsyslog::server(
       rsyslog::rule::local { '10_default_audit':
         rule            => '($programname == \'audispd\') or ($syslogtag == \'tag_auditd_log:\')',
         dyna_file       => "${file_base}/auditd.log",
+        stop_processing => $stop_processing
+      }
+    }
+    if $process_aide_rules {
+      rsyslog::rule::local { '10_default_aide':
+        rule            => '$programname == \'aide\'',
+        dyna_file       => "${file_base}/aide.log",
         stop_processing => $stop_processing
       }
     }
