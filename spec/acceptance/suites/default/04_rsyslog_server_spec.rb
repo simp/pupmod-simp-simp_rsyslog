@@ -80,6 +80,7 @@ rsyslog::pki: false
           ['-p local6.warn -t httpd',     'LOCAL_SERVER_HTTPD_NO_ERR_LOG', 'httpd.log'],
           ['-t dhcpd',                    'LOCAL_SERVER_DHCPD_LOG',        'dhcpd.log'],
           ['-t snmpd',                    'LOCAL_SERVER_SNMPD_LOG',        'snmpd.log'],
+          ['-t aide',                     'LOCAL_SERVER_AIDE_LOG',         'aide.log'],
           ['-p local6.err -t puppet-agent',     'LOCAL_SERVER_PUPPET_AGENT_ERR_LOG',    'puppet_agent_error.log'],
           ['-p local6.warning -t puppet-agent', 'LOCAL_SERVER_PUPPET_AGENT_NO_ERR_LOG', 'puppet_agent.log'],
           ['-p local6.err -t puppetserver',     'LOCAL_SERVER_PUPPETSERVER_ERR_LOG',    'puppetserver_error.log'],

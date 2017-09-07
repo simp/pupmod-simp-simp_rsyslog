@@ -24,6 +24,8 @@ describe 'simp_rsyslog' do
           "($programname == 'audit')",
           "($programname == 'systemd')",
           "($programname == 'crond')",
+          "($programname == 'snmpd')",
+          "($programname == 'aide')"
         ]
       end
 
@@ -192,6 +194,7 @@ describe 'simp_rsyslog' do
           it { is_expected.to contain_rsyslog__rule__local('10_default_puppetserver_error') }
           it { is_expected.to contain_rsyslog__rule__local('11_default_puppetserver') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_audit') }
+          it { is_expected.to contain_rsyslog__rule__local('10_default_aide') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_slapd_audit') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_iptables') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_kern') }
@@ -235,6 +238,7 @@ describe 'simp_rsyslog' do
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_puppetserver_error') }
           it { is_expected.not_to contain_rsyslog__rule__local('11_default_puppetserver') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_audit') }
+          it { is_expected.not_to contain_rsyslog__rule__local('10_default_aide') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_slapd_audit') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_iptables') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_kern') }
@@ -268,6 +272,7 @@ describe 'simp_rsyslog' do
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_puppetserver_error') }
           it { is_expected.not_to contain_rsyslog__rule__local('11_default_puppetserver') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_audit') }
+          it { is_expected.not_to contain_rsyslog__rule__local('10_default_aide') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_slapd_audit') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_iptables') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_kern') }

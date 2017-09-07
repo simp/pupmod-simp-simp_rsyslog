@@ -6,6 +6,7 @@ simp_rsyslog::server::process_snmpd_rules: false
 simp_rsyslog::server::process_puppet_agent_rules: false
 simp_rsyslog::server::process_puppetserver_rules: false
 simp_rsyslog::server::process_auditd_rules: false
+simp_rsyslog::server::process_aide_rules: false
 simp_rsyslog::server::process_slapd_rules: false
 simp_rsyslog::server::process_kern_rules: false
 simp_rsyslog::server::process_iptables_rules: false
