@@ -1,8 +1,5 @@
 require 'spec_helper'
 
-file_content_7 = '/usr/bin/systemctl restart rsyslog > /dev/null 2>&1 || true'
-file_content_6 = '/sbin/service rsyslog restart > /dev/null 2>&1 || true'
-
 describe 'simp_rsyslog' do
   shared_examples_for 'a structured module' do
     it { is_expected.to compile.with_all_deps }
@@ -132,7 +129,7 @@ describe 'simp_rsyslog' do
             :log_servers  => ['1.2.3.4'],
             :log_openldap => true
           }}
-  
+
           it_behaves_like 'a structured module'
           it {
             logs = program_logs + [ "($programname == 'slapd')" ] +
@@ -143,7 +140,7 @@ describe 'simp_rsyslog' do
             )
           }
         end
-  
+
         context 'custom log forwarding' do
           let(:params) {{
             :forward_logs => true,
@@ -152,7 +149,7 @@ describe 'simp_rsyslog' do
               'facilities' => ['local2.warn']
              }
           }}
-  
+
           it_behaves_like 'a structured module'
           it {
             logs = program_logs + facility_logs + [ "prifilt('local2.warn')" ] +
@@ -206,13 +203,7 @@ describe 'simp_rsyslog' do
           it { is_expected.to contain_rsyslog__rule__local('30_default_catchall') }
           it { is_expected.not_to contain_rsyslog__rule__local('30_default_drop') }
           it { is_expected.to contain_class('logrotate') }
-          if ['RedHat','CentOS'].include?(facts[:operatingsystem])
-            if facts[:operatingsystemmajrelease].to_s < '7'
-              it { should create_file('/etc/logrotate.d/simp_rsyslog_server_profile').with_content(/#{file_content_6}/)}
-            else
-              it { should create_file('/etc/logrotate.d/simp_rsyslog_server_profile').with_content(/#{file_content_7}/)}
-            end
-          end
+          it { is_expected.to create_logrotate__rule('simp_rsyslog_server_profile').with_log_files(['/var/log/hosts/*/*.log' ]) }
         end
 
         context 'simp_rsyslog class that is a log server with all features disabled' do
