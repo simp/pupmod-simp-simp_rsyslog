@@ -133,7 +133,7 @@
 #
 # @author Trevor Vaughan <tvaughan@onyxpoint.com>
 #
-class simp_rsyslog::server(
+class simp_rsyslog::server (
   Optional[String]                          $server_conf                    = undef,
   Boolean                                   $process_sudosh_rules           = true,
   Boolean                                   $process_tlog_rules             = true,
@@ -172,7 +172,7 @@ class simp_rsyslog::server(
     }
   }
   else {
-    $logdir ='/var/log/hosts'
+    $logdir = '/var/log/hosts'
     $file_base = "${logdir}/%HOSTNAME%"
 
 
@@ -355,12 +355,12 @@ class simp_rsyslog::server(
       include '::logrotate'
 
       logrotate::rule { 'simp_rsyslog_server_profile':
-        log_files                  => [ "${logdir}/*/*.log" ],
-        missingok                  => true,
-        size                       => $rotate_size,
-        rotate_period              => $rotate_period,
-        rotate                     => $rotate_preserve,
-        lastaction_restart_logger  => true
+        log_files                 => [ "${logdir}/*/*.log" ],
+        missingok                 => true,
+        size                      => $rotate_size,
+        rotate_period             => $rotate_period,
+        rotate                    => $rotate_preserve,
+        lastaction_restart_logger => true
       }
     }
   }

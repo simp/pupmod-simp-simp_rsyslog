@@ -6,6 +6,7 @@
 
 * Thu Jun 14 2018 Nick Miller <nick.miller@onyxpoint.com> - 0.2.1-0
 - Update systemd fixtures and CI assets
+- Add support for Puppet 5 and OEL
 
 * Wed Sep 06 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 0.2.0-0
 - Add processing for aide logs
