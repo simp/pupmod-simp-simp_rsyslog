@@ -107,7 +107,8 @@ EOS
             ['-p mail.info -t id1',         'CLIENT_FORWARDED_ANY_MAIL_LOG',     nil,               'maillog'],
             ['-p cron.warning -t cron',     'CLIENT_FORWARDED_CRON_ANY_LOG',     'cron.log',        'cron'],
             ['-p local4.emerg -t id2',      'CLIENT_FORWARDED_ANY_EMERG_LOG',    'emergency.log',   'secure'],
-            ['-p local2.info -t sudosh',    'CLIENT_FORWARDED_SUDOSH_LOG',       'sudosh.log',      'secure'], # local='sudosh.log' when sudosh installed
+            ['-p local2.info -t sudosh',    'CLIENT_FORWARDED_SUDOSH_LOG',       'sudosh.log',      'messages'], # local='sudosh.log' when sutosh module used
+            ['-p local2.info -t tlog',    'CLIENT_FORWARDED_TLOG_LOG',           'tlog.log',        'messages'], # local='tlog.log' when tlog module used
             ['-p local6.err -t httpd',      'CLIENT_FORWARDED_HTTPD_ERR_LOG',    'httpd_error.log', 'secure'], # local='httpd/error_log' when simp_apache is installed
             ['-p local6.warning -t httpd',  'CLIENT_FORWARDED_HTTPD_NO_ERR_LOG', 'httpd.log',       'secure'], # local='httpd/access_log' when simp_apache is installed
             ['-t dhcpd',                    'CLIENT_FORWARDED_DHCPD_LOG',        nil,               'messages'], # local='dhcpd' when dhcp is installed
@@ -160,7 +161,7 @@ EOS
                 expect(result.stdout.strip).to eq("/var/log/#{client_logfile}")
               end
             else
-              # Ensure dropped message (e.g., duplicate auditd messages) 
+              # Ensure dropped message (e.g., duplicate auditd messages)
               # are not logged on the client
               on(client, "grep -Rl '#{message}' /var/log", :acceptable_exit_codes => [1])
             end

@@ -1,19 +1,19 @@
 ---
 fixtures:
   repositories:
-    auditd: https://github.com/simp/pupmod-simp-auditd.git
+    auditd:    'https://github.com/simp/pupmod-simp-auditd.git'
     augeasproviders_core: https://github.com/simp/augeasproviders_core
     augeasproviders_grub: https://github.com/simp/augeasproviders_grub
-    iptables:  https://github.com/simp/pupmod-simp-iptables.git
-    logrotate: https://github.com/simp/pupmod-simp-logrotate.git
-    pki: https://github.com/simp/pupmod-simp-pki.git
+    iptables:  'https://github.com/simp/pupmod-simp-iptables.git'
+    logrotate: 'https://github.com/simp/pupmod-simp-logrotate.git'
+    pki:       'https://github.com/simp/pupmod-simp-pki.git'
     rsyslog: https://github.com/simp/pupmod-simp-rsyslog.git
-    simpcat: https://github.com/simp/pupmod-simp-simpcat.git
-    simplib: https://github.com/simp/pupmod-simp-simplib.git
-    stdlib: https://github.com/simp/puppetlabs-stdlib.git
+    simpcat:   'https://github.com/simp/pupmod-simp-simpcat.git'
+    simplib:   'https://github.com/simp/pupmod-simp-simplib.git'
+    stdlib:    'https://github.com/simp/puppetlabs-stdlib.git'
     systemd:
-      repo: https://github.com/simp/puppet-systemd
-      branch: simp-master
-    tcpwrappers: https://github.com/simp/pupmod-simp-tcpwrappers.git
+      repo: 'https://github.com/simp/puppet-systemd.git'
+      branch: 'simp-master'
+    tcpwrappers: 'https://github.com/simp/pupmod-simp-tcpwrappers.git'
   symlinks:
     simp_rsyslog: '#{source_dir}'

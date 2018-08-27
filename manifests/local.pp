@@ -34,11 +34,21 @@ class simp_rsyslog::local (
   # TODO
   # 1. Write a rule that allows *.emerg messages to both log to the console
   #    of all users and to be persisted to file.
-  # 2. Remove sudosh from this rule, since it is already represented in a rule
-  #    from the SIMP sudosh module.
   $_residual_logs = {
-    'programs'   => [ 'sudo', 'sudosh', 'audit', 'auditd', 'yum', 'systemd', 'crond' ],
-    'facilities' => [ 'local7.warn', '*.emerg'],
+    'programs'   => [
+      'audispd',
+      'audit',
+      'auditd',
+      'crond',
+      'sudo',
+      'systemd',
+      'yum'
+    ],
+
+    'facilities' => [
+      '*.emerg',
+      'local7.warn'
+    ],
   }
 
   $residual_security_logs = simp_rsyslog::format_options($_residual_logs)
