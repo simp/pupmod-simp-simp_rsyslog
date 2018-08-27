@@ -1,3 +1,7 @@
+* Mon Aug 27 018 Jeanne Greulich <jeanne.greulich@onyxpoint.com> = 0.3.0-0
+- Update it to pass in a value for StreamDriverPermittedPeers.  Default
+  to 'LOGSERVERNAME' which requires rsyslog 7.2.0 or later.
+
 * Thu Jun 14 2018 Nick Miller <nick.miller@onyxpoint.com> - 0.2.1-0
 - Update systemd fixtures and CI assets
 
