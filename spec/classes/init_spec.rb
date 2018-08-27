@@ -13,25 +13,30 @@ describe 'simp_rsyslog' do
       end
 
       let(:program_logs) do
-        [ "($programname == 'sudo')",
-          "($programname == 'sudosh')",
-          "($programname == 'yum')",
+        [
+          "($programname == 'aide')",
           "($programname == 'audispd')",
-          "($programname == 'auditd')",
           "($programname == 'audit')",
-          "($programname == 'systemd')",
+          "($programname == 'auditd')",
           "($programname == 'crond')",
           "($programname == 'snmpd')",
-          "($programname == 'aide')"
+          "($programname == 'sudo')",
+          "($programname == 'sudosh')",
+          "($programname == 'systemd')",
+          "($programname == 'tlog')",
+          "($programname == 'tlog-rec-session')",
+          "($programname == '-tlog-rec-session')",
+          "($programname == 'yum')"
         ]
       end
 
       let(:facility_logs) do
-        [ "prifilt('cron.*')",
-          "prifilt('authpriv.*')",
-          "prifilt('local6.*')",
-          "prifilt('local7.warn')",
+        [
           "prifilt('*.emerg')",
+          "prifilt('authpriv.*')",
+          "prifilt('cron.*')",
+          "prifilt('local6.*')",
+          "prifilt('local7.warn')"
         ]
       end
 
@@ -46,15 +51,16 @@ describe 'simp_rsyslog' do
       end
 
       let (:residual_security_logs) do
-        [ "($programname == 'sudo')",
-          "($programname == 'sudosh')",
+        [
+          "($programname == 'audispd')",
           "($programname == 'audit')",
           "($programname == 'auditd')",
-          "($programname == 'yum')",
-          "($programname == 'systemd')",
           "($programname == 'crond')",
-          "prifilt('local7.warn')",
-          "prifilt('*.emerg')"
+          "($programname == 'sudo')",
+          "($programname == 'systemd')",
+          "($programname == 'yum')",
+          "prifilt('*.emerg')",
+          "prifilt('local7.warn')"
         ].join(' or ')
       end
 
@@ -182,6 +188,7 @@ describe 'simp_rsyslog' do
           it { is_expected.to contain_rsyslog__rule__local('10_00_default_cron') }
           it { is_expected.to contain_rsyslog__rule__local('10_00_default_emerg') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_sudosh') }
+          it { is_expected.to contain_rsyslog__rule__local('10_default_tlog') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_httpd_error') }
           it { is_expected.to contain_rsyslog__rule__local('11_default_httpd') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_dhcpd') }
@@ -204,6 +211,7 @@ describe 'simp_rsyslog' do
           it { is_expected.not_to contain_rsyslog__rule__local('30_default_drop') }
           it { is_expected.to contain_class('logrotate') }
           it { is_expected.to create_logrotate__rule('simp_rsyslog_server_profile').with_log_files(['/var/log/hosts/*/*.log' ]) }
+          it { is_expected.to create_logrotate__rule('simp_rsyslog_server_profile').with_lastaction_restart_logger(true) }
         end
 
         context 'simp_rsyslog class that is a log server with all features disabled' do
@@ -220,6 +228,7 @@ describe 'simp_rsyslog' do
           it { is_expected.not_to contain_rsyslog__rule__local('10_00_default_cron') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_00_default_emerg') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_sudosh') }
+          it { is_expected.not_to contain_rsyslog__rule__local('10_default_tlog') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_httpd_error') }
           it { is_expected.not_to contain_rsyslog__rule__local('11_default_httpd') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_dhcpd') }
@@ -254,6 +263,7 @@ describe 'simp_rsyslog' do
           it { is_expected.not_to contain_rsyslog__rule__local('10_00_default_cron') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_00_default_emerg') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_sudosh') }
+          it { is_expected.not_to contain_rsyslog__rule__local('10_default_tlog') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_httpd_error') }
           it { is_expected.not_to contain_rsyslog__rule__local('11_default_httpd') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_default_dhcpd') }
