@@ -42,6 +42,7 @@ rsyslog::tcp_server: true
 rsyslog::tls_tcp_server: true
 rsyslog::pki: true
 rsyslog::app_pki_external_source: '/etc/pki/simp-testing/pki'
+# Need to let log servers accept from different domains
 rsyslog::config::tls_input_tcp_server_stream_driver_permitted_peers:
   - "*.wayout.org"
   - "*.my.domain"
