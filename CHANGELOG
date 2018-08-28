@@ -1,9 +1,11 @@
 * Mon Aug 27 018 Jeanne Greulich <jeanne.greulich@onyxpoint.com> = 0.3.0-0
-- Update forward to pass in a value for StreamDriverPermittedPeers. This
+- Update forward.pp to pass in a value for StreamDriverPermittedPeers. This
   will allow the use of remote syslog servers in different domains.
 - If TLS is enabled it will default StreamDriverPermittedPeers to
   the names of the servers in the log_servers and failover_log_servers
   if permitted_peers is not set.
+- If log_servers and failover+log_server list is going to be used,
+  verify they are hostnames and not IP Addresses and fail if not.
 
 * Thu Jun 14 2018 Nick Miller <nick.miller@onyxpoint.com> - 0.2.1-0
 - Update systemd fixtures and CI assets
