@@ -123,8 +123,28 @@ class simp_rsyslog (
     Array[String]
   ]                           $default_logs         = {
 
-    'programs'   => [ 'sudo', 'sudosh', 'yum', 'audispd', 'auditd', 'audit', 'systemd', 'crond', 'snmpd', 'aide' ],
-    'facilities' => [ 'cron.*', 'authpriv.*', 'local6.*', 'local7.warn', '*.emerg'],
+    'programs'   => [
+      'aide',
+      'audispd',
+      'audit',
+      'auditd',
+      'crond',
+      'snmpd',
+      'sudo',
+      'sudosh',
+      'systemd',
+      'tlog',
+      'tlog-rec-session',
+      '-tlog-rec-session',
+      'yum'
+    ],
+    'facilities' => [
+      '*.emerg',
+      'authpriv.*',
+      'cron.*',
+      'local6.*',
+      'local7.warn'
+    ],
     # Some versions of rsyslog include the space separator that precedes
     # the message as part of the message body
     'msg_starts' => [' IPT:', 'IPT:'],

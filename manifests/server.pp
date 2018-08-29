@@ -42,6 +42,9 @@
 # @param process_sudosh_rules
 #   Enable processing of sudosh rules
 #
+# @param process_tlog_rules
+#   Enable processing of tlog rules
+#
 # @param process_httpd_rules
 #   Enable processing of httpd rules
 #
@@ -133,6 +136,7 @@
 class simp_rsyslog::server(
   Optional[String]                          $server_conf                    = undef,
   Boolean                                   $process_sudosh_rules           = true,
+  Boolean                                   $process_tlog_rules             = true,
   Boolean                                   $process_httpd_rules            = true,
   Boolean                                   $process_dhcpd_rules            = true,
   Boolean                                   $process_snmpd_rules            = true,
@@ -207,6 +211,13 @@ class simp_rsyslog::server(
       rsyslog::rule::local { '10_default_sudosh':
         rule            => '$programname == \'sudosh\'',
         dyna_file       => "${file_base}/sudosh.log",
+        stop_processing => $stop_processing
+      }
+    }
+    if $process_tlog_rules {
+      rsyslog::rule::local { '10_default_tlog':
+        rule            => '$programname == \'tlog-rec-session\' or $programname == \'-tlog-rec-session\' or $programname == \'tlog\'',
+        dyna_file       => "${file_base}/tlog.log",
         stop_processing => $stop_processing
       }
     }

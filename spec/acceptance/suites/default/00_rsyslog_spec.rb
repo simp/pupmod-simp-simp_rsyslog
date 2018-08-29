@@ -3,21 +3,6 @@ require 'spec_helper_acceptance'
 test_name 'simp_rsyslog profile'
 
 describe 'simp_rsyslog' do
-  before(:context) do
-    hosts.each do |host|
-      interfaces = fact_on(host, 'interfaces').strip.split(',')
-      interfaces.delete_if do |x|
-        x =~ /^lo/
-      end
-
-      interfaces.each do |iface|
-        if fact_on(host, "ipaddress_#{iface}").strip.empty?
-          on(host, "ifup #{iface}", :accept_all_exit_codes => true)
-        end
-      end
-    end
-  end
-
   let(:manifest) {
     <<-EOS
       include 'simp_rsyslog'
@@ -74,7 +59,6 @@ describe 'simp_rsyslog' do
         # log messages identified by program name
         on(host, 'logger -t auditd LOCAL_ONLY_AUDITD_LOG')
         on(host, 'logger -t audit LOCAL_ONLY_AUDIT_LOG')
-        on(host, 'logger -p local2.info -t sudosh LOCAL_ONLY_SUDOSH_LOG')
         on(host, 'logger -t sudo LOCAL_ONLY_SUDO_LOG')
         on(host, 'logger -t yum LOCAL_ONLY_YUM_LOG')
         on(host, 'logger -t systemd LOCAL_ONLY_SYSTEMD_LOG')
@@ -91,7 +75,6 @@ describe 'simp_rsyslog' do
 
         [ 'LOCAL_ONLY_AUDITD_LOG',
           'LOCAL_ONLY_AUDIT_LOG',
-          'LOCAL_ONLY_SUDOSH_LOG',  # sudosh module is not installed so ends up in secure log
           'LOCAL_ONLY_SUDO_LOG',
           'LOCAL_ONLY_YUM_LOG',
           'LOCAL_ONLY_SYSTEMD_LOG',
