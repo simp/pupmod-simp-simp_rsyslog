@@ -195,7 +195,7 @@ describe 'simp_rsyslog' do
           it {
             is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with(
               {
-                :stream_driver_permitted_peers => "logserver.my.domain,failoverlogserver.my.domain"
+                :stream_driver_permitted_peers => ''
               })
           }
         end
@@ -207,6 +207,7 @@ describe 'simp_rsyslog' do
             :forward_logs         => true,
             :log_servers          => ['logserver.my.domain'],
             :failover_log_servers => ['failoverlogserver.my.domain'],
+            :permitted_peers      => "*.my.domain,this.system"
           }}
           it {
             is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with(

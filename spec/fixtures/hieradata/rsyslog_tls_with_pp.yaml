@@ -1,0 +1,6 @@
+---
+rsyslog::enable_tls_logging: true
+simp_rsyslog::forward::permitted_peers:
+  - "*.my.domain"
+  - "this.system"
+simp_rsyslog::forward::enable_tls: true

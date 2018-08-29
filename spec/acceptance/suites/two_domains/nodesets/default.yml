@@ -14,20 +14,6 @@ HOSTS:
         gpgkeys:
           - https://getfedora.org/static/352C64E5.txt
 
-  el7server.wayout.org:
-    roles:
-      - rsyslog_server3
-      - rsyslog_server
-      - el7
-    platform:   el-7-x86_64
-    box:        centos/7
-    hypervisor: vagrant
-    yum_repos:
-      epel:
-        mirrorlist: 'https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch'
-        gpgkeys:
-          - https://getfedora.org/static/352C64E5.txt
-
   el7client.my.domain:
     roles:
       - rsyslog_client

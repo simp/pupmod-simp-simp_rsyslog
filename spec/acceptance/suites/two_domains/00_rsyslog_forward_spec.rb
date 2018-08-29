@@ -24,17 +24,14 @@ EOS
   }
   rsyslog_server1 = hosts_with_role(hosts,'rsyslog_server1').first
   rsyslog_server2 = hosts_with_role(hosts,'rsyslog_server2').first
-  rsyslog_server3 = hosts_with_role(hosts,'rsyslog_server3').first
   let(:server1_fqdn){fact_on(rsyslog_server1, 'fqdn')}
   let(:server2_fqdn){fact_on(rsyslog_server2, 'fqdn')}
-  let(:server3_fqdn){fact_on(rsyslog_server3, 'fqdn')}
   let(:server_hieradata) {
       <<-EOS
 ---
 simp_options::syslog::log_servers:
   - '#{server1_fqdn}'
   - '#{server2_fqdn}'
-  - '#{server3_fqdn}'
 
 simp_rsyslog::is_server: true
 simp_rsyslog::forward_logs: false
@@ -71,7 +68,6 @@ EOS
 simp_options::syslog::log_servers:
   - '#{server1_fqdn}'
   - '#{server2_fqdn}'
-  - '#{server3_fqdn}'
 rsyslog::app_pki_external_source: '/etc/pki/simp-testing/pki'
 simp_rsyslog::forward_logs: true
 rsyslog::pki: true
@@ -123,7 +119,6 @@ rsyslog::enable_tls_logging: true
             ['-p mail.info -t id1',         'CLIENT_FORWARDED_ANY_MAIL_LOG',     nil,               'maillog'],
             ['-p cron.warning -t cron',     'CLIENT_FORWARDED_CRON_ANY_LOG',     'cron.log',        'cron'],
             ['-p local4.emerg -t id2',      'CLIENT_FORWARDED_ANY_EMERG_LOG',    'emergency.log',   'secure'],
-            ['-p local2.info -t sudosh',    'CLIENT_FORWARDED_SUDOSH_LOG',       'sudosh.log',      'secure'], # local='sudosh.log' when sudosh installed
             ['-p local6.err -t httpd',      'CLIENT_FORWARDED_HTTPD_ERR_LOG',    'httpd_error.log', 'secure'], # local='httpd/error_log' when simp_apache is installed
             ['-p local6.warning -t httpd',  'CLIENT_FORWARDED_HTTPD_NO_ERR_LOG', 'httpd.log',       'secure'], # local='httpd/access_log' when simp_apache is installed
             ['-t dhcpd',                    'CLIENT_FORWARDED_DHCPD_LOG',        nil,               'messages'], # local='dhcpd' when dhcp is installed
