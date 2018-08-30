@@ -1,12 +1,13 @@
+* Thu Aug 30 2018 Nick Miller <nick.miller@onyxpoint.com> - 0.3.1-0
+- Update systemd fixtures and CI assets
+- Add support for Puppet 5 and OEL
+- Move acceptance tests to iptables module
+
 * Mon Aug 27 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 0.3.0-0
 - Remove redundant rules for sudosh since the puppet module will correctly take
   care of adding those rules
 - Add support for tlog since it will be commonly replacing sudosh across the
   SIMP infrastructure
-
-* Thu Jun 14 2018 Nick Miller <nick.miller@onyxpoint.com> - 0.2.1-0
-- Update systemd fixtures and CI assets
-- Add support for Puppet 5 and OEL
 
 * Wed Sep 06 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 0.2.0-0
 - Add processing for aide logs
