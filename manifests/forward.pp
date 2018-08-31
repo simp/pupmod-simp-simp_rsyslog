@@ -24,7 +24,7 @@
 # @param permitted_peers
 #   If TLS is being used, permitted_peers sets StreamDriverPermittedPeers in the rsyslog rule.
 #   This is used to verify servers from the CN, AltDNSname, or fingerprint of certificate.
-#   If permitted peers is the empty string  and TLS is being used it will default to the names
+#   If permitted peers is the undef and TLS is being used it will default to the names
 #   in the log_server and failover_log_server parameters.
 #   If you are using IP addresses for the log servers you will need to set this string.
 #   It expects a comma seperated list. Example:  "*.my.domain,server1.my.other.domain"
@@ -37,7 +37,7 @@ class simp_rsyslog::forward (
   Integer                  $order           = 99,
   Enum['tcp','udp','relp'] $dest_type       = 'tcp',
   Boolean                  $stop_processing = false,
-  String                   $permitted_peers = '',
+  Optional[String]         $permitted_peers = undef,
 ){
   assert_private()
 

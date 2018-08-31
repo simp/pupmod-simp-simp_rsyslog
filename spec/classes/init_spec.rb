@@ -175,16 +175,6 @@ describe 'simp_rsyslog' do
           it { is_expected.not_to compile.with_all_deps }
         end
 
-        context 'with remote log servers and tls enabled and ips' do
-          let(:hieradata) { 'rsyslog_tls' }
-          let(:params) {{
-            :forward_logs => true,
-            :log_servers  => ['1.2.3.4'],
-          }}
-          it { is_expected.not_to compile.with_all_deps }
-        end
-
-
         context 'with remote log servers and tls enabled' do
           let(:hieradata) { 'rsyslog_tls' }
           let(:params) {{
@@ -195,7 +185,7 @@ describe 'simp_rsyslog' do
           it {
             is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with(
               {
-                :stream_driver_permitted_peers => ''
+                :stream_driver_permitted_peers => nil 
               })
           }
         end
@@ -206,8 +196,7 @@ describe 'simp_rsyslog' do
           let(:params) {{
             :forward_logs         => true,
             :log_servers          => ['logserver.my.domain'],
-            :failover_log_servers => ['failoverlogserver.my.domain'],
-            :permitted_peers      => "*.my.domain,this.system"
+            :failover_log_servers => ['1.2.3.4'],
           }}
           it {
             is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with(
