@@ -129,10 +129,9 @@ compatibility.
 If you wish to set your system up to forward logs to a set of remote log
 servers, in either the server or client case, you should use the following:
 
-```ruby
-include '::simp_rsyslog::log_shipper'
+```yaml
+simp_rsyslog::forward_logs: true
 ```
-
 This will use the `$simp_options::syslog::log_servers` and
 `$simp_options::syslog::failover_log_servers` variables to set the targets for
 your logs. Alternatively, you can specify the targets in Hiera directly.
