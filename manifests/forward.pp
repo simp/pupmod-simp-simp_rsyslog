@@ -22,12 +22,21 @@
 #     locally.
 #
 # @param permitted_peers
-#   If TLS is being used, permitted_peers sets StreamDriverPermittedPeers in the rsyslog rule.
-#   This is used to verify servers from the CN, AltDNSname, or fingerprint of certificate.
-#   If permitted peers is the undef and TLS is being used it will default to the names
-#   in the log_server and failover_log_server parameters.
-#   If you are using IP addresses for the log servers you will need to set this string.
-#   It expects a comma seperated list. Example:  "*.my.domain,server1.my.other.domain"
+#   If TLS is being used, ``permitted_peers`` sets the StreamDriverPermittedPeers
+#   directive in the forwarding rule actions for the remote rsyslog servers.
+#   When ``undef``, the default value computed by
+#   ``rsyslog::rule::remote::stream_driver_permitted_peers`` is used.
+#
+#   * You will need to set this value if any IP addresses appear in
+#     ``simp_rsyslog::log_servers`` or ``simp_rsyslog::failover_servers`` AND
+#     one or more of those servers is not in the same domain as the client.
+#
+#   * StreamDriverPermittedPeers is used to verify servers from the CN,
+#     AltDNSname, or fingerprint of the certificate.
+#
+#   * Rsyslog expects a comma separated list. For example:
+#     "*.my.domain,server1.my.other.domain"
+#
 #   @see https://www.rsyslog.com/doc/v8-stable/configuration/modules/omfwd.html
 #   for more information on how to set this.
 #

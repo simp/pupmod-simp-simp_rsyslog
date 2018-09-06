@@ -1,3 +1,0 @@
----
-simp_rsyslog::forward::enable_tls: true
-

@@ -199,6 +199,17 @@ default:
   script:
     - bundle exec rake beaker:suites[default]
 
+two_domains:
+  stage: acceptance
+  tags:
+    - beaker
+  <<: *cache_bundler
+  <<: *setup_bundler_env
+  variables:
+    PUPPET_VERSION: '4.10'
+  script:
+    - bundle exec rake beaker:suites[two_domains]
+
 default-fips:
   stage: acceptance
   tags:

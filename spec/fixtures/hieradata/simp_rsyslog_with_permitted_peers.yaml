@@ -1,0 +1,2 @@
+---
+simp_rsyslog::forward::permitted_peers: "*.my.domain,this.system"

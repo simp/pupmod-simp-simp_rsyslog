@@ -136,12 +136,6 @@ This will use the `$simp_options::syslog::log_servers` and
 `$simp_options::syslog::failover_log_servers` variables to set the targets for
 your logs. Alternatively, you can specify the targets in Hiera directly.
 
-If your system is a logserver make sure it is not in the list defined by
-global hiera variables $simp_options::syslog::log_servers
-or $simp_options::syslog::failover_log_servers`.  You can override these settings
-for the logserver in the logserver's  hosts hiera yaml file.
-
-
 TLS and TCP connections will be used for log forwarding for security purposes.
 
 ------------------------------------------------------------------------

@@ -1,7 +1,11 @@
 * Mon Aug 27 2018 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 0.3.0-0
-- Update forward.pp to pass in a value for StreamDriverPermittedPeers. This
-  will allow the use of remote syslog servers in different domains.  it will allow
-  users to override the default value if needed.
+- Update simp_rsyslog::forward to allow configuration of the
+  StreamDriverPermittedPeers directive in the forwarding rule actions
+  for the remote rsyslog servers.  This allows the user to set the correct
+  StreamDriverPermittedPeers value, when the default value is incorrect
+  (e.g., when IP addresses are used in simp_rsyslog::log_servers or
+  simp_rsyslog::failover_servers and one or more of those servers
+  is not in the same domain as the client).
 
 * Mon Aug 27 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 0.3.0-0
 - Remove redundant rules for sudosh since the puppet module will correctly take
