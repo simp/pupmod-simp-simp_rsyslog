@@ -1,0 +1,61 @@
+HOSTS:
+  el7server.my.domain:
+    roles:
+      - default
+      - rsyslog_server1
+      - rsyslog_server
+      - el7
+    platform:   el-7-x86_64
+    box:        centos/7
+    hypervisor: vagrant
+    yum_repos:
+      epel:
+        mirrorlist: 'https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch'
+        gpgkeys:
+          - https://getfedora.org/static/352C64E5.txt
+
+  el7client.my.domain:
+    roles:
+      - rsyslog_client
+      - el7
+    platform:   el-7-x86_64
+    box:        centos/7
+    hypervisor: vagrant
+    yum_repos:
+      epel:
+        mirrorlist: 'https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch'
+        gpgkeys:
+          - https://getfedora.org/static/352C64E5.txt
+
+  el6server.wayout.org:
+    roles:
+      - rsyslog_server2
+      - rsyslog_server
+      - el6
+    platform:   el-6-x86_64
+    box:        centos/6
+    hypervisor: vagrant
+    yum_repos:
+      epel:
+        mirrorlist: 'https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch'
+        gpgkeys:
+          - https://getfedora.org/static/0608B895.txt
+
+  el6client.wayout.org:
+    roles:
+      - rsyslog_client
+      - el6
+    platform:   el-6-x86_64
+    box:        centos/6
+    hypervisor: vagrant
+    yum_repos:
+      epel:
+        mirrorlist: 'https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch'
+        gpgkeys:
+          - https://getfedora.org/static/0608B895.txt
+
+CONFIG:
+  log_level: verbose
+  type:      aio
+  vagrant_memsize: 256
+  # vb_gui: true

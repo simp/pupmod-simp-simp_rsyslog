@@ -92,11 +92,12 @@ describe 'simp_rsyslog' do
           it {
             is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with(
              {
-              :rule                 => Regexp.new(Regexp.escape(default_security_relevant_logs)),
-              :dest                 => ['1.2.3.4'],
-              :failover_log_servers => [],
-              :dest_type            => 'tcp',
-              :stop_processing      => false
+              :rule                          => Regexp.new(Regexp.escape(default_security_relevant_logs)),
+              :dest                          => ['1.2.3.4'],
+              :failover_log_servers          => [],
+              :dest_type                     => 'tcp',
+              :stream_driver_permitted_peers => nil,
+              :stop_processing               => false
              }
             )
           }
@@ -117,11 +118,12 @@ describe 'simp_rsyslog' do
           it {
             is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with(
              {
-              :rule                 => "prifilt('*.*')",
-              :dest                 => ['1.2.3.4'],
-              :failover_log_servers => ['3.4.5.6'],
-              :dest_type            => 'tcp',
-              :stop_processing      => false
+              :rule                          => "prifilt('*.*')",
+              :dest                          => ['1.2.3.4'],
+              :failover_log_servers          => ['3.4.5.6'],
+              :dest_type                     => 'tcp',
+              :stream_driver_permitted_peers => nil,
+              :stop_processing               => false
              }
             )
           }
@@ -174,6 +176,22 @@ describe 'simp_rsyslog' do
           }}
           it { is_expected.not_to compile.with_all_deps }
         end
+
+        context 'with remote log servers and tls enabled and permitted_peers set' do
+          let(:hieradata) { 'simp_rsyslog_with_permitted_peers' }
+          let(:params) {{
+            :forward_logs         => true,
+            :log_servers          => ['logserver.my.domain'],
+            :failover_log_servers => ['1.2.3.4'],
+          }}
+          it {
+            is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with(
+              {
+                :stream_driver_permitted_peers => "*.my.domain,this.system"
+              })
+          }
+        end
+
       end
 
       context 'simp_rsyslog class that is a log server' do
