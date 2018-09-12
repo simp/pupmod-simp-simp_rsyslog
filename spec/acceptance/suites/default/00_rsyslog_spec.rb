@@ -6,12 +6,32 @@ describe 'simp_rsyslog' do
   let(:manifest) {
     <<-EOS
       include 'simp_rsyslog'
+      include 'iptables'
+      
+      iptables::listen::tcp_stateful { 'allow_sshd':
+        order => 8,
+        trusted_nets => ['ALL'],
+        dports => 22,
+      }
+
+      iptables::rule { 'log_pings':
+        order => 0,
+        content => '-A LOCAL-INPUT -p icmp -m icmp --icmp-type 8 -j LOG --log-prefix "IPT:"',
+        apply_to => 'ipv4',
+      }
+    EOS
+  }
+  let(:hieradata) {
+    <<-EOS
+---
+simp_options::firewall: true
     EOS
   }
 
   hosts_with_role(hosts, 'rsyslog_client').each do |host|
     context "local-only logging on #{host.name}" do
       it 'should configure the system without errors' do
+        set_hieradata_on(host, hieradata)
         apply_manifest_on(host, manifest, :catch_failures => true)
       end
 
@@ -28,30 +48,10 @@ describe 'simp_rsyslog' do
       end
 
       it 'should collect iptables log messages in /var/log/iptables.log' do
-        # kern facility messages cannot be created by a user via logger,
-        # because the facility is automatically changed to user. So, the
-        # only way to test this is to cause an actual iptables drop.
-        # TODO:  The code below should be replaced with use of the actual
-        #   iptables modules, a new drop rule for some port, and then nc
-        #   to try to open a connection to that port.
-        #
-        # Set up iptables to disallow icmp requests
-        on(host, 'iptables --list-rules')
-        on(host, 'iptables -N LOG_AND_DROP')
-        on(host, 'iptables -A LOG_AND_DROP -j LOG --log-prefix "IPT:"')
-        on(host, 'iptables -A LOG_AND_DROP -j DROP')
-        on(host, 'iptables -A INPUT -p icmp -m icmp --icmp-type 8 -j LOG_AND_DROP')
-        on(host, 'ping -c 1 `facter ipaddress`', :accept_all_exit_codes => true)
+        # Set up iptables to log icmp requests
+        on(host, 'ping -c 3 `facter ipaddress`', :accept_all_exit_codes => true)
         check = on(host, "grep -l 'IPT:' /var/log/iptables.log").stdout.strip
         expect(check).to eq('/var/log/iptables.log')
-
-        # clean up iptables rules to allow any future tests using the
-        # SIMP iptables module to start with a clean slate
-        on(host, 'iptables --delete LOG_AND_DROP -j LOG --log-prefix "IPT:"')
-        on(host, 'iptables --delete LOG_AND_DROP -j DROP')
-        on(host, 'iptables --delete INPUT -p icmp -m icmp --icmp-type 8 -j LOG_AND_DROP')
-        on(host, 'iptables -X LOG_AND_DROP')
-        on(host, 'iptables --list-rules')
       end
 
       it 'should collect other security relevant log messages in /var/log/secure' do

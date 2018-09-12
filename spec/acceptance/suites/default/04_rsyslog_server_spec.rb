@@ -22,6 +22,19 @@ describe 'simp_rsyslog' do
   let(:server_manifest) {
     <<-EOS
       include 'simp_rsyslog'
+      include 'iptables'
+
+      iptables::listen::tcp_stateful { 'allow_sshd':
+        order => 8,
+        trusted_nets => ['ALL'],
+        dports => 22,
+      }
+
+      iptables::rule { 'log_pings':
+        order => 0,
+        content => '-A LOCAL-INPUT -p icmp -m icmp --icmp-type 8 -j LOG --log-prefix "IPT:"',
+        apply_to => 'ipv4',
+      }
     EOS
   }
   let(:server_hieradata) {
@@ -32,6 +45,7 @@ simp_rsyslog::forward_logs: false
 rsyslog::tcp_server: true
 rsyslog::tls_tcp_server: false
 rsyslog::pki: false
+simp_options::firewall: true
     EOS
 }
 
@@ -49,23 +63,10 @@ rsyslog::pki: false
       end
 
       it 'should collect iptables messages to host-specific iptables.log' do
-        # Set up iptables to disallow icmp requests
-        on(server, 'iptables --list-rules')
-        on(server, 'iptables -N LOG_AND_DROP')
-        on(server, 'iptables -A LOG_AND_DROP -j LOG --log-prefix "IPT:"')
-        on(server, 'iptables -A LOG_AND_DROP -j DROP')
-        on(server, 'iptables -A INPUT -p icmp -m icmp --icmp-type 8 -j LOG_AND_DROP')
-        on(server, 'ping -c 1 `facter ipaddress`', :accept_all_exit_codes => true)
+        # Set up iptables to log icmp requests
+        on(server, 'ping -c 3 `facter ipaddress`', :accept_all_exit_codes => true)
         result = on(server, "grep -l 'IPT:' #{log_dir}/iptables.log")
         expect(result.stdout.strip).to eq("#{log_dir}/iptables.log")
-
-        # clean up iptables rules to allow any future tests using the
-        # SIMP iptables module to start with a clean slate
-        on(server, 'iptables --delete LOG_AND_DROP -j LOG --log-prefix "IPT:"')
-        on(server, 'iptables --delete LOG_AND_DROP -j DROP')
-        on(server, 'iptables --delete INPUT -p icmp -m icmp --icmp-type 8 -j LOG_AND_DROP')
-        on(server, 'iptables -X LOG_AND_DROP')
-        on(server, 'iptables --list-rules')
       end
 
       it 'should collect messages to host-specific files' do

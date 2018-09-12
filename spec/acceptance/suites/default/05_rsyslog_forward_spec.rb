@@ -25,6 +25,19 @@ describe 'simp_rsyslog' do
         let(:server_fqdn){ fact_on( server, 'fqdn' ) }
         let(:manifest) { <<-EOS
 include 'simp_rsyslog'
+include 'iptables'
+
+iptables::listen::tcp_stateful { 'allow_sshd':
+  order => 8,
+  trusted_nets => ['ALL'],
+  dports => 22,
+}
+
+iptables::rule { 'log_pings':
+  order => 0,
+  content => '-A LOCAL-INPUT -p icmp -m icmp --icmp-type 8 -j LOG --log-prefix "IPT:"',
+  apply_to => 'ipv4',
+}
 EOS
         }
         let(:client_hieradata) {
@@ -36,7 +49,7 @@ simp_options::syslog::log_servers:
 simp_rsyslog::forward_logs: true
 rsyslog::pki: false
 rsyslog::enable_tls_logging: false
-
+simp_options::firewall: true
 EOS
         }
 
@@ -51,6 +64,9 @@ simp_rsyslog::forward_logs: false
 rsyslog::tcp_server: true
 rsyslog::tls_tcp_server: false
 rsyslog::pki: false
+rsyslog::trusted_nets:
+  - 'ALL'
+simp_options::firewall: true
 EOS
         }
 
@@ -75,25 +91,12 @@ EOS
         end
 
         it "should collect #{client} iptables messages to host-specific, server iptables.log, as well as client iptables.log" do
-          # Set up iptables to disallow icmp requests
-          on(client, 'iptables --list-rules')
-          on(client, 'iptables -N LOG_AND_DROP')
-          on(client, 'iptables -A LOG_AND_DROP -j LOG --log-prefix "IPT:"')
-          on(client, 'iptables -A LOG_AND_DROP -j DROP')
-          on(client, 'iptables -A INPUT -p icmp -m icmp --icmp-type 8 -j LOG_AND_DROP')
-          on(client, 'ping -c 1 `facter ipaddress`', :accept_all_exit_codes => true)
+          # Set up iptables to log icmp requests
+          on(client, 'ping -c 3 `facter ipaddress`', :accept_all_exit_codes => true)
           result = on(server, "grep -l 'IPT:' #{client_log_dir}/iptables.log")
           expect(result.stdout.strip).to eq("#{client_log_dir}/iptables.log")
           result = on(client, "grep -l 'IPT:' /var/log/iptables.log")
           expect(result.stdout.strip).to eq('/var/log/iptables.log')
-
-          # clean up iptables rules to allow any future tests using the
-          # SIMP iptables module to start with a clean slate
-          on(client, 'iptables --delete LOG_AND_DROP -j LOG --log-prefix "IPT:"')
-          on(client, 'iptables --delete LOG_AND_DROP -j DROP')
-          on(client, 'iptables --delete INPUT -p icmp -m icmp --icmp-type 8 -j LOG_AND_DROP')
-          on(client, 'iptables -X LOG_AND_DROP')
-          on(client, 'iptables --list-rules')
         end
   
         it "should collect #{client} messages to host-specific, server logs, as well as client logs" do
