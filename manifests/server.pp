@@ -137,6 +137,8 @@
 # @param dyna_key
 #   The dyna_file rule that organizes the logs as they come in
 #
+#   @see https://www.rsyslog.com/doc/v8-stable/configuration/templates.html
+#
 # @author Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class simp_rsyslog::server (
