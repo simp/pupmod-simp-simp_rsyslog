@@ -12,31 +12,25 @@ EOS
   rsyslog_server2 = hosts_with_role(hosts,'rsyslog_server2').first
   let(:server1_fqdn){fact_on(rsyslog_server1, 'fqdn')}
   let(:server2_fqdn){fact_on(rsyslog_server2, 'fqdn')}
-  let(:server_hieradata) {
-      <<-EOS
----
-simp_options::syslog::log_servers:
-  - '#{server1_fqdn}'
-  - '#{server2_fqdn}'
-
-simp_rsyslog::is_server: true
-simp_rsyslog::forward_logs: false
-rsyslog::tcp_server: true
-rsyslog::tls_tcp_server: true
-rsyslog::pki: true
-rsyslog::app_pki_external_source: '/etc/pki/simp-testing/pki'
-# Need to let log servers accept from different domains.  The default
-# is just the domain of the log server.
-rsyslog::config::tls_input_tcp_server_stream_driver_permitted_peers:
-  - "*.wayout.org"
-  - "*.my.domain"
-EOS
-  }
+  let(:server_hieradata) {{
+    'simp_options::syslog::log_servers' => [ "#{server1_fqdn}", "#{server2_fqdn}"],
+    'rsyslog::app_pki_external_source'  => '/etc/pki/simp-testing/pki',
+    'rsyslog::pki'                      => true,
+    'simp_rsyslog::is_server'           => true,
+    'simp_rsyslog::forward_logs'        => false,
+    'rsyslog::tcp_server'               => true,
+    'rsyslog::tls_tcp_server'           => true,
+    # Need to let log servers accept from different domains.  The default
+    # is just the domain of the log server.
+    'rsyslog::config::tls_input_tcp_server_stream_driver_permitted_peers' => ['*.wayout.org' ,'*.my.domain']
+  }}
   # Set up the servers first so they can both receive from the clients
   hosts_with_role(hosts, 'rsyslog_server').each do |server|
 
     it "should configure server #{server} without errors" do
-      set_hieradata_on(server, server_hieradata)
+      create_remote_file(server, '/etc/puppetlabs/code/environments/production/data/common.yaml', server_hieradata.to_yaml)
+      on(server,'ln -s /etc/puppetlabs/code/environments/production/data /etc/puppetlabs/code/environments/production/hieradata')
+
       apply_manifest_on(server, manifest, :catch_failures => true)
     end
 
@@ -49,23 +43,18 @@ EOS
     hosts_with_role(hosts, 'rsyslog_client').each do |client|
       context "#{client} logging to the remote syslog server #{server} with default forwarding" do
         let(:client_fqdn){ fact_on( client, 'fqdn' ) }
-        let(:client_hieradata) {
-          <<-EOS
----
-simp_options::syslog::log_servers:
-  - '#{server1_fqdn}'
-  - '#{server2_fqdn}'
-rsyslog::app_pki_external_source: '/etc/pki/simp-testing/pki'
-simp_rsyslog::forward_logs: true
-rsyslog::pki: true
-rsyslog::enable_tls_logging: true
-         EOS
-        }
+        let(:client_hieradata) {{
+          'simp_options::syslog::log_servers' => ["#{server1_fqdn}","#{server2_fqdn}"],
+          'rsyslog::app_pki_external_source'  => '/etc/pki/simp-testing/pki',
+          'rsyslog::pki'                      => true,
+          'rsyslog::enable_tls_logging'       => true,
+          'simp_rsyslog::forward_logs'        => true
+        }}
 
         let(:client_log_dir) { "/var/log/hosts/#{client_fqdn}" }
 
         it "should configure client #{client} without errors" do
-          set_hieradata_on(client, client_hieradata)
+          create_remote_file(client, '/etc/puppetlabs/code/environments/production/data/common.yaml', client_hieradata.to_yaml)
           apply_manifest_on(client, manifest, :catch_failures => true)
         end
 
@@ -91,8 +80,12 @@ rsyslog::enable_tls_logging: true
             on(client,"logger #{options} #{message}")
           end
 
-          wait_for_log_message(server, File.join(client_log_dir, default_test_array[-1][2]),
-            default_test_array[-1][1])
+          wait_for_log_message(
+            server,
+            File.join(client_log_dir,
+            default_test_array[-1][2]),
+            default_test_array[-1][1]
+          )
 
           # verify messages are forwarded and persisted
           default_test_array.each do |options,message,server_logfile|
