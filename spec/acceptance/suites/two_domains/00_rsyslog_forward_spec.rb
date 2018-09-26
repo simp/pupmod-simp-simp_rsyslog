@@ -28,6 +28,7 @@ EOS
   hosts_with_role(hosts, 'rsyslog_server').each do |server|
 
     it "should configure server #{server} without errors" do
+      on(server, 'mkdir -p /etc/puppetlabs/code/environments/production/{hiera,}data')
       create_remote_file(server, '/etc/puppetlabs/code/environments/production/data/common.yaml', server_hieradata.to_yaml)
       on(server,'ln -s /etc/puppetlabs/code/environments/production/data /etc/puppetlabs/code/environments/production/hieradata')
 
@@ -54,7 +55,9 @@ EOS
         let(:client_log_dir) { "/var/log/hosts/#{client_fqdn}" }
 
         it "should configure client #{client} without errors" do
+          on(client, 'mkdir -p /etc/puppetlabs/code/environments/production/{hiera,}data')
           create_remote_file(client, '/etc/puppetlabs/code/environments/production/data/common.yaml', client_hieradata.to_yaml)
+          on(client,'ln -s /etc/puppetlabs/code/environments/production/data /etc/puppetlabs/code/environments/production/hieradata')
           apply_manifest_on(client, manifest, :catch_failures => true)
         end
 
