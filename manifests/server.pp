@@ -131,6 +131,12 @@
 #
 #   * Has no effect if ``add_logrotate_rule`` is ``false``
 #
+# @param logdir
+#   The directory where the server will send collected logs
+#
+# @param dyna_key
+#   The dyna_file rule that organizes the logs as they come in
+#
 # @author Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class simp_rsyslog::server (
@@ -159,12 +165,14 @@ class simp_rsyslog::server (
   Boolean                                   $add_logrotate_rule             = true,
   Enum['daily','weekly','monthly','yearly'] $rotate_period                  = 'weekly',
   Integer                                   $rotate_preserve                = 12,
-  Optional[Integer]                         $rotate_size                    = undef
+  Optional[Integer]                         $rotate_size                    = undef,
+  Stdlib::AbsolutePath                      $logdir                         = '/var/log/hosts',
+  String                                    $dyna_key                       = '%HOSTNAME%'
 ) {
+  assert_private()
+
   include '::rsyslog'
   include '::rsyslog::server'
-
-  assert_private()
 
   if $server_conf {
     rsyslog::rule::drop { '0_default':
@@ -172,9 +180,7 @@ class simp_rsyslog::server (
     }
   }
   else {
-    $logdir = '/var/log/hosts'
-    $file_base = "${logdir}/%HOSTNAME%"
-
+    $file_base = "${logdir}/${dyna_key}"
 
     # Up front because they are the fastest to process
     if $process_boot_rules {

@@ -203,7 +203,11 @@ describe 'simp_rsyslog' do
           it { is_expected.to contain_class('simp_rsyslog::server') }
           it { is_expected.to contain_rsyslog__rule__local('10_00_default_boot') }
           it { is_expected.to contain_rsyslog__rule__local('10_00_default_mail') }
-          it { is_expected.to contain_rsyslog__rule__local('10_00_default_cron') }
+          it { is_expected.to contain_rsyslog__rule__local('10_00_default_cron').with({
+            'rule'            => "prifilt('cron.*')",
+            'dyna_file'       => '/var/log/hosts/%HOSTNAME%/cron.log',
+            'stop_processing' => true,
+          }) }
           it { is_expected.to contain_rsyslog__rule__local('10_00_default_emerg') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_sudosh') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_tlog') }
@@ -230,6 +234,19 @@ describe 'simp_rsyslog' do
           it { is_expected.to contain_class('logrotate') }
           it { is_expected.to create_logrotate__rule('simp_rsyslog_server_profile').with_log_files(['/var/log/hosts/*/*.log' ]) }
           it { is_expected.to create_logrotate__rule('simp_rsyslog_server_profile').with_lastaction_restart_logger(true) }
+        end
+
+        context 'simp_rsyslog class that has moved the logdir' do
+          let(:params) {{
+            :is_server => true,
+          }}
+          let(:hieradata) { 'rsyslog_server_logdir' }
+          it_behaves_like 'a structured module'
+          it { is_expected.to contain_rsyslog__rule__local('10_00_default_cron').with({
+            'rule'            => "prifilt('cron.*')",
+            'dyna_file'       => '/opt/logs/%DOMAIN%/cron.log',
+            'stop_processing' => true,
+          }) }
         end
 
         context 'simp_rsyslog class that is a log server with all features disabled' do
