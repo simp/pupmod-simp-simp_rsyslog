@@ -30,7 +30,7 @@ EOS
     it "should configure server #{server} without errors" do
       on(server, 'mkdir -p /etc/puppetlabs/code/environments/production/{hiera,}data')
       create_remote_file(server, '/etc/puppetlabs/code/environments/production/data/common.yaml', server_hieradata.to_yaml)
-      on(server,'ln -s /etc/puppetlabs/code/environments/production/data /etc/puppetlabs/code/environments/production/hieradata')
+      on(server,'rm -rf /etc/puppetlabs/code/environments/production/hieradata && ln -s /etc/puppetlabs/code/environments/production/data /etc/puppetlabs/code/environments/production/hieradata')
 
       apply_manifest_on(server, manifest, :catch_failures => true)
     end
@@ -57,7 +57,7 @@ EOS
         it "should configure client #{client} without errors" do
           on(client, 'mkdir -p /etc/puppetlabs/code/environments/production/{hiera,}data')
           create_remote_file(client, '/etc/puppetlabs/code/environments/production/data/common.yaml', client_hieradata.to_yaml)
-          on(client,'ln -s /etc/puppetlabs/code/environments/production/data /etc/puppetlabs/code/environments/production/hieradata')
+          on(client,'rm -rf /etc/puppetlabs/code/environments/production/hieradata && ln -s /etc/puppetlabs/code/environments/production/data /etc/puppetlabs/code/environments/production/hieradata')
           apply_manifest_on(client, manifest, :catch_failures => true)
         end
 
