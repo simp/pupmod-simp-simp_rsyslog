@@ -138,6 +138,7 @@
 #   The dyna_file rule that organizes the logs as they come in
 #
 #   @see https://www.rsyslog.com/doc/v8-stable/configuration/templates.html
+#   @see https://www.rsyslog.com/doc/v8-stable/configuration/properties.html
 #
 # @author Trevor Vaughan <tvaughan@onyxpoint.com>
 #

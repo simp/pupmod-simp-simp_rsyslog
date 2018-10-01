@@ -244,7 +244,7 @@ describe 'simp_rsyslog' do
           it_behaves_like 'a structured module'
           it { is_expected.to contain_rsyslog__rule__local('10_00_default_cron').with({
             'rule'            => "prifilt('cron.*')",
-            'dyna_file'       => '/opt/logs/%DOMAIN%/cron.log',
+            'dyna_file'       => '/opt/logs/%SYSLOGFACILITY-TEXT%/cron.log',
             'stop_processing' => true,
           }) }
         end
