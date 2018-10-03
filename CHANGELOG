@@ -1,7 +1,7 @@
 * Tue Sep 11 2018 Nick Miller <nick.miller@onyxpoint.com> - 0.3.0-0
 - Removed hardcoded strings
   - Make directory where logs are gathered configurable
-  - Also make rules that organizes them configuarable
+  - Also make rules that organizes them configurable
 - Update systemd fixtures and CI assets
 - Add support for Puppet 5 and OEL
 - Use iptables module in acceptance tests instead of hand generated rules
