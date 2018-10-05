@@ -1,0 +1,3 @@
+---
+simp_rsyslog::server::logdir: /opt/logs
+simp_rsyslog::server::dyna_key: '%SYSLOGFACILITY-TEXT%'
