@@ -30,6 +30,8 @@ EOS
     it "should configure server #{server} without errors" do
       set_hieradata_on(server, server_hieradata)
       apply_manifest_on(server, manifest, :catch_failures => true)
+      #Need to run twice, once to install and set fact and then configure
+      apply_manifest_on(server, manifest, :catch_failures => true)
     end
 
     it "should configure #{server} idempotently" do
@@ -53,6 +55,8 @@ EOS
 
         it "should configure client #{client} without errors" do
           set_hieradata_on(client, client_hieradata)
+          apply_manifest_on(client, manifest, :catch_failures => true)
+          #Need to run twice, once to install and set fact and then configure
           apply_manifest_on(client, manifest, :catch_failures => true)
         end
 
