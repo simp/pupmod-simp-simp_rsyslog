@@ -56,6 +56,8 @@ simp_options::firewall: true
       it 'should configure the server without errors' do
         set_hieradata_on(server, server_hieradata)
         apply_manifest_on(server, server_manifest, :catch_failures => true)
+        # Rsyslog needs to run twice to install then configure rsyslog
+        apply_manifest_on(server, server_manifest, :catch_failures => true)
       end
 
       it 'should configure the servers idempotently' do

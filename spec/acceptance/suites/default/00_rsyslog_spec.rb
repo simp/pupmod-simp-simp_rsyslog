@@ -7,7 +7,7 @@ describe 'simp_rsyslog' do
     <<-EOS
       include 'simp_rsyslog'
       include 'iptables'
-      
+
       iptables::listen::tcp_stateful { 'allow_sshd':
         order => 8,
         trusted_nets => ['ALL'],
@@ -32,6 +32,9 @@ simp_options::firewall: true
     context "local-only logging on #{host.name}" do
       it 'should configure the system without errors' do
         set_hieradata_on(host, hieradata)
+        apply_manifest_on(host, manifest, :catch_failures => true)
+        #rsyslog setup requires 2 passes first install rsyslog
+        #then configure rsyslog
         apply_manifest_on(host, manifest, :catch_failures => true)
       end
 

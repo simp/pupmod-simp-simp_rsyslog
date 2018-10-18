@@ -1,3 +1,6 @@
+* Wed Oct 17 2018 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 0.3.0-0
+- Updated acceptance test to run rsyslog twice then check for idempotence.
+
 * Tue Sep 11 2018 Nick Miller <nick.miller@onyxpoint.com> - 0.3.0-0
 - Removed hardcoded strings
   - Make directory where logs are gathered configurable
