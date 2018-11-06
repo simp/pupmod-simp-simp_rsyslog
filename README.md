@@ -175,8 +175,7 @@ supported operating systems, Puppet versions, and module dependencies.
 
 ## Development
 
-Please read our [Contribution Guide](http://simp.readthedocs.io/en/master/contributors_guide/index.html)
-and visit our [Developer Wiki](https://simp-project.atlassian.net/wiki/display/SD/SIMP+Development+Home)
+Please read our [Contribution Guide](http://simp.readthedocs.io/en/master/contributors_guide/index.html).
 
 If you find any issues, they can be submitted to our
 [JIRA](https://simp-project.atlassian.net).

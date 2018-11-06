@@ -12,7 +12,7 @@ HOSTS:
       - rsyslog_server
       - el7
     platform:   el-7-x86_64
-    box:        elastic/oel-7-x86_64
+    box:        onyxpoint/oel-7-x86_64
     hypervisor: <%= hypervisor %>
     yum_repos:
       epel:
@@ -25,7 +25,7 @@ HOSTS:
       - rsyslog_client
       - el7
     platform:   el-7-x86_64
-    box:        elastic/oel-7-x86_64
+    box:        onyxpoint/oel-7-x86_64
     hypervisor: <%= hypervisor %>
     yum_repos:
       epel:
@@ -38,7 +38,7 @@ HOSTS:
       - rsyslog_server
       - el6
     platform:   el-6-x86_64
-    box:        elastic/oel-6-x86_64
+    box:        onyxpoint/oel-6-x86_64
     hypervisor: <%= hypervisor %>
     yum_repos:
       epel:
@@ -51,7 +51,7 @@ HOSTS:
       - rsyslog_client
       - el6
     platform:   el-6-x86_64
-    box:        elastic/oel-6-x86_64
+    box:        onyxpoint/oel-6-x86_64
     hypervisor: <%= hypervisor %>
     yum_repos:
       epel:
