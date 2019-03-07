@@ -96,7 +96,7 @@ filesystem.
 
 ### Centralized Logging
 
-While we highly recommend [using ELG](https://simp.readthedocs.io/en/master/user_guide/HOWTO/Central_Log_Collection/Logstash.html) for collecting your logs, we understand that this
+While we highly recommend [using ELG](https://simp.readthedocs.io/en/stable/user_guide/HOWTO/Central_Log_Collection/Logstash.html) for collecting your logs, we understand that this
 is not practical for all situations.
 
 If you wish to collect logs from remote hosts, you can do the following:
@@ -175,7 +175,7 @@ supported operating systems, Puppet versions, and module dependencies.
 
 ## Development
 
-Please read our [Contribution Guide](http://simp.readthedocs.io/en/master/contributors_guide/index.html).
+Please read our [Contribution Guide](https://simp.readthedocs.io/en/stable/contributors_guide/index.html).
 
 If you find any issues, they can be submitted to our
 [JIRA](https://simp-project.atlassian.net).
