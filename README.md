@@ -96,7 +96,8 @@ filesystem.
 
 ### Centralized Logging
 
-While we highly recommend [using ELG](https://simp.readthedocs.io/en/stable/user_guide/HOWTO/Central_Log_Collection/Logstash.html) for collecting your logs, we understand that this
+While we highly recommend [using ELG](https://simp.readthedocs.io/en/stable/user_guide/HOWTO/Central_Log_Collection/Logstash.html)
+for collecting your logs in SIMP systems that support the ELG stack, we understand that this
 is not practical for all situations.
 
 If you wish to collect logs from remote hosts, you can do the following:
