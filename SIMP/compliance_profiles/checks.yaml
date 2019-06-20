@@ -30,10 +30,11 @@ checks:
         msg_regex: []
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AU-2:a: true
-      nist_800_53_rev4:AU-2:d: true
-      nist_800_53_rev4:AU-3:2: true
-      nist_800_53_rev4:AU-14: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AU-2:a: true
+      nist_800_53:rev4:AU-2:d: true
+      nist_800_53:rev4:AU-3:2: true
+      nist_800_53:rev4:AU-14: true
       disa_stig: true
       RHEL-07-030310: true
       RHEL-07-030620: true
@@ -42,7 +43,7 @@ checks:
       cci:CCI-002234: true
       cci:CCI-000172: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AU-2:a
       - AU-2:d
       - AU-3:2
@@ -63,13 +64,14 @@ checks:
       value: tcp
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:SI-13: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:SI-13: true
       disa_stig: true
       RHEL-07-030200: true
       SRG-OS-000205-GPOS-00083: true
       cci:CCI-001312: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - SI-13
       disa_stig:
       - RHEL-07-030200
@@ -81,10 +83,11 @@ checks:
       value: true
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AU-4: true
-      nist_800_53_rev4:AU-11: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AU-4: true
+      nist_800_53:rev4:AU-11: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AU-4
       - AU-11
   oval:com.puppet.forge.simp.simp_rsyslog.server.rotate_period:
@@ -93,14 +96,15 @@ checks:
       value: weekly
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AU-4: true
-      nist_800_53_rev4:AU-11: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AU-4: true
+      nist_800_53:rev4:AU-11: true
       disa_stig: true
       RHEL-07-030320: true
       SRG-OS-000341-GPOS-00132: true
       cci:CCI-001849: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AU-4
       - AU-11
       disa_stig:
@@ -113,14 +117,15 @@ checks:
       value: 12
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AU-4: true
-      nist_800_53_rev4:AU-11: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AU-4: true
+      nist_800_53:rev4:AU-11: true
       disa_stig: true
       RHEL-07-030320: true
       SRG-OS-000341-GPOS-00132: true
       cci:CCI-001849: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AU-4
       - AU-11
       disa_stig:
