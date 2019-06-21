@@ -4,9 +4,7 @@ fixtures:
     auditd: https://github.com/simp/pupmod-simp-auditd.git
     augeasproviders_core: https://github.com/simp/augeasproviders_core.git
     augeasproviders_grub: https://github.com/simp/augeasproviders_grub.git
-    compliance_markup:
-      repo: "https://github.com/simp/pupmod-simp-compliance_markup"
-      branch: "testing_hotfix_06062019"
+    compliance_markup: https://github.com/simp/pupmod-simp-compliance_markup
     iptables: https://github.com/simp/pupmod-simp-iptables.git
     logrotate: https://github.com/simp/pupmod-simp-logrotate.git
     pki: https://github.com/simp/pupmod-simp-pki.git
