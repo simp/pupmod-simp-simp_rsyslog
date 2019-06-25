@@ -14,3 +14,6 @@ compliance_markup::report_types:
 # do something different based on your test requirements
 compliance_markup::enforcement:
   - 'disa_stig'
+simp_rsyslog::is_server: true
+simp_rsyslog::forward_logs: true
+simp_rsyslog::log_servers: ['10.0.2.15']
