@@ -26,5 +26,3 @@ simp_options::dns::servers :
 simp_rsyslog::forward_logs: true
 simp_rsyslog::is_server: true
 simp_rsyslog::log_servers: ['puppet.foo.bar']
-sssd::domains :
-  - 'LOCAL'
