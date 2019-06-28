@@ -19,7 +19,8 @@ describe 'compliance_markup', type: :class do
   # defaults
   expected_classes = [
     'simp_rsyslog',
-    'simp_rsyslog::forward'
+    'simp_rsyslog::forward',
+    'simp_options'
   ]
 
   allowed_failures = {
