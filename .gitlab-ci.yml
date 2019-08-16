@@ -184,6 +184,13 @@ pup5.5.10-oel-fips:
   script:
     - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,oel]'
 
+pup5.5.10-two_domains:
+  <<: *pup_5_5_10
+  <<: *acceptance_base
+  script:
+    - 'bundle exec rake spec_clean'
+    - 'bundle exec rake beaker:suites[two_domains]'
+
 pup6:
   <<: *pup_6
   <<: *acceptance_base
@@ -195,3 +202,10 @@ pup6-fips:
   <<: *acceptance_base
   script:
     - 'BEAKER_fips=yes bundle exec rake beaker:suites'
+
+pup6-two_domains:
+  <<: *pup_6
+  <<: *acceptance_base
+  script:
+    - 'bundle exec rake spec_clean'
+    - 'bundle exec rake beaker:suites[two_domains]'

@@ -15,11 +15,6 @@ HOSTS:
     platform:   el-7-x86_64
     box:        centos/7
     hypervisor: <%= hypervisor %>
-    yum_repos:
-      epel:
-        mirrorlist: 'https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch'
-        gpgkeys:
-          - https://getfedora.org/static/352C64E5.txt
 
   el7client.my.domain:
     roles:
@@ -28,11 +23,6 @@ HOSTS:
     platform:   el-7-x86_64
     box:        centos/7
     hypervisor: <%= hypervisor %>
-    yum_repos:
-      epel:
-        mirrorlist: 'https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch'
-        gpgkeys:
-          - https://getfedora.org/static/352C64E5.txt
 
   el6server.wayout.org:
     roles:
@@ -42,11 +32,6 @@ HOSTS:
     platform:   el-6-x86_64
     box:        centos/6
     hypervisor: <%= hypervisor %>
-    yum_repos:
-      epel:
-        mirrorlist: 'https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch'
-        gpgkeys:
-          - https://getfedora.org/static/0608B895.txt
 
   el6client.wayout.org:
     roles:
@@ -55,11 +40,6 @@ HOSTS:
     platform:   el-6-x86_64
     box:        centos/6
     hypervisor: <%= hypervisor %>
-    yum_repos:
-      epel:
-        mirrorlist: 'https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch'
-        gpgkeys:
-          - https://getfedora.org/static/0608B895.txt
 
 CONFIG:
   log_level: verbose
