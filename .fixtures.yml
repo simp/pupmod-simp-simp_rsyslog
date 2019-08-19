@@ -18,9 +18,7 @@ fixtures:
     simpcat: https://github.com/simp/pupmod-simp-simpcat.git
     simplib: https://github.com/simp/pupmod-simp-simplib.git
     stdlib: https://github.com/simp/puppetlabs-stdlib.git
-    systemd:
-      repo: https://github.com/simp/puppet-systemd.git
-      branch: simp-master
+    systemd: https://github.com/simp/puppet-systemd.git
     tcpwrappers: https://github.com/simp/pupmod-simp-tcpwrappers.git
   symlinks:
     simp_rsyslog: "#{source_dir}"
