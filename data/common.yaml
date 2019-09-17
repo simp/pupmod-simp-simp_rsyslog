@@ -1,0 +1,4 @@
+---
+lookup_options:
+  simp_rsyslog::log_collection:
+    merge: deep
