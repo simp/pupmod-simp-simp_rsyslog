@@ -4,21 +4,6 @@ test_name 'simp_rsyslog profile'
 
 
 describe 'simp_rsyslog' do
-  before(:context) do
-    hosts.each do |host|
-      interfaces = fact_on(host, 'interfaces').strip.split(',')
-      interfaces.delete_if do |x|
-        x =~ /^lo/
-      end
-
-      interfaces.each do |iface|
-        if fact_on(host, "ipaddress_#{iface}").strip.empty?
-          on(host, "ifup #{iface}", :accept_all_exit_codes => true)
-        end
-      end
-    end
-  end
-
   let(:server_manifest) {
     <<-EOS
       include 'simp_rsyslog'
@@ -29,25 +14,21 @@ describe 'simp_rsyslog' do
         trusted_nets => ['ALL'],
         dports => 22,
       }
-
-      iptables::rule { 'log_pings':
-        order => 0,
-        content => '-A LOCAL-INPUT -p icmp -m icmp --icmp-type 8 -j LOG --log-prefix "IPT:"',
-        apply_to => 'ipv4',
-      }
     EOS
   }
   let(:server_hieradata) {
-    <<-EOS
----
-simp_rsyslog::is_server: true
-simp_rsyslog::forward_logs: false
-rsyslog::tcp_server: true
-rsyslog::tls_tcp_server: false
-rsyslog::pki: false
-simp_options::firewall: true
+    <<~EOS
+      ---
+      simp_rsyslog::is_server: true
+      simp_rsyslog::forward_logs: false
+      rsyslog::tcp_server: true
+      rsyslog::tls_tcp_server: false
+      rsyslog::pki: false
+      simp_options::firewall: true
+      iptables::rules::base::allow_ping: false
+      iptables::firewalld::shim::log_denied: all
     EOS
-}
+  }
 
   hosts_with_role( hosts, 'rsyslog_server' ).each do |server|
     context "#{server} logging to the co-resident syslog server" do
@@ -64,11 +45,11 @@ simp_options::firewall: true
         apply_manifest_on(server, server_manifest, :catch_changes => true)
       end
 
-      it 'should collect iptables messages to host-specific iptables.log' do
+      it 'should collect firewall messages to host-specific logs' do
         # Set up iptables to log icmp requests
-        on(server, 'ping -c 3 `facter ipaddress`', :accept_all_exit_codes => true)
-        result = on(server, "grep -l 'IPT:' #{log_dir}/iptables.log")
-        expect(result.stdout.strip).to eq("#{log_dir}/iptables.log")
+        expect(Net::Ping::External.new(server.ip).ping?).to be false
+        result = on(server, "grep -l 'TYPE=8' #{log_dir}/{iptables,firewall}.log", :accept_all_exit_codes => true)
+        expect(result.stdout.strip).to match(%r{^#{log_dir}/.+\.log})
       end
 
       it 'should collect messages to host-specific files' do

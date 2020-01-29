@@ -1,3 +1,7 @@
+* Mon Feb 03 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 0.5.0-0
+- Add EL8 Support
+- Add support for firewalld log message collection
+
 * Tue Sep 17 2019 Steven Pritchard <steven.pritchard@onyxpoint.com> - 0.5.0-0
 - Deep merge simp_rsyslog::log_collection
 

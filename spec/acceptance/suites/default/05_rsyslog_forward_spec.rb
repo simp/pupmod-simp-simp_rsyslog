@@ -3,71 +3,56 @@ require 'spec_helper_acceptance'
 test_name 'simp_rsyslog profile'
 
 describe 'simp_rsyslog' do
-  before(:context) do
-    hosts.each do |host|
-      interfaces = fact_on(host, 'interfaces').strip.split(',')
-      interfaces.delete_if do |x|
-        x =~ /^lo/
-      end
-
-      interfaces.each do |iface|
-        if fact_on(host, "ipaddress_#{iface}").strip.empty?
-          on(host, "ifup #{iface}", :accept_all_exit_codes => true)
-        end
-      end
-    end
-  end
-
   hosts_with_role( hosts, 'rsyslog_server' ).each do |server|
     hosts_with_role(hosts, 'rsyslog_client').each do |client|
       context "#{client} logging to the remote syslog server #{server} with default forwarding" do
         let(:client_fqdn){ fact_on( client, 'fqdn' ) }
         let(:server_fqdn){ fact_on( server, 'fqdn' ) }
-        let(:manifest) { <<-EOS
-include 'simp_rsyslog'
-include 'iptables'
+        let(:manifest) {
+          <<~EOS
+          include 'simp_rsyslog'
+          include 'iptables'
 
-iptables::listen::tcp_stateful { 'allow_sshd':
-  order => 8,
-  trusted_nets => ['ALL'],
-  dports => 22,
-}
-
-iptables::rule { 'log_pings':
-  order => 0,
-  content => '-A LOCAL-INPUT -p icmp -m icmp --icmp-type 8 -j LOG --log-prefix "IPT:"',
-  apply_to => 'ipv4',
-}
-EOS
+          iptables::listen::tcp_stateful { 'allow_sshd':
+            order => 8,
+            trusted_nets => ['ALL'],
+            dports => 22,
+          }
+          EOS
         }
-        let(:client_hieradata) {
-    <<-EOS
----
-simp_options::syslog::log_servers:
-  - '#{server_fqdn}'
 
-simp_rsyslog::forward_logs: true
-rsyslog::pki: false
-rsyslog::enable_tls_logging: false
-simp_options::firewall: true
-EOS
+        let(:client_hieradata) {
+          <<~EOS
+          ---
+          simp_options::syslog::log_servers:
+            - '#{server_fqdn}'
+
+          simp_rsyslog::forward_logs: true
+          rsyslog::pki: false
+          rsyslog::enable_tls_logging: false
+          simp_options::firewall: true
+          iptables::rules::base::allow_ping: false
+          iptables::firewalld::shim::log_denied: all
+          EOS
         }
 
         let(:server_hieradata) {
-    <<-EOS
----
-simp_options::syslog::log_servers:
-  - '#{server_fqdn}'
+          <<~EOS
+          ---
+          simp_options::syslog::log_servers:
+            - '#{server_fqdn}'
 
-simp_rsyslog::is_server: true
-simp_rsyslog::forward_logs: false
-rsyslog::tcp_server: true
-rsyslog::tls_tcp_server: false
-rsyslog::pki: false
-rsyslog::trusted_nets:
-  - 'ALL'
-simp_options::firewall: true
-EOS
+          simp_rsyslog::is_server: true
+          simp_rsyslog::forward_logs: false
+          rsyslog::tcp_server: true
+          rsyslog::tls_tcp_server: false
+          rsyslog::pki: false
+          rsyslog::trusted_nets:
+            - 'ALL'
+          simp_options::firewall: true
+          iptables::rules::base::allow_ping: false
+          iptables::firewalld::shim::log_denied: all
+          EOS
         }
 
         let(:client_log_dir) { "/var/log/hosts/#{client_fqdn}" }
@@ -90,15 +75,15 @@ EOS
           apply_manifest_on(client, manifest, :catch_changes => true)
         end
 
-        it "should collect #{client} iptables messages to host-specific, server iptables.log, as well as client iptables.log" do
+        it "should collect #{client} firewall messages to host-specific, server, as well as client log files" do
           # Set up iptables to log icmp requests
-          on(client, 'ping -c 3 `facter ipaddress`', :accept_all_exit_codes => true)
-          result = on(server, "grep -l 'IPT:' #{client_log_dir}/iptables.log")
-          expect(result.stdout.strip).to eq("#{client_log_dir}/iptables.log")
-          result = on(client, "grep -l 'IPT:' /var/log/iptables.log")
-          expect(result.stdout.strip).to eq('/var/log/iptables.log')
+          expect(Net::Ping::External.new(client.ip).ping?).to be false
+          result = on(server, "grep -l 'TYPE=8' #{client_log_dir}/{iptables,firewall}.log", :accept_all_exit_codes => true)
+          expect(result.stdout.strip).to match(%r{#{client_log_dir}/.+\.log})
+          result = on(client, "grep -l 'TYPE=8' /var/log/{iptables,firewall}.log", :accept_all_exit_codes => true)
+          expect(result.stdout.strip).to match(%r{^/var/log/.+\.log$})
         end
-  
+
         it "should collect #{client} messages to host-specific, server logs, as well as client logs" do
           # Each entry in this array is [log_options, log_message, server_logfile, client_logfile]
           # server_logfile is the relative log file in the client-specific directory;
@@ -156,7 +141,7 @@ EOS
             if client_logfile
               # Ensure messages are still logged on the client
               result = on(client, "grep -l '#{message}' /var/log/#{client_logfile}")
-              if (message == 'CLIENT_FORWARDED_NEWS_CRIT_LOG' or 
+              if (message == 'CLIENT_FORWARDED_NEWS_CRIT_LOG' or
                   message == 'CLIENT_FORWARDED_UUCP_CRIT_LOG')
                 # logged to /var/log/spooler AND /var/log/messages because of syslog module bug
                 expect(result.stdout.strip).to match(/\/var\/log\/#{client_logfile}/)

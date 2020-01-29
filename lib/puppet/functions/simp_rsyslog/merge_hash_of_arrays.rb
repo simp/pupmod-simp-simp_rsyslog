@@ -4,7 +4,7 @@ Puppet::Functions.create_function(:'simp_rsyslog::merge_hash_of_arrays') do
   # @param first_hash
   #   First hash to be merged.  Must be a Hash of Arrays.
   #
-  # @param additional_hashes
+  # @param additional_hashes_to_merge
   #   1 more more additional hashes to be merged.  Each must be a Hash
   #   of Arrays.
   #

@@ -13,18 +13,14 @@ describe 'simp_rsyslog' do
         trusted_nets => ['ALL'],
         dports => 22,
       }
-
-      iptables::rule { 'log_pings':
-        order => 0,
-        content => '-A LOCAL-INPUT -p icmp -m icmp --icmp-type 8 -j LOG --log-prefix "IPT:"',
-        apply_to => 'ipv4',
-      }
     EOS
   }
   let(:hieradata) {
-    <<-EOS
----
-simp_options::firewall: true
+    <<~EOS
+      ---
+      simp_options::firewall: true
+      iptables::firewalld::shim::log_denied: all
+      iptables::rules::base::allow_ping: false
     EOS
   }
 
@@ -50,11 +46,11 @@ simp_options::firewall: true
         on(host, 'grep -r LOCAL_ONLY_AUDISPD_DROP /var/log', :acceptable_exit_codes => [1])
       end
 
-      it 'should collect iptables log messages in /var/log/iptables.log' do
+      it 'should collect firewall log messages in /var/log/{iptables,firewall}.log' do
         # Set up iptables to log icmp requests
-        on(host, 'ping -c 3 `facter ipaddress`', :accept_all_exit_codes => true)
-        check = on(host, "grep -l 'IPT:' /var/log/iptables.log").stdout.strip
-        expect(check).to eq('/var/log/iptables.log')
+        expect(Net::Ping::External.new(host.ip).ping?).to be false
+        check = on(host, "grep -l 'TYPE=8' /var/log/{iptables,firewall}.log", :accept_all_exit_codes => true).stdout.strip
+        expect(check).to match(%r{^/var/log/.+\.log})
       end
 
       it 'should collect other security relevant log messages in /var/log/secure' do

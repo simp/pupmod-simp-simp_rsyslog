@@ -4,9 +4,10 @@ test_name 'simp_rsyslog profile'
 
 describe 'simp_rsyslog' do
 
-  let(:manifest) { <<-EOS
-include 'simp_rsyslog'
-EOS
+  let(:manifest) {
+    <<-EOS
+      include 'simp_rsyslog'
+    EOS
   }
   rsyslog_server1 = hosts_with_role(hosts,'rsyslog_server1').first
   rsyslog_server2 = hosts_with_role(hosts,'rsyslog_server2').first

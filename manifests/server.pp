@@ -1,7 +1,6 @@
 # **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**
 #
-# This class provides a general purpose log server suitable for centralized
-# logging.
+# @summary This class provides a general purpose log server suitable for centralized logging.
 #
 # It is **highly** recommended that you look to use the Logstash module at this
 # point.
@@ -174,8 +173,8 @@ class simp_rsyslog::server (
 ) {
   assert_private()
 
-  include '::rsyslog'
-  include '::rsyslog::server'
+  include 'rsyslog'
+  include 'rsyslog::server'
 
   if $server_conf {
     rsyslog::rule::drop { '0_default':
@@ -307,6 +306,14 @@ class simp_rsyslog::server (
         # the message as part of the message body
         rule            => 'prifilt(\'kern.*\') and (($msg startswith \' IPT:\') or ($msg startswith \'IPT:\'))',
         dyna_file       => "${file_base}/iptables.log",
+        stop_processing => $stop_processing
+      }
+
+      rsyslog::rule::local { '10_default_firewall':
+        # Some versions of rsyslog include the space separator that precedes
+        # the message as part of the message body
+        rule            => 'prifilt(\'kern.*\') and (($msg startswith \'filter_IN_99_simp_DROP:\') or ($msg startswith \' filter_IN_99_simp_DROP:\'))',
+        dyna_file       => "${file_base}/firewall.log",
         stop_processing => $stop_processing
       }
     }

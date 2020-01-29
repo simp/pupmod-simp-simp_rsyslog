@@ -11,7 +11,6 @@ HOSTS:
       - default
       - rsyslog_server1
       - rsyslog_server
-      - el7
     platform:   el-7-x86_64
     box:        centos/7
     hypervisor: <%= hypervisor %>
@@ -19,26 +18,23 @@ HOSTS:
   el7client.my.domain:
     roles:
       - rsyslog_client
-      - el7
     platform:   el-7-x86_64
     box:        centos/7
     hypervisor: <%= hypervisor %>
 
-  el6server.wayout.org:
+  el8server.wayout.org:
     roles:
       - rsyslog_server2
       - rsyslog_server
-      - el6
-    platform:   el-6-x86_64
-    box:        centos/6
+    platform:   el-8-x86_64
+    box:        centos/8
     hypervisor: <%= hypervisor %>
 
-  el6client.wayout.org:
+  el8client.wayout.org:
     roles:
       - rsyslog_client
-      - el6
-    platform:   el-6-x86_64
-    box:        centos/6
+    platform:   el-8-x86_64
+    box:        centos/8
     hypervisor: <%= hypervisor %>
 
 CONFIG:
