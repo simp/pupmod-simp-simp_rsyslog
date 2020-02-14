@@ -368,7 +368,9 @@ class simp_rsyslog::server (
     }
 
     if $add_logrotate_rule {
-      include '::logrotate'
+      simplib::assert_optional_dependency($module_name, 'simp/logrotate')
+
+      include 'logrotate'
 
       logrotate::rule { 'simp_rsyslog_server_profile':
         log_files                 => [ "${logdir}/*/*.log" ],
