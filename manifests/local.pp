@@ -1,6 +1,6 @@
 # **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**
 #
-# Set up local Rsyslog logging for the security relevant log files
+# @summary Set up local Rsyslog logging for the security relevant log files
 #
 # @param order
 #   The shell-glob-based ordering for the rule

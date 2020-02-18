@@ -1,4 +1,4 @@
-# Set up Rsyslog on your system
+# @summary Set up Rsyslog on your system
 #
 # By default, this only sets up the system as a local Rsyslog server with no
 # outside connectivity allowed.
@@ -63,20 +63,20 @@
 #   Merge into ``$default_logs`` to set the
 #   ``$simp_rsyslog::security_relevant_logs`` variable.
 #
-# @option log_collection
-#   ``programs`` logged daemon names
+# @option log_collection [Array[String[1]] :programs
+#   Logged daemon names
 #
-# @option log_collection
-#   ``facilities`` syslog facilities
+# @option log_collection [Array[String[1]] :facilities
+#   Syslog facilities
 #
-# @option log_collection
-#   ``priorities`` syslog priorities
+# @option log_collection [Array[String[1]] :priorities
+#   Syslog priorities
 #
-# @option log_collection
-#   ``msg_starts`` strings the message starts with
+# @option log_collection [Array[String[1]] :msg_starts
+#   Strings the message starts with
 #
-# @option log_collection
-#   ``msg_regex`` regular expression match on the message
+# @option log_collection [Array[String[1]] :msg_regex
+#   Regular expression match on the message
 #
 # @param log_openldap
 #   Collect all OpenLDAP logs
@@ -147,7 +147,7 @@ class simp_rsyslog (
     ],
     # Some versions of rsyslog include the space separator that precedes
     # the message as part of the message body
-    'msg_starts' => [' IPT:', 'IPT:'],
+    'msg_starts' => [' IPT:', 'IPT:', ' filter_IN_99_simp_DROP:', 'filter_IN_99_simp_DROP:'],
     'msg_regex'  => []
   },
   Boolean                     $log_openldap         = false,
@@ -176,8 +176,7 @@ class simp_rsyslog (
     )
   }
 
-  include '::rsyslog'
-  include '::logrotate'
+  include 'rsyslog'
 
   if $log_local {
     contain '::simp_rsyslog::local'

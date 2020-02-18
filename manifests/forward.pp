@@ -1,6 +1,6 @@
 # **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**
 #
-# Forward Rsyslog logs to remote servers
+# @summary Forward Rsyslog logs to remote servers
 #
 # @param order
 #   The shell-glob-based ordering for the rule

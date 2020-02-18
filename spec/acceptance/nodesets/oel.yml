@@ -10,23 +10,20 @@ HOSTS:
     roles:
       - default
       - rsyslog_server
-      - el7
     platform:   el-7-x86_64
-    box:        onyxpoint/oel-7-x86_64
+    box:        generic/oracle7
     hypervisor: <%= hypervisor %>
 
   el7-client:
     roles:
       - rsyslog_client
-      - el7
     platform:   el-7-x86_64
-    box:        onyxpoint/oel-7-x86_64
+    box:        generic/oracle7
     hypervisor: <%= hypervisor %>
 
   el6-server:
     roles:
       - rsyslog_server
-      - el6
     platform:   el-6-x86_64
     box:        onyxpoint/oel-6-x86_64
     hypervisor: <%= hypervisor %>
@@ -34,9 +31,22 @@ HOSTS:
   el6-client:
     roles:
       - rsyslog_client
-      - el6
     platform:   el-6-x86_64
     box:        onyxpoint/oel-6-x86_64
+    hypervisor: <%= hypervisor %>
+
+  el8-server:
+    roles:
+      - rsyslog_server
+    platform:   el-8-x86_64
+    box:        generic/oracle8
+    hypervisor: <%= hypervisor %>
+
+  el8-client:
+    roles:
+      - rsyslog_client
+    platform:   el-8-x86_64
+    box:        generic/oracle8
     hypervisor: <%= hypervisor %>
 
 CONFIG:

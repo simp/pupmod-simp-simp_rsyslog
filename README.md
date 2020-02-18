@@ -8,14 +8,22 @@
 
 #### Table of Contents
 
-1. [Description](#description)
-2. [Setup - The basics of getting started with simp_rsyslog](#setup)
-    * [What simp_rsyslog affects](#what-simp_rsyslog-affects)
-3. [Usage - Configuration options and additional functionality](#usage)
-4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
-    * [Acceptance Tests - Beaker env variables](#acceptance-tests)
+<!-- vim-markdown-toc GFM -->
+
+* [Description](#description)
+  * [This is a SIMP module](#this-is-a-simp-module)
+* [Setup](#setup)
+  * [What simp_rsyslog affects](#what-simp_rsyslog-affects)
+* [Usage](#usage)
+  * [Local Logging](#local-logging)
+  * [Centralized Logging](#centralized-logging)
+  * [Log Forwarding](#log-forwarding)
+* [Reference](#reference)
+* [Limitations](#limitations)
+* [Development](#development)
+  * [Acceptance tests](#acceptance-tests)
+
+<!-- vim-markdown-toc -->
 
 ## Description
 
@@ -96,16 +104,12 @@ filesystem.
 
 ### Centralized Logging
 
-While we highly recommend [using ELG](https://simp.readthedocs.io/en/stable/user_guide/HOWTO/Central_Log_Collection/Logstash.html)
-for collecting your logs in SIMP systems that support the ELG stack, we understand that this
-is not practical for all situations.
-
 If you wish to collect logs from remote hosts, you can do the following:
 
 **Manifest:**
 
 ```ruby
-include '::simp_rsyslog'
+include 'simp_rsyslog'
 ```
 
 **Hieradata:**
@@ -156,9 +160,7 @@ TLS and TCP connections will be used for log forwarding for security purposes.
 
 ## Reference
 
-The full module reference can be found in the
-[module docs](https://simp.github.io/pupmod-simp-simp_rsyslog) and in the local
-`docs/` directory.
+The module reference can be found in the [REFERENCE.md](./REFERENCE.md) file.
 
 ## Limitations
 
