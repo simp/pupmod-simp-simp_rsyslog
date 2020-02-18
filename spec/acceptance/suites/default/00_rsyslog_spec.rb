@@ -47,8 +47,8 @@ describe 'simp_rsyslog' do
       end
 
       it 'should collect firewall log messages in /var/log/{iptables,firewall}.log' do
-        # Set up iptables to log icmp requests
-        expect(Net::Ping::External.new(host.ip).ping?).to be false
+        on(hosts.find{|x| x != host}, "ping -c 3 #{host.ip}", :accept_all_exit_codes => true)
+
         check = on(host, "grep -l 'TYPE=8' /var/log/{iptables,firewall}.log", :accept_all_exit_codes => true).stdout.strip
         expect(check).to match(%r{^/var/log/.+\.log})
       end
