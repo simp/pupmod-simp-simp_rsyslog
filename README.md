@@ -63,7 +63,7 @@ configurations.
 To set up local logging, you can simply do the following:
 
 ```ruby
-include '::simp_rsyslog'
+include simp_rsyslog
 ```
 
 The `$log_collection` `Hash` provides an `Rsyslog 7` compatible set of
@@ -84,7 +84,7 @@ $log_collection = {
 ```
 
 If you need something more complex than this, you will need to configure your
-own rsyslog rules using the `::rsyslog::rule` defined type.
+own rsyslog rules using the `rsyslog::rule` defined type.
 
 If you simply want to log **EVERYTHING** to your remote servers, set
 `simp_rsyslog::collect_everything` to `true`.
@@ -109,7 +109,7 @@ If you wish to collect logs from remote hosts, you can do the following:
 **Manifest:**
 
 ```ruby
-include 'simp_rsyslog'
+include simp_rsyslog
 ```
 
 **Hieradata:**
@@ -117,6 +117,9 @@ include 'simp_rsyslog'
 ```yaml
 ---
 simp_rsyslog::is_server : true
+
+# If your system uses simp/iptables then you should also set the following
+iptables::precise_match: true
 ```
 
 This will set your system up as an Rsyslog server, using TLS which is capable
@@ -132,11 +135,13 @@ compatibility.
 ### Log Forwarding
 
 If you wish to set your system up to forward logs to a set of remote log
-servers, in either the server or client case, you should use the following:
+servers, in either the server or client case, you should use the following in
+Hiera:
 
 ```yaml
 simp_rsyslog::forward_logs: true
 ```
+
 This will use the `$simp_options::syslog::log_servers` and
 `$simp_options::syslog::failover_log_servers` variables to set the targets for
 your logs. Alternatively, you can specify the targets in Hiera directly.

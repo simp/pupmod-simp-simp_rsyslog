@@ -28,7 +28,7 @@ class simp_rsyslog::local (
   }
 
   # All other security logs which will NOT be handled by the 'ZZ_default' rules.
-  # (ZZ_default contains iptables, puppet-agent, puppetserver and
+  # (ZZ_default contains firewall, puppet-agent, puppetserver and
   # local6.* rules, in the appropriate order.)
   #
   # TODO

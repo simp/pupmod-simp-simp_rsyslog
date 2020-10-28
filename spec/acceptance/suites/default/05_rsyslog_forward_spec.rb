@@ -50,6 +50,7 @@ describe 'simp_rsyslog' do
           rsyslog::trusted_nets:
             - 'ALL'
           simp_options::firewall: true
+          iptables::precise_match: true
           iptables::rules::base::allow_ping: false
           iptables::firewalld::shim::log_denied: all
           EOS

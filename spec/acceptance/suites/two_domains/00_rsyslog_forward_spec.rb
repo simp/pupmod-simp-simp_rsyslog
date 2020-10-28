@@ -15,6 +15,7 @@ describe 'simp_rsyslog' do
   let(:server2_fqdn){fact_on(rsyslog_server2, 'fqdn')}
   let(:server_hieradata) {{
     'simp_options::syslog::log_servers' => [ "#{server1_fqdn}", "#{server2_fqdn}"],
+    'iptables::precise_match'           => true,
     'rsyslog::app_pki_external_source'  => '/etc/pki/simp-testing/pki',
     'rsyslog::pki'                      => true,
     'simp_rsyslog::is_server'           => true,
