@@ -1,3 +1,9 @@
+* Wed Oct 28 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 0.5.1-0
+- Ensure that the docs are correct
+- Fix the acceptance tests to use `iptables::precise_match`
+- Remove the `filter_IN_99_simp_DROP` rules since these are based on the
+  experimental version of `simp/simp_firewalld`
+
 * Mon Feb 03 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 0.5.0-0
 - Add EL8 Support
 - Add support for firewalld log message collection

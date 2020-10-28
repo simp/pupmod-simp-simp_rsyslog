@@ -147,7 +147,7 @@ class simp_rsyslog (
     ],
     # Some versions of rsyslog include the space separator that precedes
     # the message as part of the message body
-    'msg_starts' => [' IPT:', 'IPT:', ' filter_IN_99_simp_DROP:', 'filter_IN_99_simp_DROP:'],
+    'msg_starts' => [' IPT:', 'IPT:', 'IN_99_simp_DROP:', ' IN_99_simp_DROP:'],
     'msg_regex'  => []
   },
   Boolean                     $log_openldap         = false,

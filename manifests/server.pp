@@ -72,13 +72,18 @@
 #   Enable processing of kern.* rules
 #
 # @param process_iptables_rules
-#   Enable processing of messages starting with ``IPT:``
+#   Enable processing of messages starting with ``IPT:`` in alignment with the
+#   ``simp/iptables`` module.
+#
+# @param process_firewall_rules
+#   Enable processing of messages starting with ``IN_99_simp_DROP`` in
+#   alignment with the ``simp/simp_firewalld`` module.
 #
 # @param process_security_relevant_logs
-#   Enable processing of the ``::simp_rsyslog::security_relevant_logs``
+#   Enable processing of the ``simp_rsyslog::security_relevant_logs``
 #
 # @param process_message_rules
-#   Enable the default ``/var/log/message`` traditional processing
+#   Enable the default ``/var/log/messages`` traditional processing
 #
 # @param process_mail_rules
 #   Enable processing of mail.* rules
@@ -139,7 +144,7 @@
 #   @see https://www.rsyslog.com/doc/v8-stable/configuration/templates.html
 #   @see https://www.rsyslog.com/doc/v8-stable/configuration/properties.html
 #
-# @author Trevor Vaughan <tvaughan@onyxpoint.com>
+# @author https://github.com/simp/pupmod-simp-simp_rsyslog/graphs/contributors
 #
 class simp_rsyslog::server (
   Optional[String]                          $server_conf                    = undef,
@@ -155,6 +160,7 @@ class simp_rsyslog::server (
   Boolean                                   $process_slapd_rules            = true,
   Boolean                                   $process_kern_rules             = true,
   Boolean                                   $process_iptables_rules         = true,
+  Boolean                                   $process_firewall_rules         = $process_iptables_rules,
   Boolean                                   $process_security_relevant_logs = true,
   Boolean                                   $process_message_rules          = true,
   Boolean                                   $process_mail_rules             = true,
@@ -308,15 +314,18 @@ class simp_rsyslog::server (
         dyna_file       => "${file_base}/iptables.log",
         stop_processing => $stop_processing
       }
+    }
 
+    if $process_firewall_rules {
       rsyslog::rule::local { '10_default_firewall':
         # Some versions of rsyslog include the space separator that precedes
         # the message as part of the message body
-        rule            => 'prifilt(\'kern.*\') and (($msg startswith \'filter_IN_99_simp_DROP:\') or ($msg startswith \' filter_IN_99_simp_DROP:\'))',
+        rule            => 'prifilt(\'kern.*\') and (($msg startswith \'IN_99_simp_DROP:\') or ($msg startswith \' IN_99_simp_DROP:\'))',
         dyna_file       => "${file_base}/firewall.log",
         stop_processing => $stop_processing
       }
     }
+
     if $process_kern_rules {
       rsyslog::rule::local { '10_default_kern':
         rule            => 'prifilt(\'kern.*\')',
