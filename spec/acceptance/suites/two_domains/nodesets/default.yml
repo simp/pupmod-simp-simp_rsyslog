@@ -29,6 +29,7 @@ HOSTS:
     platform:   el-8-x86_64
     box:        centos/8
     hypervisor: <%= hypervisor %>
+    vagrant_memsize: 512
 
   el8client.wayout.org:
     roles:
