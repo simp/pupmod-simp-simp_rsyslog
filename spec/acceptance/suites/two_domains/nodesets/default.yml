@@ -27,7 +27,7 @@ HOSTS:
       - rsyslog_server2
       - rsyslog_server
     platform:   el-8-x86_64
-    box:        centos/8
+    box:        generic/centos8
     hypervisor: <%= hypervisor %>
     vagrant_memsize: 512
 
@@ -35,7 +35,7 @@ HOSTS:
     roles:
       - rsyslog_client
     platform:   el-8-x86_64
-    box:        centos/8
+    box:        generic/centos8
     hypervisor: <%= hypervisor %>
 
 CONFIG:
