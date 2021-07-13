@@ -7,6 +7,13 @@ describe 'simp_rsyslog' do
   let(:manifest) {
     <<-EOS
       include 'simp_rsyslog'
+      include 'iptables'
+
+      iptables::listen::tcp_stateful { 'allow_sshd':
+        order => 8,
+        trusted_nets => ['ALL'],
+        dports => 22
+      }
     EOS
   }
   rsyslog_server1 = hosts_with_role(hosts,'rsyslog_server1').first
@@ -18,8 +25,10 @@ describe 'simp_rsyslog' do
     'iptables::precise_match'           => true,
     'rsyslog::app_pki_external_source'  => '/etc/pki/simp-testing/pki',
     'rsyslog::pki'                      => true,
+    'rsyslog::trusted_nets'             => ['ALL'],
     'simp_rsyslog::is_server'           => true,
     'simp_rsyslog::forward_logs'        => false,
+    'simp_options::firewall'            => true,
     'rsyslog::tcp_server'               => true,
     'rsyslog::tls_tcp_server'           => true,
     # Need to let log servers accept from different domains.  The default
