@@ -55,7 +55,7 @@ class simp_rsyslog::forward (
   }
 
   if  $::simp_rsyslog::is_server and $::simp_rsyslog::enable_warning {
-      warning("Possible log forwarding loop. Log forwarding is enable on a log server, ${facts['fqdn']}.  Make sure the log server and its aliases are not in the list of log servers, ${::simp_rsyslog::log_servers}, or fail over servers, ${::simp_rsyslog::failover_log_servers}.  To disable this message set ::simp_rsyslog::enable_warning to false for this server.")
+      warning("Possible log forwarding loop. Log forwarding is enable on a log server, ${facts['networking']['fqdn']}.  Make sure the log server and its aliases are not in the list of log servers, ${::simp_rsyslog::log_servers}, or fail over servers, ${::simp_rsyslog::failover_log_servers}.  To disable this message set ::simp_rsyslog::enable_warning to false for this server.")
   }
 
   rsyslog::rule::remote { "${order}_simp_rsyslog_profile_remote":
