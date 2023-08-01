@@ -7,18 +7,18 @@
 ### Classes
 
 * [`simp_rsyslog`](#simp_rsyslog): Set up Rsyslog on your system
-* [`simp_rsyslog::forward`](#simp_rsyslogforward): Forward Rsyslog logs to remote servers
-* [`simp_rsyslog::local`](#simp_rsysloglocal): Set up local Rsyslog logging for the security relevant log files
-* [`simp_rsyslog::server`](#simp_rsyslogserver): This class provides a general purpose log server suitable for centralized logging.
+* [`simp_rsyslog::forward`](#simp_rsyslog--forward): Forward Rsyslog logs to remote servers
+* [`simp_rsyslog::local`](#simp_rsyslog--local): Set up local Rsyslog logging for the security relevant log files
+* [`simp_rsyslog::server`](#simp_rsyslog--server): This class provides a general purpose log server suitable for centralized logging.
 
 ### Functions
 
-* [`simp_rsyslog::format_options`](#simp_rsyslogformat_options): Formats a passed log options hash into a form that is appropriate for an Expression Filter-based Rsyslog 7 rule.
-* [`simp_rsyslog::merge_hash_of_arrays`](#simp_rsyslogmerge_hash_of_arrays): Merges a hash of arrays
+* [`simp_rsyslog::format_options`](#simp_rsyslog--format_options): Formats a passed log options hash into a form that is appropriate for an Expression Filter-based Rsyslog 7 rule.
+* [`simp_rsyslog::merge_hash_of_arrays`](#simp_rsyslog--merge_hash_of_arrays): Merges a hash of arrays
 
 ## Classes
 
-### `simp_rsyslog`
+### <a name="simp_rsyslog"></a>`simp_rsyslog`
 
 By default, this only sets up the system as a local Rsyslog server with no
 outside connectivity allowed.
@@ -64,26 +64,38 @@ SIMP components to function properly.
 
 #### Parameters
 
-The following parameters are available in the `simp_rsyslog` class.
+The following parameters are available in the `simp_rsyslog` class:
 
-##### `is_server`
+* [`is_server`](#-simp_rsyslog--is_server)
+* [`forward_logs`](#-simp_rsyslog--forward_logs)
+* [`log_servers`](#-simp_rsyslog--log_servers)
+* [`failover_log_servers`](#-simp_rsyslog--failover_log_servers)
+* [`default_logs`](#-simp_rsyslog--default_logs)
+* [`log_collection`](#-simp_rsyslog--log_collection)
+* [`log_openldap`](#-simp_rsyslog--log_openldap)
+* [`log_local`](#-simp_rsyslog--log_local)
+* [`local_target`](#-simp_rsyslog--local_target)
+* [`collect_everything`](#-simp_rsyslog--collect_everything)
+* [`enable_warning`](#-simp_rsyslog--enable_warning)
+
+##### <a name="-simp_rsyslog--is_server"></a>`is_server`
 
 Data type: `Boolean`
 
 Configure the system as a log server for remote hosts
 
-Default value: ``false``
+Default value: `false`
 
-##### `forward_logs`
+##### <a name="-simp_rsyslog--forward_logs"></a>`forward_logs`
 
 Data type: `Boolean`
 
 Configure the system to forward the logs specified in the
 ``$simp_rsyslog::security_relevant_logs`` variable
 
-Default value: ``false``
+Default value: `false`
 
-##### `log_servers`
+##### <a name="-simp_rsyslog--log_servers"></a>`log_servers`
 
 Data type: `Array[String]`
 
@@ -93,7 +105,7 @@ The log servers to which to send remote logs
 
 Default value: `simplib::lookup('simp_options::syslog::log_servers', { 'default_value' => [] })`
 
-##### `failover_log_servers`
+##### <a name="-simp_rsyslog--failover_log_servers"></a>`failover_log_servers`
 
 Data type: `Array[String]`
 
@@ -101,9 +113,12 @@ Failover log servers to use if the primaries go down
 
 Default value: `simplib::lookup('simp_options::syslog::failover_log_servers', { 'default_value' => [] })`
 
-##### `default_logs`
+##### <a name="-simp_rsyslog--default_logs"></a>`default_logs`
 
-Data type: `Hash[
+Data type:
+
+```puppet
+Hash[
     Enum[
       'programs',
       'facilities',
@@ -111,7 +126,8 @@ Data type: `Hash[
       'msg_regex'
     ],
     Array[String]
-  ]`
+  ]
+```
 
 The logs that should be forwarded as security relevant to this system.
 
@@ -120,7 +136,10 @@ The logs that should be forwarded as security relevant to this system.
 * If you set this yourself, you will override *ALL* defaults. If you want
   to merge in entries, simply use the ``log_collection`` parameter.
 
-Default value: `{
+Default value:
+
+```puppet
+{
 
     'programs'   => [
       'aide',
@@ -148,9 +167,10 @@ Default value: `{
     # the message as part of the message body
     'msg_starts' => [' IPT:', 'IPT:', 'IN_99_simp_DROP:', ' IN_99_simp_DROP:'],
     'msg_regex'  => []
-  }`
+  }
+```
 
-##### `log_collection`
+##### <a name="-simp_rsyslog--log_collection"></a>`log_collection`
 
 Data type: `Hash[String, Array[String]]`
 
@@ -177,7 +197,7 @@ Regular expression match on the message
 
 Default value: `{}`
 
-##### `log_openldap`
+##### <a name="-simp_rsyslog--log_openldap"></a>`log_openldap`
 
 Data type: `Boolean`
 
@@ -185,17 +205,17 @@ Collect all OpenLDAP logs
 
 * **WARNING** these logs are particularly verbose
 
-Default value: ``false``
+Default value: `false`
 
-##### `log_local`
+##### <a name="-simp_rsyslog--log_local"></a>`log_local`
 
 Data type: `Boolean`
 
 Write security-related logs to the filesystem at ``local_target``
 
-Default value: ``true``
+Default value: `true`
 
-##### `local_target`
+##### <a name="-simp_rsyslog--local_target"></a>`local_target`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -203,7 +223,7 @@ Path on the filesystem to which to write security-related logs
 
 Default value: `'/var/log/secure'`
 
-##### `collect_everything`
+##### <a name="-simp_rsyslog--collect_everything"></a>`collect_everything`
 
 Data type: `Boolean`
 
@@ -213,9 +233,9 @@ Set a ``*.*`` rule in Rsyslog that matches **all** logs on the system
 * This overrides **any other rules** that are specified
 * This is primarily meant for remote logging where all data is required
 
-Default value: ``false``
+Default value: `false`
 
-##### `enable_warning`
+##### <a name="-simp_rsyslog--enable_warning"></a>`enable_warning`
 
 Data type: `Boolean`
 
@@ -223,17 +243,22 @@ By default it will log a warning if a log server is set to forward logs.
 This can cause a loop unless the simp_rsyslog::servers list does not
 contain the log server itself.
 
-Default value: ``true``
+Default value: `true`
 
-### `simp_rsyslog::forward`
+### <a name="simp_rsyslog--forward"></a>`simp_rsyslog::forward`
 
 **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**
 
 #### Parameters
 
-The following parameters are available in the `simp_rsyslog::forward` class.
+The following parameters are available in the `simp_rsyslog::forward` class:
 
-##### `order`
+* [`order`](#-simp_rsyslog--forward--order)
+* [`dest_type`](#-simp_rsyslog--forward--dest_type)
+* [`stop_processing`](#-simp_rsyslog--forward--stop_processing)
+* [`permitted_peers`](#-simp_rsyslog--forward--permitted_peers)
+
+##### <a name="-simp_rsyslog--forward--order"></a>`order`
 
 Data type: `Integer`
 
@@ -241,7 +266,7 @@ The shell-glob-based ordering for the rule
 
 Default value: `99`
 
-##### `dest_type`
+##### <a name="-simp_rsyslog--forward--dest_type"></a>`dest_type`
 
 Data type: `Enum['tcp','udp','relp']`
 
@@ -252,7 +277,7 @@ The protocol to use when forwarding to the remote log server
 
 Default value: `'tcp'`
 
-##### `stop_processing`
+##### <a name="-simp_rsyslog--forward--stop_processing"></a>`stop_processing`
 
 Data type: `Boolean`
 
@@ -265,9 +290,9 @@ been sent to the remote server.
   systems where you want a minimum of log information to be captured
   locally.
 
-Default value: ``false``
+Default value: `false`
 
-##### `permitted_peers`
+##### <a name="-simp_rsyslog--forward--permitted_peers"></a>`permitted_peers`
 
 Data type: `Optional[String]`
 
@@ -289,17 +314,19 @@ When ``undef``, the default value computed by
 @see https://www.rsyslog.com/doc/v8-stable/configuration/modules/omfwd.html
 for more information on how to set this.
 
-Default value: ``undef``
+Default value: `undef`
 
-### `simp_rsyslog::local`
+### <a name="simp_rsyslog--local"></a>`simp_rsyslog::local`
 
 **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**
 
 #### Parameters
 
-The following parameters are available in the `simp_rsyslog::local` class.
+The following parameters are available in the `simp_rsyslog::local` class:
 
-##### `order`
+* [`order`](#-simp_rsyslog--local--order)
+
+##### <a name="-simp_rsyslog--local--order"></a>`order`
 
 Data type: `String`
 
@@ -315,7 +342,7 @@ This is currently set to ensure the following:
 
 Default value: `'ZZ_0'`
 
-### `simp_rsyslog::server`
+### <a name="simp_rsyslog--server"></a>`simp_rsyslog::server`
 
 **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**
 
@@ -349,9 +376,39 @@ Loose standard for the rules that will be created:
 
 #### Parameters
 
-The following parameters are available in the `simp_rsyslog::server` class.
+The following parameters are available in the `simp_rsyslog::server` class:
 
-##### `server_conf`
+* [`server_conf`](#-simp_rsyslog--server--server_conf)
+* [`process_sudosh_rules`](#-simp_rsyslog--server--process_sudosh_rules)
+* [`process_tlog_rules`](#-simp_rsyslog--server--process_tlog_rules)
+* [`process_httpd_rules`](#-simp_rsyslog--server--process_httpd_rules)
+* [`process_dhcpd_rules`](#-simp_rsyslog--server--process_dhcpd_rules)
+* [`process_snmpd_rules`](#-simp_rsyslog--server--process_snmpd_rules)
+* [`process_puppet_agent_rules`](#-simp_rsyslog--server--process_puppet_agent_rules)
+* [`process_puppetserver_rules`](#-simp_rsyslog--server--process_puppetserver_rules)
+* [`process_auditd_rules`](#-simp_rsyslog--server--process_auditd_rules)
+* [`process_aide_rules`](#-simp_rsyslog--server--process_aide_rules)
+* [`process_slapd_rules`](#-simp_rsyslog--server--process_slapd_rules)
+* [`process_kern_rules`](#-simp_rsyslog--server--process_kern_rules)
+* [`process_iptables_rules`](#-simp_rsyslog--server--process_iptables_rules)
+* [`process_firewall_rules`](#-simp_rsyslog--server--process_firewall_rules)
+* [`process_security_relevant_logs`](#-simp_rsyslog--server--process_security_relevant_logs)
+* [`process_message_rules`](#-simp_rsyslog--server--process_message_rules)
+* [`process_mail_rules`](#-simp_rsyslog--server--process_mail_rules)
+* [`process_cron_rules`](#-simp_rsyslog--server--process_cron_rules)
+* [`process_emerg_rules`](#-simp_rsyslog--server--process_emerg_rules)
+* [`process_spool_rules`](#-simp_rsyslog--server--process_spool_rules)
+* [`process_boot_rules`](#-simp_rsyslog--server--process_boot_rules)
+* [`enable_catchall`](#-simp_rsyslog--server--enable_catchall)
+* [`stop_processing`](#-simp_rsyslog--server--stop_processing)
+* [`add_logrotate_rule`](#-simp_rsyslog--server--add_logrotate_rule)
+* [`rotate_period`](#-simp_rsyslog--server--rotate_period)
+* [`rotate_preserve`](#-simp_rsyslog--server--rotate_preserve)
+* [`rotate_size`](#-simp_rsyslog--server--rotate_size)
+* [`logdir`](#-simp_rsyslog--server--logdir)
+* [`dyna_key`](#-simp_rsyslog--server--dyna_key)
+
+##### <a name="-simp_rsyslog--server--server_conf"></a>`server_conf`
 
 Data type: `Optional[String]`
 
@@ -362,106 +419,106 @@ The full configuration to use
   in specifying your log server ruleset if you do not like the one that is
   provided. There will be **no** sanity checking of this string!
 
-Default value: ``undef``
+Default value: `undef`
 
-##### `process_sudosh_rules`
+##### <a name="-simp_rsyslog--server--process_sudosh_rules"></a>`process_sudosh_rules`
 
 Data type: `Boolean`
 
 Enable processing of sudosh rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_tlog_rules`
+##### <a name="-simp_rsyslog--server--process_tlog_rules"></a>`process_tlog_rules`
 
 Data type: `Boolean`
 
 Enable processing of tlog rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_httpd_rules`
+##### <a name="-simp_rsyslog--server--process_httpd_rules"></a>`process_httpd_rules`
 
 Data type: `Boolean`
 
 Enable processing of httpd rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_dhcpd_rules`
+##### <a name="-simp_rsyslog--server--process_dhcpd_rules"></a>`process_dhcpd_rules`
 
 Data type: `Boolean`
 
 Enable processing of dhcpd rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_snmpd_rules`
+##### <a name="-simp_rsyslog--server--process_snmpd_rules"></a>`process_snmpd_rules`
 
 Data type: `Boolean`
 
 Enable processing of snmpd rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_puppet_agent_rules`
+##### <a name="-simp_rsyslog--server--process_puppet_agent_rules"></a>`process_puppet_agent_rules`
 
 Data type: `Boolean`
 
 Enable processing of puppet agent rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_puppetserver_rules`
+##### <a name="-simp_rsyslog--server--process_puppetserver_rules"></a>`process_puppetserver_rules`
 
 Data type: `Boolean`
 
 Enable processing of puppetserver rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_auditd_rules`
+##### <a name="-simp_rsyslog--server--process_auditd_rules"></a>`process_auditd_rules`
 
 Data type: `Boolean`
 
 Enable processing of auditd rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_aide_rules`
+##### <a name="-simp_rsyslog--server--process_aide_rules"></a>`process_aide_rules`
 
 Data type: `Boolean`
 
 Enable processing of aide rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_slapd_rules`
+##### <a name="-simp_rsyslog--server--process_slapd_rules"></a>`process_slapd_rules`
 
 Data type: `Boolean`
 
 Enable processing of OpenLDAP Server rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_kern_rules`
+##### <a name="-simp_rsyslog--server--process_kern_rules"></a>`process_kern_rules`
 
 Data type: `Boolean`
 
 Enable processing of kern.* rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_iptables_rules`
+##### <a name="-simp_rsyslog--server--process_iptables_rules"></a>`process_iptables_rules`
 
 Data type: `Boolean`
 
 Enable processing of messages starting with ``IPT:`` in alignment with the
 ``simp/iptables`` module.
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_firewall_rules`
+##### <a name="-simp_rsyslog--server--process_firewall_rules"></a>`process_firewall_rules`
 
 Data type: `Boolean`
 
@@ -470,71 +527,71 @@ alignment with the ``simp/simp_firewalld`` module.
 
 Default value: `$process_iptables_rules`
 
-##### `process_security_relevant_logs`
+##### <a name="-simp_rsyslog--server--process_security_relevant_logs"></a>`process_security_relevant_logs`
 
 Data type: `Boolean`
 
 Enable processing of the ``simp_rsyslog::security_relevant_logs``
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_message_rules`
+##### <a name="-simp_rsyslog--server--process_message_rules"></a>`process_message_rules`
 
 Data type: `Boolean`
 
 Enable the default ``/var/log/messages`` traditional processing
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_mail_rules`
+##### <a name="-simp_rsyslog--server--process_mail_rules"></a>`process_mail_rules`
 
 Data type: `Boolean`
 
 Enable processing of mail.* rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_cron_rules`
+##### <a name="-simp_rsyslog--server--process_cron_rules"></a>`process_cron_rules`
 
 Data type: `Boolean`
 
 Enable processing of cron.* rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_emerg_rules`
+##### <a name="-simp_rsyslog--server--process_emerg_rules"></a>`process_emerg_rules`
 
 Data type: `Boolean`
 
 Enable processing of *.emerg rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_spool_rules`
+##### <a name="-simp_rsyslog--server--process_spool_rules"></a>`process_spool_rules`
 
 Data type: `Boolean`
 
 Enable processing of spool.* rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `process_boot_rules`
+##### <a name="-simp_rsyslog--server--process_boot_rules"></a>`process_boot_rules`
 
 Data type: `Boolean`
 
 Enable processing of local7.* rules
 
-Default value: ``true``
+Default value: `true`
 
-##### `enable_catchall`
+##### <a name="-simp_rsyslog--server--enable_catchall"></a>`enable_catchall`
 
 Data type: `Boolean`
 
 Add anything missed by other rules to a ``catchall.log`` file
 
-Default value: ``true``
+Default value: `true`
 
-##### `stop_processing`
+##### <a name="-simp_rsyslog--server--stop_processing"></a>`stop_processing`
 
 Data type: `Boolean`
 
@@ -544,9 +601,9 @@ been sent to the remote server.
 * You will probably want to keep this set so that your local system logs
   are not filled with material from other hosts.
 
-Default value: ``true``
+Default value: `true`
 
-##### `add_logrotate_rule`
+##### <a name="-simp_rsyslog--server--add_logrotate_rule"></a>`add_logrotate_rule`
 
 Data type: `Boolean`
 
@@ -555,9 +612,9 @@ Add a logrotate rule for the logs that are collected by these server rules
 * This will **not** be applied if you are not using the inbuilt rules since
   there is no way to know what you are doing.
 
-Default value: ``true``
+Default value: `true`
 
-##### `rotate_period`
+##### <a name="-simp_rsyslog--server--rotate_period"></a>`rotate_period`
 
 Data type: `Enum['daily','weekly','monthly','yearly']`
 
@@ -567,7 +624,7 @@ How often to rotate the local logs
 
 Default value: `'weekly'`
 
-##### `rotate_preserve`
+##### <a name="-simp_rsyslog--server--rotate_preserve"></a>`rotate_preserve`
 
 Data type: `Integer`
 
@@ -579,7 +636,7 @@ How many rotated logs to preserve
 
 Default value: `12`
 
-##### `rotate_size`
+##### <a name="-simp_rsyslog--server--rotate_size"></a>`rotate_size`
 
 Data type: `Optional[Integer]`
 
@@ -589,9 +646,9 @@ The maximum size of a log file
 
 * Has no effect if ``add_logrotate_rule`` is ``false``
 
-Default value: ``undef``
+Default value: `undef`
 
-##### `logdir`
+##### <a name="-simp_rsyslog--server--logdir"></a>`logdir`
 
 Data type: `Stdlib::AbsolutePath`
 
@@ -599,7 +656,7 @@ The directory where the server will send collected logs
 
 Default value: `'/var/log/hosts'`
 
-##### `dyna_key`
+##### <a name="-simp_rsyslog--server--dyna_key"></a>`dyna_key`
 
 Data type: `String`
 
@@ -612,7 +669,7 @@ Default value: `'%HOSTNAME%'`
 
 ## Functions
 
-### `simp_rsyslog::format_options`
+### <a name="simp_rsyslog--format_options"></a>`simp_rsyslog::format_options`
 
 Type: Ruby 4.x API
 
@@ -636,7 +693,7 @@ The options hash.
 * All entries will be combined with a logical ``OR``
 * **NOTE** Only the documented Hash keys will be respected
 
-### `simp_rsyslog::merge_hash_of_arrays`
+### <a name="simp_rsyslog--merge_hash_of_arrays"></a>`simp_rsyslog::merge_hash_of_arrays`
 
 Type: Ruby 4.x API
 
