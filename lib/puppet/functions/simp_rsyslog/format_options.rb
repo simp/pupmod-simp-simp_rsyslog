@@ -28,21 +28,21 @@ Puppet::Functions.create_function(:'simp_rsyslog::format_options') do
 
   def format_options(opts)
     valid_options = {
-      'programs'   => {
-        :start => '($programname == ',
-        :end   => ')'
+      'programs' => {
+        start: '($programname == ',
+        end: ')'
       },
       'facilities' => {
-        :start => 'prifilt(',
-        :end   => ')'
+        start: 'prifilt(',
+        end: ')'
       },
       'msg_starts' => {
-        :start => '($msg startswith ',
-        :end   => ')'
+        start: '($msg startswith ',
+        end: ')'
       },
-      'msg_regex'  => {
-        :start => 're_match($msg, ',
-        :end   => ')'
+      'msg_regex' => {
+        start: 're_match($msg, ',
+        end: ')'
       }
     }
 
@@ -50,20 +50,20 @@ Puppet::Functions.create_function(:'simp_rsyslog::format_options') do
 
     Array(opts['facilities']).each do |facility|
       unless facility.include?('.')
-        fail('All facility entries must be of the form "facility.priority"')
+        raise('All facility entries must be of the form "facility.priority"')
       end
     end
 
-    valid_options.keys.each do |opt|
+    valid_options.each_key do |opt|
       Array(opts[opt]).each do |value|
         return_str << valid_options[opt][:start] + "'" + value + "'" + valid_options[opt][:end]
       end
     end
 
     if return_str.empty?
-      fail('Did not find any valid content in the passed Options')
+      raise('Did not find any valid content in the passed Options')
     end
 
-    return return_str.join(' or ')
+    return_str.join(' or ')
   end
 end

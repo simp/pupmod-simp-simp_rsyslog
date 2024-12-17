@@ -15,26 +15,26 @@ include Simp::BeakerHelpers
 # TODO move to Simp::BeakerHelpers
 require 'timeout'
 def wait_for_log_message(
-    host,
-    log,
-    message,
-    max_wait_seconds = (ENV['SIMPTEST_WAIT_FOR_LOG_MAX'] ? ENV['SIMPTEST_WAIT_FOR_LOG_MAX'].to_f : 60.0),
-    interval_sec = (ENV['SIMPTEST_LOG_CHECK_INTERVAL'] ? ENV['SIMPTEST_LOG_CHECK_INTERVAL'].to_f : 1.0)
-  )
+  host,
+  log,
+  message,
+  max_wait_seconds = (ENV['SIMPTEST_WAIT_FOR_LOG_MAX'] ? ENV['SIMPTEST_WAIT_FOR_LOG_MAX'].to_f : 60.0),
+  interval_sec = (ENV['SIMPTEST_LOG_CHECK_INTERVAL'] ? ENV['SIMPTEST_LOG_CHECK_INTERVAL'].to_f : 1.0)
+)
   result = nil
-  Timeout::timeout(max_wait_seconds) do
-    while true
-      result = on host, "grep '#{message}' #{log}", :accept_all_exit_codes => true
+  Timeout.timeout(max_wait_seconds) do
+    loop do
+      result = on host, "grep '#{message}' #{log}", accept_all_exit_codes: true
       return if result.exit_code == 0
       sleep(interval_sec)
     end
   end
-rescue Timeout::Error => e
+rescue Timeout::Error
   error_msg = "Failed to find '#{message}' in #{log} on #{host} within #{max_wait_seconds} seconds:\n"
   error_msg += "\texit_code = #{result.exit_code}\n"
-  error_msg += "\tstdout = \"#{result.stdout}\"\n" unless result.stdout.nil? or result.stdout.strip.empty?
-  error_msg += "\tstderr = \"#{result.stderr}\"" unless result.stderr.nil? or result.stderr.strip.empty?
-  fail error_msg
+  error_msg += "\tstdout = \"#{result.stdout}\"\n" unless result.stdout.nil? || result.stdout.strip.empty?
+  error_msg += "\tstderr = \"#{result.stderr}\"" unless result.stderr.nil? || result.stderr.strip.empty?
+  raise error_msg
 end
 
 unless ENV['BEAKER_provision'] == 'no'
@@ -47,7 +47,6 @@ unless ENV['BEAKER_provision'] == 'no'
     end
   end
 end
-
 
 RSpec.configure do |c|
   # ensure that environment OS is ready on each host
@@ -62,21 +61,17 @@ RSpec.configure do |c|
 
   # Configure all nodes in nodeset
   c.before :suite do
-    begin
-      # Install modules and dependencies from spec/fixtures/modules
-      copy_fixture_modules_to( hosts )
+    # Install modules and dependencies from spec/fixtures/modules
+    copy_fixture_modules_to(hosts)
 
-      # Generate and install PKI certificates on each SUT
-      Dir.mktmpdir do |cert_dir|
-        run_fake_pki_ca_on( default, hosts, cert_dir )
-        hosts.each{ |sut| copy_pki_to( sut, cert_dir, '/etc/pki/simp-testing' )}
-      end
-    rescue StandardError, ScriptError => e
-      if ENV['PRY']
-        require 'pry'; binding.pry
-      else
-        raise e
-      end
+    # Generate and install PKI certificates on each SUT
+    Dir.mktmpdir do |cert_dir|
+      run_fake_pki_ca_on(default, hosts, cert_dir)
+      hosts.each { |sut| copy_pki_to(sut, cert_dir, '/etc/pki/simp-testing') }
     end
+  rescue StandardError, ScriptError => e
+    raise e unless ENV['PRY']
+    require 'pry'
+    binding.pry
   end
 end

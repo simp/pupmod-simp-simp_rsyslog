@@ -25,12 +25,12 @@ Puppet::Functions.create_function(:'simp_rsyslog::merge_hash_of_arrays') do
       validate(hash)
       merged_hash.deep_merge!(hash)
     end
-    return merged_hash
+    merged_hash
   end
 
   def validate(hash)
-    hash.each do |tag,value|
-      fail("'#{hash}' is not a Hash of Arrays") unless value.is_a?(Array)
+    hash.each_value do |value|
+      raise("'#{hash}' is not a Hash of Arrays") unless value.is_a?(Array)
     end
   end
 end
