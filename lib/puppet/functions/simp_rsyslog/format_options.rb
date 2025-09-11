@@ -30,20 +30,20 @@ Puppet::Functions.create_function(:'simp_rsyslog::format_options') do
     valid_options = {
       'programs' => {
         start: '($programname == ',
-        end: ')'
+        end: ')',
       },
       'facilities' => {
         start: 'prifilt(',
-        end: ')'
+        end: ')',
       },
       'msg_starts' => {
         start: '($msg startswith ',
-        end: ')'
+        end: ')',
       },
       'msg_regex' => {
         start: 're_match($msg, ',
-        end: ')'
-      }
+        end: ')',
+      },
     }
 
     return_str = []

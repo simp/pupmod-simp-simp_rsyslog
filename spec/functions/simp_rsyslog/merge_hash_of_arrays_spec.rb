@@ -34,10 +34,10 @@ describe 'simp_rsyslog::merge_hash_of_arrays' do
     it {
       is_expected.to run.with_params(hash1, hash2, hash3).and_return(
         {
-          'programs'   => ['program1', 'program2', 'program3', 'program4', 'program0'],
+          'programs' => ['program1', 'program2', 'program3', 'program4', 'program0'],
           'facilities' => ['facility1', 'facility3'],
           'msg_starts' => ['start1', 'start2', 'start0'],
-          'msg_regex'  => ['msg[0-9]+'],
+          'msg_regex' => ['msg[0-9]+'],
         },
       )
     }

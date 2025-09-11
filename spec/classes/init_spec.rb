@@ -41,8 +41,10 @@ describe 'simp_rsyslog' do
       end
 
       let(:msg_starts_logs) do
-        [ "($msg startswith ' IPT:')",
-          "($msg startswith 'IPT:')"]
+        [
+          "($msg startswith ' IPT:')",
+          "($msg startswith 'IPT:')",
+        ]
       end
 
       let(:default_security_relevant_logs) do
@@ -84,7 +86,7 @@ describe 'simp_rsyslog' do
           let(:params) do
             {
               forward_logs: true,
-           log_servers: ['1.2.3.4']
+              log_servers: ['1.2.3.4'],
             }
           end
 
@@ -93,15 +95,13 @@ describe 'simp_rsyslog' do
           it { is_expected.to contain_class('simp_rsyslog::forward') }
           it {
             is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with(
-             {
-               rule: Regexp.new(Regexp.escape(default_security_relevant_logs)),
+              rule: Regexp.new(Regexp.escape(default_security_relevant_logs)),
               dest: ['1.2.3.4'],
               failover_log_servers: [],
               dest_type: 'tcp',
               stream_driver_permitted_peers: nil,
-              stop_processing: false
-             },
-           )
+              stop_processing: false,
+            )
           }
           it { is_expected.not_to contain_class('simp_rsyslog::server') }
         end
@@ -110,10 +110,10 @@ describe 'simp_rsyslog' do
           let(:params) do
             {
               forward_logs: true,
-           log_servers: ['1.2.3.4'],
-           failover_log_servers: ['3.4.5.6'],
-           collect_everything: true,
-           log_local: false
+              log_servers: ['1.2.3.4'],
+              failover_log_servers: ['3.4.5.6'],
+              collect_everything: true,
+              log_local: false,
             }
           end
 
@@ -121,15 +121,13 @@ describe 'simp_rsyslog' do
           it { is_expected.to contain_class('simp_rsyslog::forward') }
           it {
             is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with(
-             {
-               rule: "prifilt('*.*')",
+              rule: "prifilt('*.*')",
               dest: ['1.2.3.4'],
               failover_log_servers: ['3.4.5.6'],
               dest_type: 'tcp',
               stream_driver_permitted_peers: nil,
-              stop_processing: false
-             },
-           )
+              stop_processing: false,
+            )
           }
           it { is_expected.not_to contain_class('simp_rsyslog::local') }
           it { is_expected.not_to contain_class('simp_rsyslog::server') }
@@ -139,8 +137,8 @@ describe 'simp_rsyslog' do
           let(:params) do
             {
               forward_logs: true,
-           log_servers: ['1.2.3.4'],
-           log_openldap: true
+              log_servers: ['1.2.3.4'],
+              log_openldap: true,
             }
           end
 
@@ -159,10 +157,10 @@ describe 'simp_rsyslog' do
           let(:params) do
             {
               forward_logs: true,
-           log_servers: ['1.2.3.4'],
-           log_collection: {
-             'facilities' => ['local2.warn']
-           }
+              log_servers: ['1.2.3.4'],
+              log_collection: {
+                'facilities' => ['local2.warn'],
+              },
             }
           end
 
@@ -181,7 +179,7 @@ describe 'simp_rsyslog' do
           let(:params) do
             {
               forward_logs: true,
-           log_servers: [],
+              log_servers: [],
             }
           end
 
@@ -193,16 +191,14 @@ describe 'simp_rsyslog' do
           let(:params) do
             {
               forward_logs: true,
-           log_servers: ['logserver.my.domain'],
-           failover_log_servers: ['1.2.3.4'],
+              log_servers: ['logserver.my.domain'],
+              failover_log_servers: ['1.2.3.4'],
             }
           end
 
           it {
             is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with(
-              {
-                stream_driver_permitted_peers: '*.my.domain,this.system'
-              },
+              stream_driver_permitted_peers: '*.my.domain,this.system',
             )
           }
         end
@@ -212,7 +208,7 @@ describe 'simp_rsyslog' do
         context 'with default parameters' do
           let(:params) do
             {
-              is_server: true
+              is_server: true,
             }
           end
 
@@ -221,11 +217,11 @@ describe 'simp_rsyslog' do
           it { is_expected.to contain_rsyslog__rule__local('10_00_default_boot') }
           it { is_expected.to contain_rsyslog__rule__local('10_00_default_mail') }
           it {
-            is_expected.to contain_rsyslog__rule__local('10_00_default_cron').with({
-                                                                                     'rule'            => "prifilt('cron.*')",
-            'dyna_file'       => '/var/log/hosts/%HOSTNAME%/cron.log',
-            'stop_processing' => true,
-                                                                                   })
+            is_expected.to contain_rsyslog__rule__local('10_00_default_cron').with(
+              'rule' => "prifilt('cron.*')",
+              'dyna_file' => '/var/log/hosts/%HOSTNAME%/cron.log',
+              'stop_processing' => true,
+            )
           }
           it { is_expected.to contain_rsyslog__rule__local('10_00_default_emerg') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_sudosh') }
@@ -267,11 +263,11 @@ describe 'simp_rsyslog' do
 
           it_behaves_like 'a structured module'
           it {
-            is_expected.to contain_rsyslog__rule__local('10_00_default_cron').with({
-                                                                                     'rule'            => "prifilt('cron.*')",
-            'dyna_file'       => '/opt/logs/%SYSLOGFACILITY-TEXT%/cron.log',
-            'stop_processing' => true,
-                                                                                   })
+            is_expected.to contain_rsyslog__rule__local('10_00_default_cron').with(
+              'rule' => "prifilt('cron.*')",
+              'dyna_file' => '/opt/logs/%SYSLOGFACILITY-TEXT%/cron.log',
+              'stop_processing' => true,
+            )
           }
         end
 
@@ -280,7 +276,7 @@ describe 'simp_rsyslog' do
           # parameters
           let(:params) do
             {
-              is_server: true
+              is_server: true,
             }
           end
           let(:hieradata) { 'rsyslog_server_features_disabled' }
@@ -317,7 +313,7 @@ describe 'simp_rsyslog' do
         context 'simp_rsyslog class that is a log server with custom rules' do
           let(:params) do
             {
-              is_server: true
+              is_server: true,
             }
           end
           let(:hieradata) { 'rsyslog_server_custom_rules' }

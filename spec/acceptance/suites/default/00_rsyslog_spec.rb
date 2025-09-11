@@ -72,7 +72,8 @@ describe 'simp_rsyslog' do
 
         wait_for_log_message(host, '/var/log/secure', 'LOCAL_ONLY_ANY_EMERG_LOG')
 
-        [ 'LOCAL_ONLY_AUDITD_LOG',
+        [
+          'LOCAL_ONLY_AUDITD_LOG',
           'LOCAL_ONLY_AUDIT_LOG',
           'LOCAL_ONLY_SUDO_LOG',
           'LOCAL_ONLY_YUM_LOG',
@@ -82,7 +83,8 @@ describe 'simp_rsyslog' do
           'LOCAL_ONLY_LOCAL5_ANY_LOG',
           'LOCAL_ONLY_LOCAL6_ANY_LOG',
           'LOCAL_ONLY_LOCAL7_WARN_LOG',
-          'LOCAL_ONLY_ANY_EMERG_LOG'].each do |message|
+          'LOCAL_ONLY_ANY_EMERG_LOG',
+        ].each do |message|
           check = on(host, "grep -l '#{message}' /var/log/secure").stdout.strip
           expect(check).to eq('/var/log/secure')
         end

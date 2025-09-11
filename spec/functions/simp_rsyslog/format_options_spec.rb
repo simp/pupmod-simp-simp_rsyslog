@@ -9,9 +9,7 @@ describe 'simp_rsyslog::format_options' do
 
     it {
       is_expected.to run.with_params(
-        {
-          'programs' => ['foo', 'bar'],
-        },
+        'programs' => ['foo', 'bar'],
       ).and_return(
         %{($programname == 'foo') or ($programname == 'bar')},
       )
@@ -19,12 +17,10 @@ describe 'simp_rsyslog::format_options' do
 
     it {
       is_expected.to run.with_params(
-        {
-          'programs' => ['foo1', 'bar1'],
-          'facilities' => ['foo2.*', 'bar2.*'],
-          'msg_starts' => ['foo4', 'bar4'],
-          'msg_regex' => ['$foo5', '^.*bar5$']
-        },
+        'programs' => ['foo1', 'bar1'],
+        'facilities' => ['foo2.*', 'bar2.*'],
+        'msg_starts' => ['foo4', 'bar4'],
+        'msg_regex' => ['$foo5', '^.*bar5$'],
       ).and_return(
         [
           %{($programname == 'foo1') or ($programname == 'bar1')},

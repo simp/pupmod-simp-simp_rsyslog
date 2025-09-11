@@ -10,49 +10,49 @@ describe 'simp_rsyslog' do
         let(:server_fqdn) { fact_on(server, 'fqdn') }
         let(:manifest) do
           <<~EOS
-          include 'simp_rsyslog'
-          include 'iptables'
+            include 'simp_rsyslog'
+            include 'iptables'
 
-          iptables::listen::tcp_stateful { 'allow_sshd':
-            order => 8,
-            trusted_nets => ['ALL'],
-            dports => 22,
-          }
+            iptables::listen::tcp_stateful { 'allow_sshd':
+              order => 8,
+              trusted_nets => ['ALL'],
+              dports => 22,
+            }
           EOS
         end
 
         let(:client_hieradata) do
           <<~EOS
-          ---
-          simp_options::syslog::log_servers:
-            - '#{server_fqdn}'
+            ---
+            simp_options::syslog::log_servers:
+              - '#{server_fqdn}'
 
-          simp_rsyslog::forward_logs: true
-          rsyslog::pki: false
-          rsyslog::enable_tls_logging: false
-          simp_options::firewall: true
-          iptables::rules::base::allow_ping: false
-          iptables::firewalld::shim::log_denied: all
+            simp_rsyslog::forward_logs: true
+            rsyslog::pki: false
+            rsyslog::enable_tls_logging: false
+            simp_options::firewall: true
+            iptables::rules::base::allow_ping: false
+            iptables::firewalld::shim::log_denied: all
           EOS
         end
 
         let(:server_hieradata) do
           <<~EOS
-          ---
-          simp_options::syslog::log_servers:
-            - '#{server_fqdn}'
+            ---
+            simp_options::syslog::log_servers:
+              - '#{server_fqdn}'
 
-          simp_rsyslog::is_server: true
-          simp_rsyslog::forward_logs: false
-          rsyslog::tcp_server: true
-          rsyslog::tls_tcp_server: false
-          rsyslog::pki: false
-          rsyslog::trusted_nets:
-            - 'ALL'
-          simp_options::firewall: true
-          iptables::precise_match: true
-          iptables::rules::base::allow_ping: false
-          iptables::firewalld::shim::log_denied: all
+            simp_rsyslog::is_server: true
+            simp_rsyslog::forward_logs: false
+            rsyslog::tcp_server: true
+            rsyslog::tls_tcp_server: false
+            rsyslog::pki: false
+            rsyslog::trusted_nets:
+              - 'ALL'
+            simp_options::firewall: true
+            iptables::precise_match: true
+            iptables::rules::base::allow_ping: false
+            iptables::firewalld::shim::log_denied: all
           EOS
         end
 
@@ -91,33 +91,168 @@ describe 'simp_rsyslog' do
           # client_logfile is the relative, local log file on the client;
           #   when nil, this means the log is dropped
           default_test_array = [
-            ['-p local7.warning -t boot',   'CLIENT_FORWARDED_BOOT_LOG',         'boot.log',        'secure'],
-            ['-p mail.info -t id1',         'CLIENT_FORWARDED_ANY_MAIL_LOG',     nil,               'maillog'],
-            ['-p cron.warning -t cron',     'CLIENT_FORWARDED_CRON_ANY_LOG',     'cron.log',        'cron'],
-            ['-p local4.emerg -t id2',      'CLIENT_FORWARDED_ANY_EMERG_LOG',    'emergency.log',   'secure'],
-            ['-p local2.info -t sudosh',    'CLIENT_FORWARDED_SUDOSH_LOG',       'sudosh.log',      'messages'], # local='sudosh.log' when sudosh module used
-            ['-p local2.info -t tlog', 'CLIENT_FORWARDED_TLOG_LOG', 'tlog.log', 'messages'], # local='tlog.log' when tlog module used
-            ['-p local6.err -t httpd',      'CLIENT_FORWARDED_HTTPD_ERR_LOG',    'httpd_error.log', 'secure'], # local='httpd/error_log' when simp_apache is installed
-            ['-p local6.warning -t httpd',  'CLIENT_FORWARDED_HTTPD_NO_ERR_LOG', 'httpd.log',       'secure'], # local='httpd/access_log' when simp_apache is installed
-            ['-t dhcpd',                    'CLIENT_FORWARDED_DHCPD_LOG',        nil,               'messages'], # local='dhcpd' when dhcp is installed
-            ['-p local6.info -t snmpd',     'CLIENT_FORWARDED_SNMPD_LOG',        'snmpd.log',       'secure'], # local='snmpd.log' when snmpd is installed
-            ['-p local6.notice -t aide',    'CLIENT_FORWARDED_AIDE_LOG',         'aide.log',        'secure'], # local='aide/aide.log' when aide is installed
-            ['-p local6.err -t puppet-agent',     'CLIENT_FORWARDED_PUPPET_AGENT_ERR_LOG',     'puppet_agent_error.log', 'puppet-agent-err.log'],
-            ['-p local6.warning -t puppet-agent', 'CLIENT_FORWARDED_PUPPET_AGENT_NO_ERR_LOG',  'puppet_agent.log',       'puppet-agent.log'],
-            ['-p local6.err -t puppetserver',     'CLIENT_FORWARDED_PUPPETSERVER_ERR_LOG',     'puppetserver_error.log', 'puppetserver-err.log'],
-            ['-p local6.warning -t puppetserver', 'CLIENT_FORWARDED_PUPPETSERVER_NO_ERR_LOG',  'puppetserver.log',       'puppetserver.log'],
-            ['-p local5.notice -t audispd', 'CLIENT_FORWARDED_AUDISPD_LOG',      'auditd.log', nil], # locally defeated as already in /var/log/audit when real audispd message
-            ['-t slapd_audit',              'CLIENT_FORWARDED_SLAPD_AUDIT_LOG',  nil,          'slapd_audit.log'],
-            ['-p news.crit -t news',        'CLIENT_FORWARDED_NEWS_CRIT_LOG',    nil,          'spooler'], # syslog module FIXME also appears in messages
-            ['-p uucp.crit -t uucp',        'CLIENT_FORWARDED_UUCP_CRIT_LOG',    nil,          'spooler'], # syslog module FIXME also appears in messages, locally
-            ['-t sudo',                     'CLIENT_FORWARDED_SUDO_LOG',         'secure.log', 'secure'],
-            ['-t auditd',                   'CLIENT_FORWARDED_AUDITD_LOG',       'secure.log', 'secure'],
-            ['-t audit',                    'CLIENT_FORWARDED_AUDIT_LOG',        'secure.log', 'secure'],
-            ['-t yum',                      'CLIENT_FORWARDED_YUM_LOG',          'secure.log', 'secure'],
-            ['-t systemd',                  'CLIENT_FORWARDED_SYSTEMD_LOG',      'secure.log', 'secure'],
-            ['-t crond',                    'CLIENT_FORWARDED_CROND_LOG',        'secure.log', 'secure'],
-            ['-p authpriv.warning -t auth', 'CLIENT_FORWARDED_AUTHPRIV_ANY_LOG', 'secure.log', 'secure'],
-            ['-p local6.info -t id3',       'CLIENT_FORWARDED_LOCAL6_ANY_LOG',   'secure.log', 'secure'],
+            [
+              '-p local7.warning -t boot',
+              'CLIENT_FORWARDED_BOOT_LOG',
+              'boot.log',
+              'secure',
+            ],
+            [
+              '-p mail.info -t id1',
+              'CLIENT_FORWARDED_ANY_MAIL_LOG',
+              nil,
+              'maillog',
+            ],
+            [
+              '-p cron.warning -t cron',
+              'CLIENT_FORWARDED_CRON_ANY_LOG',
+              'cron.log',
+              'cron',
+            ],
+            [
+              '-p local4.emerg -t id2',
+              'CLIENT_FORWARDED_ANY_EMERG_LOG',
+              'emergency.log',
+              'secure',
+            ],
+            [
+              '-p local2.info -t sudosh',
+              'CLIENT_FORWARDED_SUDOSH_LOG',
+              'sudosh.log',
+              'messages',
+            ], # local='sudosh.log' when sudosh module used
+            [
+              '-p local2.info -t tlog',
+              'CLIENT_FORWARDED_TLOG_LOG',
+              'tlog.log',
+              'messages',
+            ], # local='tlog.log' when tlog module used
+            [
+              '-p local6.err -t httpd',
+              'CLIENT_FORWARDED_HTTPD_ERR_LOG',
+              'httpd_error.log',
+              'secure',
+            ], # local='httpd/error_log' when simp_apache is installed
+            [
+              '-p local6.warning -t httpd',
+              'CLIENT_FORWARDED_HTTPD_NO_ERR_LOG',
+              'httpd.log',
+              'secure',
+            ], # local='httpd/access_log' when simp_apache is installed
+            [
+              '-t dhcpd',
+              'CLIENT_FORWARDED_DHCPD_LOG',
+              nil,
+              'messages',
+            ], # local='dhcpd' when dhcp is installed
+            [
+              '-p local6.info -t snmpd',
+              'CLIENT_FORWARDED_SNMPD_LOG',
+              'snmpd.log',
+              'secure',
+            ], # local='snmpd.log' when snmpd is installed
+            [
+              '-p local6.notice -t aide',
+              'CLIENT_FORWARDED_AIDE_LOG',
+              'aide.log',
+              'secure',
+            ], # local='aide/aide.log' when aide is installed
+            [
+              '-p local6.err -t puppet-agent',
+              'CLIENT_FORWARDED_PUPPET_AGENT_ERR_LOG',
+              'puppet_agent_error.log',
+              'puppet-agent-err.log',
+            ],
+            [
+              '-p local6.warning -t puppet-agent',
+              'CLIENT_FORWARDED_PUPPET_AGENT_NO_ERR_LOG',
+              'puppet_agent.log',
+              'puppet-agent.log',
+            ],
+            [
+              '-p local6.err -t puppetserver',
+              'CLIENT_FORWARDED_PUPPETSERVER_ERR_LOG',
+              'puppetserver_error.log',
+              'puppetserver-err.log',
+            ],
+            [
+              '-p local6.warning -t puppetserver',
+              'CLIENT_FORWARDED_PUPPETSERVER_NO_ERR_LOG',
+              'puppetserver.log',
+              'puppetserver.log',
+            ],
+            [
+              '-p local5.notice -t audispd',
+              'CLIENT_FORWARDED_AUDISPD_LOG',
+              'auditd.log',
+              nil,
+            ], # locally defeated as already in /var/log/audit when real audispd message
+            [
+              '-t slapd_audit',
+              'CLIENT_FORWARDED_SLAPD_AUDIT_LOG',
+              nil,
+              'slapd_audit.log',
+            ],
+            [
+              '-p news.crit -t news',
+              'CLIENT_FORWARDED_NEWS_CRIT_LOG',
+              nil,
+              'spooler',
+            ], # syslog module FIXME also appears in messages
+            [
+              '-p uucp.crit -t uucp',
+              'CLIENT_FORWARDED_UUCP_CRIT_LOG',
+              nil,
+              'spooler',
+            ], # syslog module FIXME also appears in messages, locally
+            [
+              '-t sudo',
+              'CLIENT_FORWARDED_SUDO_LOG',
+              'secure.log',
+              'secure',
+            ],
+            [
+              '-t auditd',
+              'CLIENT_FORWARDED_AUDITD_LOG',
+              'secure.log',
+              'secure',
+            ],
+            [
+              '-t audit',
+              'CLIENT_FORWARDED_AUDIT_LOG',
+              'secure.log',
+              'secure',
+            ],
+            [
+              '-t yum',
+              'CLIENT_FORWARDED_YUM_LOG',
+              'secure.log',
+              'secure',
+            ],
+            [
+              '-t systemd',
+              'CLIENT_FORWARDED_SYSTEMD_LOG',
+              'secure.log',
+              'secure',
+            ],
+            [
+              '-t crond',
+              'CLIENT_FORWARDED_CROND_LOG',
+              'secure.log',
+              'secure',
+            ],
+            [
+              '-p authpriv.warning -t auth',
+              'CLIENT_FORWARDED_AUTHPRIV_ANY_LOG',
+              'secure.log',
+              'secure',
+            ],
+            [
+              '-p local6.info -t id3',
+              'CLIENT_FORWARDED_LOCAL6_ANY_LOG',
+              'secure.log',
+              'secure',
+            ],
           ]
 
           # send the messages

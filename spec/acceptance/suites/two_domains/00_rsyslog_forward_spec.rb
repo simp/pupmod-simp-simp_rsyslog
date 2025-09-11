@@ -19,19 +19,19 @@ describe 'simp_rsyslog' do
   let(:server2_fqdn) { fact_on(rsyslog_server2, 'fqdn') }
   let(:server_hieradata) do
     {
-      'simp_options::syslog::log_servers' => [ server1_fqdn.to_s, server2_fqdn.to_s],
-   'iptables::precise_match'           => true,
-   'rsyslog::app_pki_external_source'  => '/etc/pki/simp-testing/pki',
-   'rsyslog::pki'                      => true,
-   'rsyslog::trusted_nets'             => ['ALL'],
-   'simp_rsyslog::is_server'           => true,
-   'simp_rsyslog::forward_logs'        => false,
-   'simp_options::firewall'            => true,
-   'rsyslog::tcp_server'               => true,
-   'rsyslog::tls_tcp_server'           => true,
-   # Need to let log servers accept from different domains.  The default
-   # is just the domain of the log server.
-   'rsyslog::config::tls_input_tcp_server_stream_driver_permitted_peers' => ['*.wayout.org', '*.my.domain']
+      'simp_options::syslog::log_servers' => [server1_fqdn.to_s, server2_fqdn.to_s],
+      'iptables::precise_match' => true,
+      'rsyslog::app_pki_external_source' => '/etc/pki/simp-testing/pki',
+      'rsyslog::pki' => true,
+      'rsyslog::trusted_nets' => ['ALL'],
+      'simp_rsyslog::is_server' => true,
+      'simp_rsyslog::forward_logs' => false,
+      'simp_options::firewall' => true,
+      'rsyslog::tcp_server' => true,
+      'rsyslog::tls_tcp_server' => true,
+      # Need to let log servers accept from different domains.  The default
+      # is just the domain of the log server.
+      'rsyslog::config::tls_input_tcp_server_stream_driver_permitted_peers' => ['*.wayout.org', '*.my.domain'],
     }
   end
 
@@ -59,10 +59,10 @@ describe 'simp_rsyslog' do
         let(:client_hieradata) do
           {
             'simp_options::syslog::log_servers' => [server1_fqdn.to_s, server2_fqdn.to_s],
-         'rsyslog::app_pki_external_source'  => '/etc/pki/simp-testing/pki',
-         'rsyslog::pki'                      => true,
-         'rsyslog::enable_tls_logging'       => true,
-         'simp_rsyslog::forward_logs'        => true
+            'rsyslog::app_pki_external_source' => '/etc/pki/simp-testing/pki',
+            'rsyslog::pki' => true,
+            'rsyslog::enable_tls_logging' => true,
+            'simp_rsyslog::forward_logs' => true,
           }
         end
 
@@ -83,10 +83,10 @@ describe 'simp_rsyslog' do
           # Each entry in this array is [log_options, log_message, server_logfile]
           # server_logfile is the relative log file in the client-specific directory
           default_test_array = [
-            ['-p local4.emerg -t id2',            'FORWARDED_ANY_EMERG_LOG',           'emergency.log'],
-            ['-p local6.err -t puppet-agent',     'FORWARDED_PUPPET_AGENT_ERR_LOG',    'puppet_agent_error.log'],
+            ['-p local4.emerg -t id2', 'FORWARDED_ANY_EMERG_LOG', 'emergency.log'],
+            ['-p local6.err -t puppet-agent', 'FORWARDED_PUPPET_AGENT_ERR_LOG', 'puppet_agent_error.log'],
             ['-p local6.warning -t puppet-agent', 'FORWARDED_PUPPET_AGENT_NO_ERR_LOG', 'puppet_agent.log'],
-            ['-p local6.err -t puppetserver',     'FORWARDED_PUPPETSERVER_ERR_LOG',    'puppetserver_error.log'],
+            ['-p local6.err -t puppetserver', 'FORWARDED_PUPPETSERVER_ERR_LOG', 'puppetserver_error.log'],
             ['-p local6.warning -t puppetserver', 'FORWARDED_PUPPETSERVER_NO_ERR_LOG', 'puppetserver.log'],
           ]
 
@@ -97,8 +97,10 @@ describe 'simp_rsyslog' do
 
           wait_for_log_message(
             server,
-            File.join(client_log_dir,
-            default_test_array[-1][2]),
+            File.join(
+              client_log_dir,
+              default_test_array[-1][2],
+            ),
             default_test_array[-1][1],
           )
 
