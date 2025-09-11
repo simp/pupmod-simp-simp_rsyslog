@@ -6,10 +6,10 @@ describe 'simp_rsyslog' do
     it { is_expected.to contain_class('simp_rsyslog') }
   end
 
-  on_supported_os.each do |os, facts|
+  on_supported_os.each do |os, os_facts|
     context "on #{os}" do
       let(:facts) do
-        facts
+        os_facts
       end
 
       let(:program_logs) do
@@ -26,7 +26,7 @@ describe 'simp_rsyslog' do
           "($programname == 'tlog')",
           "($programname == 'tlog-rec-session')",
           "($programname == '-tlog-rec-session')",
-          "($programname == 'yum')"
+          "($programname == 'yum')",
         ]
       end
 
@@ -36,13 +36,14 @@ describe 'simp_rsyslog' do
           "prifilt('authpriv.*')",
           "prifilt('cron.*')",
           "prifilt('local6.*')",
-          "prifilt('local7.warn')"
+          "prifilt('local7.warn')",
         ]
       end
 
       let(:msg_starts_logs) do
-        [ "($msg startswith ' IPT:')",
-          "($msg startswith 'IPT:')"
+        [
+          "($msg startswith ' IPT:')",
+          "($msg startswith 'IPT:')",
         ]
       end
 
@@ -50,7 +51,7 @@ describe 'simp_rsyslog' do
         (program_logs + facility_logs + msg_starts_logs).join(' or ')
       end
 
-      let (:residual_security_logs) do
+      let(:residual_security_logs) do
         [
           "($programname == 'audispd')",
           "($programname == 'audit')",
@@ -60,18 +61,19 @@ describe 'simp_rsyslog' do
           "($programname == 'systemd')",
           "($programname == 'yum')",
           "prifilt('*.emerg')",
-          "prifilt('local7.warn')"
+          "prifilt('local7.warn')",
         ].join(' or ')
       end
 
       context 'simp_rsyslog class with default parameters' do
-        let(:params) {{ }}
+        let(:params) { {} }
+
         it_behaves_like 'a structured module'
         it { is_expected.to contain_class('simp_rsyslog::local') }
         it { is_expected.to contain_rsyslog__rule__local('ZZ_01_simp_rsyslog_profile_local_drop_audispd_duplicates') }
         it {
           is_expected.to contain_rsyslog__rule__local('ZZ_02_simp_rsyslog_profile_local_security').with_rule(
-            Regexp.new(Regexp.escape(residual_security_logs))
+            Regexp.new(Regexp.escape(residual_security_logs)),
           )
         }
         it { is_expected.to contain_rsyslog__rule__local('ZZ_02_simp_rsyslog_profile_local_security').with_stop_processing(true) }
@@ -81,50 +83,50 @@ describe 'simp_rsyslog' do
 
       context 'simp rsyslog class that enables forwarding' do
         context 'forwarding default logs' do
-          let(:params) {{
-            :forward_logs => true,
-            :log_servers  => ['1.2.3.4']
-          }}
+          let(:params) do
+            {
+              forward_logs: true,
+              log_servers: ['1.2.3.4'],
+            }
+          end
 
           it_behaves_like 'a structured module'
           it { is_expected.to contain_class('simp_rsyslog::local') }
           it { is_expected.to contain_class('simp_rsyslog::forward') }
           it {
             is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with(
-             {
-              :rule                          => Regexp.new(Regexp.escape(default_security_relevant_logs)),
-              :dest                          => ['1.2.3.4'],
-              :failover_log_servers          => [],
-              :dest_type                     => 'tcp',
-              :stream_driver_permitted_peers => nil,
-              :stop_processing               => false
-             }
+              rule: Regexp.new(Regexp.escape(default_security_relevant_logs)),
+              dest: ['1.2.3.4'],
+              failover_log_servers: [],
+              dest_type: 'tcp',
+              stream_driver_permitted_peers: nil,
+              stop_processing: false,
             )
           }
           it { is_expected.not_to contain_class('simp_rsyslog::server') }
         end
 
         context 'forwarding all logs but disable local rsyslog configuration' do
-          let(:params){{
-            :forward_logs         => true,
-            :log_servers          => ['1.2.3.4'],
-            :failover_log_servers => ['3.4.5.6'],
-            :collect_everything   => true,
-            :log_local            => false
-          }}
+          let(:params) do
+            {
+              forward_logs: true,
+              log_servers: ['1.2.3.4'],
+              failover_log_servers: ['3.4.5.6'],
+              collect_everything: true,
+              log_local: false,
+            }
+          end
 
           it_behaves_like 'a structured module'
           it { is_expected.to contain_class('simp_rsyslog::forward') }
           it {
             is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with(
-             {
-              :rule                          => "prifilt('*.*')",
-              :dest                          => ['1.2.3.4'],
-              :failover_log_servers          => ['3.4.5.6'],
-              :dest_type                     => 'tcp',
-              :stream_driver_permitted_peers => nil,
-              :stop_processing               => false
-             }
+              rule: "prifilt('*.*')",
+              dest: ['1.2.3.4'],
+              failover_log_servers: ['3.4.5.6'],
+              dest_type: 'tcp',
+              stream_driver_permitted_peers: nil,
+              stop_processing: false,
             )
           }
           it { is_expected.not_to contain_class('simp_rsyslog::local') }
@@ -132,82 +134,95 @@ describe 'simp_rsyslog' do
         end
 
         context 'with openldap log forwarding enabled' do
-          let(:params) {{
-            :forward_logs => true,
-            :log_servers  => ['1.2.3.4'],
-            :log_openldap => true
-          }}
+          let(:params) do
+            {
+              forward_logs: true,
+              log_servers: ['1.2.3.4'],
+              log_openldap: true,
+            }
+          end
 
           it_behaves_like 'a structured module'
           it {
             logs = program_logs + [ "($programname == 'slapd')" ] +
-              facility_logs + [ "prifilt('local4.*')" ] + msg_starts_logs
+                   facility_logs + [ "prifilt('local4.*')" ] + msg_starts_logs
             expected_logs = logs.join(' or ')
             is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with_rule(
-              Regexp.new(Regexp.escape(expected_logs))
+              Regexp.new(Regexp.escape(expected_logs)),
             )
           }
         end
 
         context 'custom log forwarding' do
-          let(:params) {{
-            :forward_logs => true,
-            :log_servers  => ['1.2.3.4'],
-            :log_collection => {
-              'facilities' => ['local2.warn']
-             }
-          }}
+          let(:params) do
+            {
+              forward_logs: true,
+              log_servers: ['1.2.3.4'],
+              log_collection: {
+                'facilities' => ['local2.warn'],
+              },
+            }
+          end
 
           it_behaves_like 'a structured module'
           it {
             logs = program_logs + facility_logs + [ "prifilt('local2.warn')" ] +
-              msg_starts_logs
+                   msg_starts_logs
             expected_logs = logs.join(' or ')
             is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with_rule(
-              Regexp.new(Regexp.escape(expected_logs))
+              Regexp.new(Regexp.escape(expected_logs)),
             )
           }
         end
 
         context 'with remote log servers not specified' do
-          let(:params) {{
-            :forward_logs => true,
-            :log_servers  => [],
-          }}
+          let(:params) do
+            {
+              forward_logs: true,
+              log_servers: [],
+            }
+          end
+
           it { is_expected.not_to compile.with_all_deps }
         end
 
         context 'with remote log servers and tls enabled and permitted_peers set' do
           let(:hieradata) { 'simp_rsyslog_with_permitted_peers' }
-          let(:params) {{
-            :forward_logs         => true,
-            :log_servers          => ['logserver.my.domain'],
-            :failover_log_servers => ['1.2.3.4'],
-          }}
+          let(:params) do
+            {
+              forward_logs: true,
+              log_servers: ['logserver.my.domain'],
+              failover_log_servers: ['1.2.3.4'],
+            }
+          end
+
           it {
             is_expected.to contain_rsyslog__rule__remote('99_simp_rsyslog_profile_remote').with(
-              {
-                :stream_driver_permitted_peers => "*.my.domain,this.system"
-              })
+              stream_driver_permitted_peers: '*.my.domain,this.system',
+            )
           }
         end
-
       end
 
       context 'simp_rsyslog class that is a log server' do
         context 'with default parameters' do
-          let(:params) {{
-            :is_server => true
-          }}
+          let(:params) do
+            {
+              is_server: true,
+            }
+          end
+
           it_behaves_like 'a structured module'
           it { is_expected.to contain_class('simp_rsyslog::server') }
           it { is_expected.to contain_rsyslog__rule__local('10_00_default_boot') }
           it { is_expected.to contain_rsyslog__rule__local('10_00_default_mail') }
-          it { is_expected.to contain_rsyslog__rule__local('10_00_default_cron').with({
-            'rule'            => "prifilt('cron.*')",
-            'dyna_file'       => '/var/log/hosts/%HOSTNAME%/cron.log',
-            'stop_processing' => true,
-          }) }
+          it {
+            is_expected.to contain_rsyslog__rule__local('10_00_default_cron').with(
+              'rule' => "prifilt('cron.*')",
+              'dyna_file' => '/var/log/hosts/%HOSTNAME%/cron.log',
+              'stop_processing' => true,
+            )
+          }
           it { is_expected.to contain_rsyslog__rule__local('10_00_default_emerg') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_sudosh') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_tlog') }
@@ -225,9 +240,11 @@ describe 'simp_rsyslog' do
           it { is_expected.to contain_rsyslog__rule__local('10_default_iptables') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_kern') }
           it { is_expected.to contain_rsyslog__rule__local('10_default_spool') }
-          it { is_expected.to contain_rsyslog__rule__local('17_default_security_relevant_logs').with_rule(
-              Regexp.new(Regexp.escape(default_security_relevant_logs))
-          ) }
+          it {
+            is_expected.to contain_rsyslog__rule__local('17_default_security_relevant_logs').with_rule(
+              Regexp.new(Regexp.escape(default_security_relevant_logs)),
+            )
+          }
           it { is_expected.to contain_rsyslog__rule__local('19_default_message') }
           it { is_expected.to contain_rsyslog__rule__local('30_default_catchall') }
           it { is_expected.not_to contain_rsyslog__rule__local('30_default_drop') }
@@ -237,25 +254,33 @@ describe 'simp_rsyslog' do
         end
 
         context 'simp_rsyslog class that has moved the logdir' do
-          let(:params) {{
-            :is_server => true,
-          }}
+          let(:params) do
+            {
+              is_server: true,
+            }
+          end
           let(:hieradata) { 'rsyslog_server_logdir' }
+
           it_behaves_like 'a structured module'
-          it { is_expected.to contain_rsyslog__rule__local('10_00_default_cron').with({
-            'rule'            => "prifilt('cron.*')",
-            'dyna_file'       => '/opt/logs/%SYSLOGFACILITY-TEXT%/cron.log',
-            'stop_processing' => true,
-          }) }
+          it {
+            is_expected.to contain_rsyslog__rule__local('10_00_default_cron').with(
+              'rule' => "prifilt('cron.*')",
+              'dyna_file' => '/opt/logs/%SYSLOGFACILITY-TEXT%/cron.log',
+              'stop_processing' => true,
+            )
+          }
         end
 
         context 'simp_rsyslog class that is a log server with all features disabled' do
           # no reason to disable all, but this allows testing of individual disable
           # parameters
-          let(:params) {{
-            :is_server => true
-          }}
+          let(:params) do
+            {
+              is_server: true,
+            }
+          end
           let(:hieradata) { 'rsyslog_server_features_disabled' }
+
           it_behaves_like 'a structured module'
           it { is_expected.to contain_class('simp_rsyslog::server') }
           it { is_expected.not_to contain_rsyslog__rule__local('10_00_default_boot') }
@@ -286,10 +311,13 @@ describe 'simp_rsyslog' do
         end
 
         context 'simp_rsyslog class that is a log server with custom rules' do
-          let(:params) {{
-            :is_server => true
-          }}
+          let(:params) do
+            {
+              is_server: true,
+            }
+          end
           let(:hieradata) { 'rsyslog_server_custom_rules' }
+
           it_behaves_like 'a structured module'
           it { is_expected.to contain_class('simp_rsyslog::server') }
           it { is_expected.to contain_rsyslog__rule__drop('0_default').with_rule('prifilt(\'*.*\')') }
