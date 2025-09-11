@@ -4,7 +4,7 @@ require 'spec_helper'
 describe 'simp_rsyslog::format_options' do
   context 'with valid parameters' do
     it {
-      is_expected.to run.with_params({ 'programs' => ['foo'] }).and_return(%{($programname == 'foo')})
+      is_expected.to run.with_params('programs' => ['foo']).and_return(%{($programname == 'foo')})
     }
 
     it {
@@ -17,10 +17,10 @@ describe 'simp_rsyslog::format_options' do
 
     it {
       is_expected.to run.with_params(
-        'programs' => ['foo1', 'bar1'],
+        'programs'   => ['foo1', 'bar1'],
         'facilities' => ['foo2.*', 'bar2.*'],
         'msg_starts' => ['foo4', 'bar4'],
-        'msg_regex' => ['$foo5', '^.*bar5$'],
+        'msg_regex'  => ['$foo5', '^.*bar5$'],
       ).and_return(
         [
           %{($programname == 'foo1') or ($programname == 'bar1')},

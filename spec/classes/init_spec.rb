@@ -6,10 +6,10 @@ describe 'simp_rsyslog' do
     it { is_expected.to contain_class('simp_rsyslog') }
   end
 
-  on_supported_os.each do |os, facts|
+  on_supported_os.each do |os, os_facts|
     context "on #{os}" do
       let(:facts) do
-        facts
+        os_facts
       end
 
       let(:program_logs) do

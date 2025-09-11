@@ -11,7 +11,7 @@ describe 'simp_rsyslog' do
       iptables::listen::tcp_stateful { 'allow_sshd':
         order => 8,
         trusted_nets => ['ALL'],
-        dports => 22
+        dports => 22,
       }
     EOS
   end
@@ -19,16 +19,16 @@ describe 'simp_rsyslog' do
   let(:server2_fqdn) { fact_on(rsyslog_server2, 'fqdn') }
   let(:server_hieradata) do
     {
-      'simp_options::syslog::log_servers' => [server1_fqdn.to_s, server2_fqdn.to_s],
-      'iptables::precise_match' => true,
-      'rsyslog::app_pki_external_source' => '/etc/pki/simp-testing/pki',
-      'rsyslog::pki' => true,
-      'rsyslog::trusted_nets' => ['ALL'],
-      'simp_rsyslog::is_server' => true,
-      'simp_rsyslog::forward_logs' => false,
-      'simp_options::firewall' => true,
-      'rsyslog::tcp_server' => true,
-      'rsyslog::tls_tcp_server' => true,
+      'simp_options::syslog::log_servers'                                   => [server1_fqdn.to_s, server2_fqdn.to_s],
+      'iptables::precise_match'                                             => true,
+      'rsyslog::app_pki_external_source'                                    => '/etc/pki/simp-testing/pki',
+      'rsyslog::pki'                                                        => true,
+      'rsyslog::trusted_nets'                                               => ['ALL'],
+      'simp_rsyslog::is_server'                                             => true,
+      'simp_rsyslog::forward_logs'                                          => false,
+      'simp_options::firewall'                                              => true,
+      'rsyslog::tcp_server'                                                 => true,
+      'rsyslog::tls_tcp_server'                                             => true,
       # Need to let log servers accept from different domains.  The default
       # is just the domain of the log server.
       'rsyslog::config::tls_input_tcp_server_stream_driver_permitted_peers' => ['*.wayout.org', '*.my.domain'],
@@ -59,10 +59,10 @@ describe 'simp_rsyslog' do
         let(:client_hieradata) do
           {
             'simp_options::syslog::log_servers' => [server1_fqdn.to_s, server2_fqdn.to_s],
-            'rsyslog::app_pki_external_source' => '/etc/pki/simp-testing/pki',
-            'rsyslog::pki' => true,
-            'rsyslog::enable_tls_logging' => true,
-            'simp_rsyslog::forward_logs' => true,
+            'rsyslog::app_pki_external_source'  => '/etc/pki/simp-testing/pki',
+            'rsyslog::pki'                      => true,
+            'rsyslog::enable_tls_logging'       => true,
+            'simp_rsyslog::forward_logs'        => true,
           }
         end
 
