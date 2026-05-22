@@ -1,5 +1,11 @@
 * Mon May 11 2026 Steven Pritchard <steve@sicura.us> - 1.0.0
 - Remove unmaintained Compliance Engine data
+- Require OpenVox 8 (drop Puppet 7 support)
+- Add EL10 support (AlmaLinux, CentOS Stream, OracleLinux, RedHat, Rocky)
+- Drop EL7 support
+- Update issues URL to GitHub
+- Broaden dependency ranges to allow the latest simp/rsyslog,
+  simp/simplib, and simp/logrotate releases
 
 * Tue Jun 10 2025 Chris Tessmer <chris.tessmer@onyxpoint.com> - 0.10.1
 - Fix rubocop issues
