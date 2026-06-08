@@ -1,32 +1,8 @@
 ---
 HOSTS:
-  el9server.my.domain:
+  server-almalinux10.simp.beaker:
     roles:
     - default
-    - rsyslog_server1
-    - rsyslog_server
-    - el9
-    platform: el-9-x86_64
-    box: almalinux/9
-    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
-    vagrant_memsize: 2048
-    vagrant_cpus: 2
-    family: almalinux-cloud/almalinux-9
-    gce_machine_type: n1-standard-2
-  el9client.my.domain:
-    roles:
-    - rsyslog_client
-    - el9
-    platform: el-9-x86_64
-    box: almalinux/9
-    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
-    vagrant_memsize: 2048
-    vagrant_cpus: 2
-    family: almalinux-cloud/almalinux-9
-    gce_machine_type: n1-standard-2
-  el10server.wayout.org:
-    roles:
-    - rsyslog_server2
     - rsyslog_server
     - el10
     platform: el-10-x86_64
@@ -37,7 +13,7 @@ HOSTS:
     # There are not currently any el10 images available on google cloud
     # family: almalinux-cloud/almalinux-10
     # gce_machine_type: n1-standard-2
-  el10client.wayout.org:
+  client-almalinux10.simp.beaker:
     roles:
     - rsyslog_client
     - el10

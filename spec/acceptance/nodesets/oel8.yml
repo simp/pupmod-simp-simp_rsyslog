@@ -1,27 +1,29 @@
 ---
 HOSTS:
-  server-almalinux9.simp.beaker:
+  server-oel8.simp.beaker:
     roles:
     - default
     - rsyslog_server
-    - el9
-    platform: el-9-x86_64
-    box: almalinux/9
+    - el8
+    platform: el-8-x86_64
+    box: oraclelinux/8
+    box_url: https://oracle.github.io/vagrant-projects/boxes/oraclelinux/8.json
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     vagrant_memsize: 2048
     vagrant_cpus: 2
-    family: almalinux-cloud/almalinux-9
+    family: sicura-image-build/oracle-linux-8
     gce_machine_type: n1-standard-2
-  client-almalinux9.simp.beaker:
+  client-oel8.simp.beaker:
     roles:
     - rsyslog_client
-    - el9
-    platform: el-9-x86_64
-    box: almalinux/9
+    - el8
+    platform: el-8-x86_64
+    box: oraclelinux/8
+    box_url: https://oracle.github.io/vagrant-projects/boxes/oraclelinux/8.json
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     vagrant_memsize: 2048
     vagrant_cpus: 2
-    family: almalinux-cloud/almalinux-9
+    family: sicura-image-build/oracle-linux-8
     gce_machine_type: n1-standard-2
 CONFIG:
   log_level: verbose

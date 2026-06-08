@@ -1,27 +1,27 @@
 ---
 HOSTS:
-  server-almalinux9.simp.beaker:
+  server-rocky9.simp.beaker:
     roles:
     - default
     - rsyslog_server
     - el9
     platform: el-9-x86_64
-    box: almalinux/9
+    box: rockylinux/9
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     vagrant_memsize: 2048
     vagrant_cpus: 2
-    family: almalinux-cloud/almalinux-9
+    family: rocky-linux-cloud/rocky-linux-9
     gce_machine_type: n1-standard-2
-  client-almalinux9.simp.beaker:
+  client-rocky9.simp.beaker:
     roles:
     - rsyslog_client
     - el9
     platform: el-9-x86_64
-    box: almalinux/9
+    box: rockylinux/9
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     vagrant_memsize: 2048
     vagrant_cpus: 2
-    family: almalinux-cloud/almalinux-9
+    family: rocky-linux-cloud/rocky-linux-9
     gce_machine_type: n1-standard-2
 CONFIG:
   log_level: verbose
