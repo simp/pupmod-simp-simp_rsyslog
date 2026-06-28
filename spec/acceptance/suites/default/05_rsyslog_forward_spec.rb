@@ -77,6 +77,10 @@ describe 'simp_rsyslog' do
         end
 
         it "collects #{client} firewall messages to host-specific, server, as well as client log files" do
+          # Kernel netfilter packet logging cannot run under containerized
+          # runtimes (docker/rootless podman); keep this live on full VMs.
+          skip('netfilter packet logging is not available under this runtime (container)') unless firewall_logging_supported?(client)
+
           on(hosts.find { |x| x != client }, "ping -c 3 #{client.ip}", accept_all_exit_codes: true)
           result = on(server, "grep -l 'TYPE=8' #{client_log_dir}/{iptables,firewall}.log", accept_all_exit_codes: true)
           expect(result.stdout.strip).to match(%r{#{client_log_dir}/.+\.log})
@@ -284,8 +288,17 @@ describe 'simp_rsyslog' do
               end
             else
               # Ensure dropped message (e.g., duplicate auditd messages)
-              # are not logged on the client
-              on(client, "grep -Rl '#{message}' /var/log", acceptable_exit_codes: [1])
+              # are not logged on the client.
+              #
+              # Use `grep -r` (do NOT dereference symlinks) rather than
+              # `grep -R`: some base images (notably the container images
+              # used under docker/podman) ship a dangling /var/log/README
+              # symlink. `grep -R` follows it, fails to stat the target, and
+              # returns exit code 2 even when the message is genuinely
+              # absent, producing a false failure. `grep -r` skips the
+              # symlink and returns 1 (no match), matching the other
+              # /var/log search in this suite.
+              on(client, "grep -rl '#{message}' /var/log", acceptable_exit_codes: [1])
             end
           end
         end

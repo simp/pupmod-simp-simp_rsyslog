@@ -4,6 +4,29 @@ require 'yaml'
 require 'simp/beaker_helpers'
 include Simp::BeakerHelpers
 
+# Returns true if the host can exercise netfilter packet logging (the
+# iptables/firewalld LOG target that produces the "TYPE=8" ICMP entries the
+# firewall-collection examples assert on).
+#
+# Under containerized runtimes (docker/podman, and especially the rootless
+# podman + seccomp runtime used in CI) the host shares the read-only kernel
+# netfilter stack of the container host: emitting kernel firewall log
+# messages for inter-host pings is not permitted (and inter-container ICMP
+# does not traverse the host's LOG rules the same way it does on a VM).
+# In that case the firewall-log examples cannot pass for reasons unrelated
+# to this module, so callers should `skip` them. On a full VM (vagrant)
+# this returns true and the examples run for real.
+#
+# Detection is based on the hypervisor that provisioned the SUT rather than
+# a live iptables probe: a privileged local docker daemon will happily
+# accept a LOG rule yet still not log inter-container ICMP, so probing the
+# rule is misleading. The hypervisor is an unambiguous, side-effect-free
+# signal.
+def firewall_logging_supported?(host)
+  hypervisor = host[:hypervisor].to_s
+  !['docker', 'podman'].include?(hypervisor)
+end
+
 # Wait up to max_wait_seconds for a message to be logged on a host or fail
 # @param [String] host Name of test server on which the log file resides
 # @param [String] log Fully qualified path to log on the test server
