@@ -1,11 +1,23 @@
 ---
 HOSTS:
-  rocky9:
+  rocky9-server:
     roles:
     - default
     - master
     - server
     - el9
+    - rsyslog_server
+    platform: el-9-x86_64
+    box: rockylinux/9
+    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
+    vagrant_memsize: 2048
+    vagrant_cpus: 2
+    family: rocky-linux-cloud/rocky-linux-9
+    gce_machine_type: n1-standard-2
+  rocky9-client:
+    roles:
+    - el9
+    - rsyslog_client
     platform: el-9-x86_64
     box: rockylinux/9
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"

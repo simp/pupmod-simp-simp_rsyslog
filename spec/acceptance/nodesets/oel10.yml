@@ -1,11 +1,21 @@
 ---
 HOSTS:
-  oel10:
+  oel10-server:
     roles:
     - default
     - master
     - server
     - el10
+    - rsyslog_server
+    platform: el-10-x86_64
+    box: generic/oracle10
+    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
+    vagrant_memsize: 2048
+    vagrant_cpus: 2
+  oel10-client:
+    roles:
+    - el10
+    - rsyslog_client
     platform: el-10-x86_64
     box: generic/oracle10
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"

@@ -77,10 +77,6 @@ describe 'simp_rsyslog' do
         end
 
         it "collects #{client} firewall messages to host-specific, server, as well as client log files" do
-          # Kernel netfilter packet logging cannot run under containerized
-          # runtimes (docker/rootless podman); keep this live on full VMs.
-          skip('netfilter packet logging is not available under this runtime (container)') unless firewall_logging_supported?(client)
-
           on(hosts.find { |x| x != client }, "ping -c 3 #{client.ip}", accept_all_exit_codes: true)
           result = on(server, "grep -l 'TYPE=8' #{client_log_dir}/{iptables,firewall}.log", accept_all_exit_codes: true)
           expect(result.stdout.strip).to match(%r{#{client_log_dir}/.+\.log})
