@@ -1,6 +1,6 @@
 ---
 HOSTS:
-  alma9-server:
+  centos9-server:
     roles:
     - default
     - master
@@ -8,22 +8,22 @@ HOSTS:
     - el9
     - rsyslog_server
     platform: el-9-x86_64
-    box: almalinux/9
+    box: generic/centos9s
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     vagrant_memsize: 2048
     vagrant_cpus: 2
-    family: almalinux-cloud/almalinux-9
+    family: centos-cloud/centos-stream-9
     gce_machine_type: n1-standard-2
-  alma9-client:
+  centos9-client:
     roles:
     - el9
     - rsyslog_client
     platform: el-9-x86_64
-    box: almalinux/9
+    box: generic/centos9s
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     vagrant_memsize: 2048
     vagrant_cpus: 2
-    family: almalinux-cloud/almalinux-9
+    family: centos-cloud/centos-stream-9
     gce_machine_type: n1-standard-2
 CONFIG:
   log_level: verbose
