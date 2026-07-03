@@ -64,6 +64,10 @@ RSpec.configure do |c|
     # Install modules and dependencies from spec/fixtures/modules
     copy_fixture_modules_to(hosts)
 
+    # Minimal EL9+ images do not ship firewalld and simp_firewalld only
+    # manages it when present; the firewall-log tests need it on every host
+    hosts.each { |sut| on(sut, 'puppet resource package firewalld ensure=present') }
+
     # Generate and install PKI certificates on each SUT
     Dir.mktmpdir do |cert_dir|
       run_fake_pki_ca_on(default, hosts, cert_dir)

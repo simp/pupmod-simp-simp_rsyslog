@@ -122,7 +122,6 @@ class simp_rsyslog (
     ],
     Array[String]
   ]                           $default_logs         = {
-
     'programs'   => [
       'aide',
       'audispd',
@@ -147,7 +146,12 @@ class simp_rsyslog (
     ],
     # Some versions of rsyslog include the space separator that precedes
     # the message as part of the message body
-    'msg_starts' => [' IPT:', 'IPT:', 'IN_99_simp_DROP:', ' IN_99_simp_DROP:'],
+    'msg_starts' => [
+      ' IPT:', 'IPT:', 'IN_99_simp_DROP:', ' IN_99_simp_DROP:',
+      # EL9+ firewalld (nftables backend) prefixes the log message with the
+      # table name
+      'filter_IN_99_simp_DROP:', ' filter_IN_99_simp_DROP:'
+    ],
     'msg_regex'  => []
   },
   Boolean                     $log_openldap         = false,
@@ -156,11 +160,10 @@ class simp_rsyslog (
   Boolean                     $collect_everything   = false,
   Boolean                     $enable_warning       = true,
 ) {
-
   if $log_openldap {
     $_openldap_logs = {
-      'programs'   => [ 'slapd' ],
-      'facilities' => [ 'local4.*' ]
+      'programs'   => ['slapd'],
+      'facilities' => ['local4.*']
     }
   }
   else {
@@ -179,14 +182,14 @@ class simp_rsyslog (
   include 'rsyslog'
 
   if $log_local {
-    contain '::simp_rsyslog::local'
+    contain 'simp_rsyslog::local'
   }
 
   if $forward_logs {
-    contain '::simp_rsyslog::forward'
+    contain 'simp_rsyslog::forward'
   }
 
   if $is_server {
-    contain '::simp_rsyslog::server'
+    contain 'simp_rsyslog::server'
   }
 }
