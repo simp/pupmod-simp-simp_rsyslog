@@ -146,13 +146,15 @@ class simp_rsyslog (
     ],
     # Some versions of rsyslog include the space separator that precedes
     # the message as part of the message body
-    'msg_starts' => [
-      ' IPT:', 'IPT:', 'IN_99_simp_DROP:', ' IN_99_simp_DROP:',
-      # EL9+ firewalld (nftables backend) prefixes the log message with the
-      # table name
-      'filter_IN_99_simp_DROP:', ' filter_IN_99_simp_DROP:'
-    ],
-    'msg_regex'  => []
+    'msg_starts' => [' IPT:', 'IPT:'],
+    # Match the firewalld DROP messages with a substring regex rather than
+    # startswith: the log-message prefix varies by platform -- bare
+    # 'IN_99_simp_DROP:' (legacy iptables), the nftables-backend
+    # 'filter_IN_99_simp_DROP:' (EL9+), and on EL8 the prefix is emitted
+    # wrapped in double quotes ('"filter_IN_99_simp_DROP: "'), so it does not
+    # start with any fixed string. 'IN_99_simp_DROP:' is unique enough to
+    # match all of these without false positives.
+    'msg_regex'  => ['IN_99_simp_DROP:']
   },
   Boolean                     $log_openldap         = false,
   Boolean                     $log_local            = true,
