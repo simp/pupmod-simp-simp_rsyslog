@@ -284,8 +284,17 @@ describe 'simp_rsyslog' do
               end
             else
               # Ensure dropped message (e.g., duplicate auditd messages)
-              # are not logged on the client
-              on(client, "grep -Rl '#{message}' /var/log", acceptable_exit_codes: [1])
+              # are not logged on the client.
+              #
+              # Use `grep -r` (do NOT dereference symlinks) rather than
+              # `grep -R`: some base images (notably the container images
+              # used under docker/podman) ship a dangling /var/log/README
+              # symlink. `grep -R` follows it, fails to stat the target, and
+              # returns exit code 2 even when the message is genuinely
+              # absent, producing a false failure. `grep -r` skips the
+              # symlink and returns 1 (no match), matching the other
+              # /var/log search in this suite.
+              on(client, "grep -rl '#{message}' /var/log", acceptable_exit_codes: [1])
             end
           end
         end
