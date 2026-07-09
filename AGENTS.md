@@ -64,8 +64,7 @@ key maps to a fixed wrapper: `programs` → `($programname == '…')`, `faciliti
 → `prifilt('…')`, `msg_starts` → `($msg startswith '…')`, `msg_regex` →
 `re_match($msg, '…')` (`format_options.rb`). Two guardrails: every
 `facilities` entry **must** contain a `.` (`facility.priority`) or it raises
-(`format_options.rb`); and if nothing produced output it raises "Did not
-find any valid content" (`format_options.rb`). Note `priorities` is a
+(`format_options.rb`); and if nothing produced output it raises "Did not find any valid content in the passed Options" (`format_options.rb`). Note `priorities` is a
 documented `@option` on the public class but is **not** in `valid_options`, so
 it is silently dropped by this function.
 
@@ -127,8 +126,7 @@ the optional `simp/logrotate` dependency and adds a logrotate rule
   `$security_relevant_logs` (`local.pp`) — editing `log_collection` does
   not change what `simp_rsyslog::local` writes.
 - **`$collect_everything` overrides everything** — when true, every other rule
-  distinction is discarded in favor of `prifilt('*.*')` (`init.pp`); it
-  applies to forwarded messages and is meant for remote collection.
+  distinction is discarded in favor of `prifilt('*.*')` (`init.pp`). Because it redefines `$security_relevant_logs` globally, it affects both forwarding (`forward.pp`) **and** the server role's local `17_default_security_relevant_logs` rule (`server.pp`), so it is not safe to treat as forwarding-only on servers.
 - **`simp/logrotate` is optional, not required.** The server role calls
   `simplib::assert_optional_dependency($module_name, 'simp/logrotate')` at
   `manifests/server.pp` before `include 'logrotate'`, so the dependency is
