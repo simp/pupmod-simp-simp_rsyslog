@@ -31,13 +31,22 @@ describe 'simp_rsyslog' do
     # by the applies below. A post-convergence noop check is deliberately omitted:
     # `puppet apply --noop --detailed-exitcodes` always exits 0, so it could never
     # fail and would test nothing.
+    #
+    # The suite manifest is not reused here: it hardcodes a troubleshooting
+    # iptables::listen rule (so beaker doesn't lock itself out), which pulls in
+    # simp_firewalld, whose Firewalld_service provider is not noop-safe from a
+    # clean state. The console previews the class itself (firewall default-off),
+    # so a bare include is both the representative subject and free of that
+    # unrelated rule. See simp/pupmod-simp-simp_firewalld#106.
     context 'in noop mode from a clean state' do
+      let(:noop_manifest) { "include 'simp_rsyslog'" }
+
       before(:context) do
         on(host, 'puppet resource package rsyslog ensure=absent')
       end
 
       it 'applies without errors in noop mode' do
-        apply_manifest_on(host, manifest, catch_failures: true, noop: true)
+        apply_manifest_on(host, noop_manifest, catch_failures: true, noop: true)
       end
     end
 
