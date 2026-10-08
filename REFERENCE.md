@@ -725,4 +725,3 @@ Data type: `Hash`
 
 1 more more additional hashes to be merged.  Each must be a Hash
 of Arrays.
-
