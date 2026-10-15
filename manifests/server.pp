@@ -148,7 +148,7 @@
 #
 class simp_rsyslog::server (
   Optional[String]                          $server_conf                    = undef,
-  Boolean                                   $process_sudosh_rules           = true,
+  Boolean                                   $process_sudosh_rules           = false,
   Boolean                                   $process_tlog_rules             = true,
   Boolean                                   $process_httpd_rules            = true,
   Boolean                                   $process_dhcpd_rules            = true,
