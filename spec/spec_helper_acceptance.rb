@@ -37,6 +37,23 @@ rescue Timeout::Error
   raise error_msg
 end
 
+# simp_rsyslog is a SIMP profile module, so the suites run it the way a SIMP
+# site does: with the `simp:defaults` Compliance Engine profile enforced.
+# simp/rsyslog 11.0.0 and later only manage and restart the rsyslog service
+# under that profile. Test data goes to common.yaml (set_hieradata_on); the
+# enforcement lives in its own file so set_hieradata_on doesn't replace it.
+HIERA_WITH_COMPLIANCE_ENGINE = {
+  'version' => 5,
+  'defaults' => { 'datadir' => 'data', 'data_hash' => 'yaml_data' },
+  'hierarchy' => [
+    { 'name' => 'Common', 'path' => 'common.yaml' },
+    { 'name' => 'Compliance profiles', 'path' => 'simp_defaults.yaml' },
+    { 'name' => 'Compliance Engine', 'lookup_key' => 'compliance_engine::enforcement' },
+  ],
+}.freeze
+
+SIMP_DEFAULTS = { 'compliance_engine::enforcement' => ['simp:defaults'] }.freeze
+
 unless ENV['BEAKER_provision'] == 'no'
   hosts.each do |host|
     # Install Puppet
@@ -63,6 +80,11 @@ RSpec.configure do |c|
   c.before :suite do
     # Install modules and dependencies from spec/fixtures/modules
     copy_fixture_modules_to(hosts)
+
+    hosts.each do |sut|
+      set_hiera_config_on(sut, HIERA_WITH_COMPLIANCE_ENGINE)
+      create_remote_file(sut, File.join(hiera_datadir(sut), 'simp_defaults.yaml'), SIMP_DEFAULTS.to_yaml)
+    end
 
     # Minimal EL9+ images do not ship firewalld and simp_firewalld only
     # manages it when present; the firewall-log tests need it on every host

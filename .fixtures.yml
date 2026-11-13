@@ -5,6 +5,10 @@ fixtures:
     augeas_core: https://github.com/simp/pupmod-puppetlabs-augeas_core.git
     augeasproviders_core: https://github.com/simp/augeasproviders_core.git
     augeasproviders_grub: https://github.com/simp/augeasproviders_grub.git
+    # Hiera backend for the simp:defaults profile the acceptance suites enforce
+    compliance_engine:
+      repo: https://github.com/simp/rubygem-simp-compliance_engine.git
+      ref: '1.2.0'
     concat: https://github.com/simp/puppetlabs-concat.git
     firewalld: https://github.com/simp/pupmod-voxpupuli-firewalld.git
     iptables: https://github.com/simp/pupmod-simp-iptables.git
