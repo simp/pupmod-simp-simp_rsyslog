@@ -320,7 +320,10 @@ class simp_rsyslog::server (
       rsyslog::rule::local { '10_default_firewall':
         # Some versions of rsyslog include the space separator that precedes
         # the message as part of the message body
-        rule            => 'prifilt(\'kern.*\') and (($msg startswith \'IN_99_simp_DROP:\') or ($msg startswith \' IN_99_simp_DROP:\'))',
+        # 'contains' also matches the EL9+ firewalld (nftables backend) form,
+        # which prefixes the message with the table name
+        # (filter_IN_99_simp_DROP:)
+        rule            => 'prifilt(\'kern.*\') and ($msg contains \'IN_99_simp_DROP:\')',
         dyna_file       => "${file_base}/firewall.log",
         stop_processing => $stop_processing
       }
@@ -344,7 +347,7 @@ class simp_rsyslog::server (
     # Late processing items
     if $process_security_relevant_logs {
       rsyslog::rule::local { '17_default_security_relevant_logs':
-        rule            => $::simp_rsyslog::security_relevant_logs,
+        rule            => $simp_rsyslog::security_relevant_logs,
         dyna_file       => "${file_base}/secure.log",
         stop_processing => $stop_processing
       }
@@ -382,7 +385,7 @@ class simp_rsyslog::server (
       include 'logrotate'
 
       logrotate::rule { 'simp_rsyslog_server_profile':
-        log_files                 => [ "${logdir}/*/*.log" ],
+        log_files                 => ["${logdir}/*/*.log"],
         missingok                 => true,
         size                      => $rotate_size,
         rotate_period             => $rotate_period,
