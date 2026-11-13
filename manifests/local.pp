@@ -9,7 +9,7 @@
 #   * Comes after the dynamic local rules that would be on a Rsyslog server
 #     (1* and 3* rules from simp_rsyslog::server)
 #   * Comes after the SIMP-module-specific rules that would be on a Rsyslog
-#     client (XX_* and YY_* rules from the sudosh, apache etc. modules).
+#     client (XX_* and YY_* rules from the apache etc. modules).
 #   * Comes before the standard 'ZZ_default.conf' file from SIMP's rsyslog
 #     module.
 #

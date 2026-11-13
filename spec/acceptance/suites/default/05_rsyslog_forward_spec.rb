@@ -116,12 +116,6 @@ describe 'simp_rsyslog' do
               'secure',
             ],
             [
-              '-p local2.info -t sudosh',
-              'CLIENT_FORWARDED_SUDOSH_LOG',
-              'sudosh.log',
-              'messages',
-            ], # local='sudosh.log' when sudosh module used
-            [
               '-p local2.info -t tlog',
               'CLIENT_FORWARDED_TLOG_LOG',
               'tlog.log',

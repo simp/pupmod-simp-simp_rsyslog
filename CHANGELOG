@@ -1,3 +1,10 @@
+* Fri Nov 13 2026 Steven Pritchard <steve@sicura.us> - 2.0.0
+- BREAKING: Remove support for the archived `sudosh`: the
+  `simp_rsyslog::server::process_sudosh_rules` parameter and its
+  `sudosh.log` rule are removed, and `sudosh` is no longer in the default
+  `simp_rsyslog::default_logs` programs. Use `tlog` (`process_tlog_rules`)
+  for session recording, or add `sudosh` to `default_logs` yourself.
+
 * Thu Oct 08 2026 Steven Pritchard <steve@sicura.us> - 1.1.0
 - Add support for OpenVox 9
 - Update metadata.json dependency ranges from the Forge

@@ -57,7 +57,6 @@ describe 'simp_rsyslog' do
           ['-p mail.info -t id1', 'LOCAL_SERVER_ANY_MAIL_LOG', 'mail.log'],
           ['-p cron.warning -t cron', 'LOCAL_SERVER_CRON_ANY_LOG', 'cron.log'],
           ['-p local4.emerg -t id2', 'LOCAL_SERVER_ANY_EMERG_LOG', 'emergency.log'],
-          ['-p local2.info -t sudosh', 'LOCAL_SERVER_SUDOSH_LOG', 'sudosh.log'],
           ['-p local6.err -t httpd', 'LOCAL_SERVER_HTTPD_ERR_LOG', 'httpd_error.log'],
           ['-p local6.warn -t httpd', 'LOCAL_SERVER_HTTPD_NO_ERR_LOG', 'httpd.log'],
           ['-t dhcpd', 'LOCAL_SERVER_DHCPD_LOG', 'dhcpd.log'],
