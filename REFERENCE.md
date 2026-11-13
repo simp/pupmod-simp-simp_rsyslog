@@ -148,7 +148,6 @@ Default value:
       'crond',
       'snmpd',
       'sudo',
-      'sudosh',
       'systemd',
       'tlog',
       'tlog-rec-session',
@@ -342,7 +341,7 @@ This is currently set to ensure the following:
 * Comes after the dynamic local rules that would be on a Rsyslog server
   (1* and 3* rules from simp_rsyslog::server)
 * Comes after the SIMP-module-specific rules that would be on a Rsyslog
-  client (XX_* and YY_* rules from the sudosh, apache etc. modules).
+  client (XX_* and YY_* rules from the apache etc. modules).
 * Comes before the standard 'ZZ_default.conf' file from SIMP's rsyslog
   module.
 
@@ -385,7 +384,6 @@ Loose standard for the rules that will be created:
 The following parameters are available in the `simp_rsyslog::server` class:
 
 * [`server_conf`](#-simp_rsyslog--server--server_conf)
-* [`process_sudosh_rules`](#-simp_rsyslog--server--process_sudosh_rules)
 * [`process_tlog_rules`](#-simp_rsyslog--server--process_tlog_rules)
 * [`process_httpd_rules`](#-simp_rsyslog--server--process_httpd_rules)
 * [`process_dhcpd_rules`](#-simp_rsyslog--server--process_dhcpd_rules)
@@ -426,14 +424,6 @@ The full configuration to use
   provided. There will be **no** sanity checking of this string!
 
 Default value: `undef`
-
-##### <a name="-simp_rsyslog--server--process_sudosh_rules"></a>`process_sudosh_rules`
-
-Data type: `Boolean`
-
-Enable processing of sudosh rules
-
-Default value: `true`
 
 ##### <a name="-simp_rsyslog--server--process_tlog_rules"></a>`process_tlog_rules`
 

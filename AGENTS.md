@@ -151,15 +151,15 @@ rather than assuming `simp_options` is present in the catalog.
 
 Module dependencies (from `metadata.json`):
 
-- `simp/rsyslog` `>= 7.6.0 < 9.0.0` — the component module this profile drives
+- `simp/rsyslog` `>= 7.6.0 < 11.0.0` — the component module this profile drives
   (provides `rsyslog`, `rsyslog::server`, and the `rsyslog::rule::*` defines).
-- `simp/simplib` `>= 4.9.0 < 5.0.0` — provides `simplib::lookup` and
+- `simp/simplib` `>= 4.9.0 < 8.0.0` — provides `simplib::lookup` and
   `simplib::assert_optional_dependency`.
-- `puppetlabs/stdlib` `>= 8.0.0 < 10.0.0`.
+- `puppetlabs/stdlib` `>= 8.0.0 < 11.0.0`.
 
 Optional dependency (from `metadata.json` `simp.optional_dependencies`):
 
-- `simp/logrotate` `>= 6.5.0 < 7.0.0` — used only by the server role when
+- `simp/logrotate` `>= 6.5.0 < 8.0.0` — used only by the server role when
   `$add_logrotate_rule` is true; enforced at runtime with
   `simplib::assert_optional_dependency($module_name, 'simp/logrotate')`
   (`manifests/server.pp`).
